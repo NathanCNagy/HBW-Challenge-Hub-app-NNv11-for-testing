@@ -1,0 +1,30 @@
+{
+  "entities": {
+    "SyncEvent": {
+      "title": "SyncEvent",
+      "description": "A batched synchronization telemetry event tracking habit actions and local milestone completions.",
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "description": "ISO 8601 formatted timestamp string."
+        },
+        "type": {
+          "type": "string",
+          "description": "The category of sync event (e.g. goal_completion, quiz_save)."
+        },
+        "payload": {
+          "type": "object",
+          "description": "Arbitrary metadata for the synchronization event."
+        }
+      },
+      "required": ["timestamp", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/sync_events/{eventId}": {
+      "schema": "SyncEvent",
+      "description": "Telemetry and habit progress sync events for a user."
+    }
+  }
+}

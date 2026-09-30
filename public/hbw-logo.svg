@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" fill="none">
+  <!-- Left Semi-circle: Vibrant Blue -->
+  <path d="M50 0 A50 50 0 0 0 50 100 Z" fill="#0080FF" />
+  
+  <!-- Stacked Brand Wordmark -->
+  <g font-family="'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="21.5" letter-spacing="0.04em">
+    <text x="59" y="22" fill="#1C1C1E">HABITS</text>
+    <text x="59" y="47.5" fill="#1C1C1E">FOR A</text>
+    <text x="59" y="73" fill="#0080FF">BETTER</text>
+    <text x="59" y="98" fill="#1C1C1E">WORLD</text>
+  </g>
+</svg>

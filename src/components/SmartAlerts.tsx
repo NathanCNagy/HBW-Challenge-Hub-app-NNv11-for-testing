@@ -319,7 +319,7 @@ export default function SmartAlerts({
               }`}
             >
               <p className="text-xs">
-                No active triggers. Tap below to pair your habit with a daily routine.
+                No active triggers. Tap below to pair your habit with an anchor routine or cue.
               </p>
               <button
                 type="button"

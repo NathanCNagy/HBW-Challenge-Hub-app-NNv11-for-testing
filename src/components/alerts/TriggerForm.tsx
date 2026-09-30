@@ -72,17 +72,17 @@ export default function TriggerForm({
       {/* Routine / Cue input */}
       <div className="space-y-1">
         <label
-          className={`text-[10px] font-mono uppercase font-semibold ${
+          className={`text-[10px] font-sans uppercase font-semibold tracking-wider ${
             isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
           }`}
         >
-          Daily Routine / Cue
+          Routine Anchor / Cue
         </label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Brushing teeth, after lunch, evening tea"
+          placeholder="e.g. Sunday family dinner, after grocery run, morning coffee"
           autoFocus
           className={`w-full px-3 py-2 text-xs border rounded-lg outline-none font-sans ${
             isDark
@@ -95,7 +95,7 @@ export default function TriggerForm({
       {/* Time */}
       <div className="space-y-1">
         <label
-          className={`text-[10px] font-mono uppercase font-semibold ${
+          className={`text-[10px] font-sans uppercase font-semibold tracking-wider ${
             isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
           }`}
         >
@@ -126,13 +126,13 @@ export default function TriggerForm({
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label
-            className={`text-[10px] font-mono uppercase font-semibold ${
+            className={`text-[10px] font-sans uppercase font-semibold tracking-wider ${
               isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
             }`}
           >
             Days of Week
           </label>
-          <div className="flex gap-1.5 text-[10px] font-sans">
+          <div className="flex gap-1.5 text-[10px] font-sans flex-wrap justify-end">
             <button
               type="button"
               onClick={() => setDays(allDays)}
@@ -159,6 +159,20 @@ export default function TriggerForm({
               }`}
             >
               Weekdays
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setDays(['Sun'])}
+              className={`hover:underline cursor-pointer ${
+                days.length === 1 && days.includes('Sun')
+                  ? 'text-[#0080FF] font-bold'
+                  : isDark
+                    ? 'text-[#98989D]'
+                    : 'text-[#6C6C70]'
+              }`}
+            >
+              Weekly (Sun)
             </button>
           </div>
         </div>

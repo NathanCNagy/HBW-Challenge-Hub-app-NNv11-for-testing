@@ -900,7 +900,7 @@ export default function EcosystemVisualization({
             {groupStats.groupName}
           </p>
           <p className={`text-xs font-sans leading-normal ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-            Your daily {goalTitle} habit fuels collective impact.
+            Your {goalTitle} habit fuels collective impact.
           </p>
         </div>
 
@@ -1069,7 +1069,7 @@ export default function EcosystemVisualization({
                     <li className="flex items-start gap-2">
                       <span className="text-[#0080FF] font-bold">•</span>
                       <span>
-                        <strong>Team Power:</strong> With <strong>{groupStats.activeMembers} active members</strong> logging daily habits and popping clouds, the group accumulates ~<strong>18,500 pts daily</strong>.
+                        <strong>Team Power:</strong> With <strong>{groupStats.activeMembers} active members</strong> logging habits and popping clouds, the group accumulates ~<strong>18,500 pts daily</strong>.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -1081,7 +1081,7 @@ export default function EcosystemVisualization({
                     <li className="flex items-start gap-2">
                       <span className="text-[#0080FF] font-bold">•</span>
                       <span>
-                        <strong>Your Daily Impact:</strong> Popping your 3 daily clouds (+30g) and checking off your habit contributes directly to the team total and keeps your plant hydrated.
+                        <strong>Your Habit Impact:</strong> Popping your floating clouds and checking off your habit contributes directly to the team total and keeps your plant hydrated.
                       </span>
                     </li>
                   </ul>

@@ -59,7 +59,10 @@ export function downloadHabitPlanPDF(activeGoal: Goal, streak: number, targetTip
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-  doc.text('DAILY HABIT ACTION PATHWAY:', 50, 172);
+  const paceHeader = activeGoal.selectedOption?.scheduleText
+    ? `HABIT ACTION PATHWAY (${activeGoal.selectedOption.scheduleText.toUpperCase()}):`
+    : 'HABIT ACTION PATHWAY:';
+  doc.text(paceHeader, 50, 172);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
@@ -101,7 +104,7 @@ export function downloadHabitPlanPDF(activeGoal: Goal, streak: number, targetTip
   doc.setFontSize(10.5);
   doc.setTextColor(textDark[0], textDark[1], textDark[2]);
   const tipText = doc.splitTextToSize(
-    `${targetTip} To maximize reliability: perform your microchange right after a static daily anchor event (such as brushing your teeth or brewing your morning coffee). Placing visual reminders in plain sight removes starting friction.`,
+    `${targetTip} To maximize reliability: perform your microchange right after a regular anchor routine (such as weekend meal prep, grocery shopping, or morning coffee). Placing visual reminders in plain sight removes starting friction.`,
     495
   );
   doc.text(tipText, 50, routineStart + 18);

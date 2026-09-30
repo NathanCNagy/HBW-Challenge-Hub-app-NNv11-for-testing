@@ -56,6 +56,9 @@ export default function ProgressTab({
     reflectDone: hasLoggedToday
   };
 
+  const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
+  const paceLabel = activeGoal.selectedOption?.scheduleText || (isWeekly ? 'Weekly' : 'Daily');
+
   return (
     <div className="flex flex-col gap-4 w-full">
       <EcosystemVisualization
@@ -70,21 +73,21 @@ export default function ProgressTab({
         setBubbles={setBubbles}
         theme={theme}
       >
-        {/* Daily Checklist Card - directly under the plant visual */}
+        {/* Habit Checklist Card - directly under the plant visual */}
         <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3.5 transition-colors duration-200 ${
           theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
         }`}>
-          <div className={`flex items-center justify-between border-b pb-2.5 ${
+          <div className={`flex items-center justify-between border-b pb-2.5 gap-2 ${
             theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
           }`}>
-            <h4 className={`text-xs font-sans font-bold uppercase tracking-wider flex items-center gap-2 ${
+            <h4 className={`text-xs font-sans font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 ${
               theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
             }`}>
               <CheckCircle className="w-4 h-4 text-[#0080FF]" />
-              Daily Checklist
+              {isWeekly ? 'Habit Checklist' : 'Daily Checklist'}
             </h4>
-            <span className={`text-[10px] font-mono ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#8E8E93]'}`}>
-              Tap to check
+            <span className={`text-[10px] font-sans text-right leading-tight ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
+              {isWeekly ? `Pace: ${paceLabel} · Tap to check & hydrate plant` : 'Tap to check & unlock clouds to hydrate plant'}
             </span>
           </div>
 
@@ -137,11 +140,11 @@ export default function ProgressTab({
                     ? 'line-through text-[#8E8E93]' 
                     : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  Pair with daily cue
+                  {isWeekly ? 'Pair with anchor routine' : 'Pair with routine cue'}
                 </span>
                 <span className={`text-[11px] block leading-normal ${
                   theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                }`}>Done right after {anchorHabit || 'your daily routine'}.</span>
+                }`}>Done alongside {anchorHabit || (isWeekly ? 'your chosen routine' : 'your regular routine')}.</span>
               </div>
             </button>
 
@@ -187,12 +190,12 @@ export default function ProgressTab({
             {hasLoggedToday ? (
               <>
                 <CheckCircle className="w-4 h-4 text-[#8E8E93]" />
-                <span>Logged for Today</span>
+                <span>{isWeekly ? 'Logged for This Target' : 'Logged for Today'}</span>
               </>
             ) : (
               <>
                 <Calendar className="w-4 h-4" />
-                <span>Log Today's Habit</span>
+                <span>{isWeekly ? 'Log Habit Completion' : "Log Today's Habit"}</span>
               </>
             )}
           </button>

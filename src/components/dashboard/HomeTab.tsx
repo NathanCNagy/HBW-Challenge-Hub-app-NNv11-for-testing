@@ -51,6 +51,8 @@ export default function HomeTab({
   onNavigateToTab,
   theme
 }: HomeTabProps) {
+  const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
+
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Active Focus Header Details */}
@@ -60,11 +62,11 @@ export default function HomeTab({
         <div className="flex flex-col gap-1.5 z-10">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D]">
-              Today's Focus
+              {isWeekly ? 'Current Habit Focus' : "Today's Focus"}
             </span>
             {hasLoggedToday && (
               <span className="text-[10px] font-sans font-semibold text-[#34C759] flex items-center gap-1">
-                <CheckCircle className="w-3.5 h-3.5" /> Logged Today
+                <CheckCircle className="w-3.5 h-3.5" /> {isWeekly ? 'Logged for Target' : 'Logged Today'}
               </span>
             )}
           </div>
@@ -112,7 +114,7 @@ export default function HomeTab({
         >
           <div className="flex items-center gap-2 truncate">
             <Calendar className="w-4 h-4 text-[#0080FF] shrink-0" />
-            <span className="truncate">{hasLoggedToday ? "View Today's Progress & Checklist" : "Go to Progress Tab to log habits"}</span>
+            <span className="truncate">{hasLoggedToday ? (isWeekly ? "View Habit Progress & Checklist" : "View Today's Progress & Checklist") : (isWeekly ? "Go to Progress Tab to log habit" : "Go to Progress Tab to log habits")}</span>
           </div>
           <ArrowRight className="w-4 h-4 text-[#0080FF] shrink-0" />
         </button>
@@ -189,7 +191,9 @@ export default function HomeTab({
           </div>
 
           <p className={`text-xs leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-            Pair your habit with a daily routine (like morning coffee) to make consistency automatic.
+            {isWeekly
+              ? 'Pair your habit with a regular routine (like your weekly grocery run or Sunday dinner) to make consistency automatic.'
+              : 'Pair your habit with a daily routine (like morning coffee or evening wind-down) to make consistency automatic.'}
           </p>
 
           <button

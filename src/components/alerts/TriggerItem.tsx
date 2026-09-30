@@ -35,6 +35,7 @@ export function formatDaysSummary(days: string[]): string {
   const weekends = ['Sat', 'Sun'];
   if (days.length === 5 && weekdays.every((d) => days.includes(d))) return 'Weekdays';
   if (days.length === 2 && weekends.every((d) => days.includes(d))) return 'Weekends';
+  if (days.length === 1) return `Weekly (${days[0]})`;
   return days.join(', ');
 }
 

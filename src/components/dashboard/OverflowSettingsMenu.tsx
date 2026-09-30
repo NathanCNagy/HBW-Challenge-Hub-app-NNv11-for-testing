@@ -311,8 +311,8 @@ export default function OverflowSettingsMenu({
                   <Globe className="w-3.5 h-3.5 text-[#0080FF]" />
                   <span className="text-xs font-bold font-sans">Units & Measures</span>
                 </div>
-                <span className="text-[10px] font-mono text-[#0080FF] font-semibold">
-                  {unitSystem === 'imperial' ? 'US (mi)' : 'Metric (km)'}
+                <span className="text-[10px] font-sans text-[#0080FF] font-semibold">
+                  {unitSystem === 'imperial' ? 'US (mi, lbs)' : 'Metric (km, kg)'}
                 </span>
               </div>
 
@@ -331,7 +331,7 @@ export default function OverflowSettingsMenu({
                         : 'text-[#6C6C70] hover:text-[#1C1C1E]'
                   }`}
                 >
-                  <span>US (mi)</span>
+                  <span>US (mi, lbs)</span>
                 </button>
 
                 <button
@@ -344,7 +344,7 @@ export default function OverflowSettingsMenu({
                       : 'text-[#6C6C70] hover:text-[#1C1C1E]'
                   }`}
                 >
-                  <span>Metric (km)</span>
+                  <span>Metric (km, kg)</span>
                 </button>
               </div>
             </div>

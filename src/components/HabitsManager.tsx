@@ -49,7 +49,9 @@ export default function HabitsManager({ activeGoal, setActiveGoal, onResetQuiz, 
             <h4 className={`text-xs font-sans font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-[#1C1C1E]'}`}>
               My Active Habits
             </h4>
-            <span className="text-[10px] font-mono font-semibold text-[#0080FF] bg-[#0080FF]/10 px-2 py-0.5 rounded-full">
+            <span className={`text-[10px] font-sans font-medium px-2.5 py-0.5 rounded-full border ${
+              isDark ? 'text-[#98989D] bg-[#1F1F24] border-[#27272A]' : 'text-[#6C6C70] bg-[#E5E5EA]/70 border-[#E5E5EA]'
+            }`}>
               The One Habit Rule
             </span>
           </div>
@@ -77,13 +79,13 @@ export default function HabitsManager({ activeGoal, setActiveGoal, onResetQuiz, 
               >
                 <div className="space-y-1 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    <span className={`text-[10px] font-sans uppercase tracking-wider px-2 py-0.5 rounded-full ${
                       isDark ? 'text-[#98989D] bg-[#1F1F24]' : 'text-[#6C6C70] bg-[#E5E5EA]/50'
                     }`}>
                       {habit.category}
                     </span>
                     {isActive && (
-                      <span className="text-[10px] font-mono font-bold text-[#0080FF] bg-[#0080FF]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-sans font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
                         ● PRIMARY FOCUS
                       </span>
                     )}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, Info, X } from 'lucide-react';
+import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, Info, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useHabit } from '../context/HabitContext';
 
 interface EcosystemVisualizationProps {
   category: 'Environment' | 'Well-Being' | 'Compassion' | 'Responsible AI';
@@ -49,6 +50,7 @@ export default function EcosystemVisualization({
   const [isHydrating, setIsHydrating] = useState<boolean>(false);
   const [hydrationMessage, setHydrationMessage] = useState<string>('');
   const [showMilestoneInfo, setShowMilestoneInfo] = useState<boolean>(false);
+  const { unitSystem } = useHabit();
 
   // Target milestone is anchored slightly lower than the Habits energy label (y = 74)
   const currentMilestone = CO2_MILESTONES.find(m => individualEnergy < m.targetScore) || CO2_MILESTONES[CO2_MILESTONES.length - 1];
@@ -116,6 +118,11 @@ export default function EcosystemVisualization({
   };
 
   // Group stats mapped to categories
+  const co2RawKg = 125480 + (individualEnergy * 2.3);
+  const co2Display = unitSystem === 'imperial'
+    ? `${(co2RawKg * 2.20462).toLocaleString(undefined, { maximumFractionDigits: 0 })} lbs`
+    : `${co2RawKg.toLocaleString(undefined, { maximumFractionDigits: 0 })} kg`;
+
   const groupStats = {
     'Environment': {
       groupName: 'The Plant-Forward Kitchen & Active Travelers',
@@ -123,7 +130,7 @@ export default function EcosystemVisualization({
       activeMembers: '24,198',
       collectiveScore: 762340 + streak * 140,
       resourceLabel: 'CO2 emissions offset',
-      resourceValue: `${(125480 + (individualEnergy * 2.3)).toLocaleString(undefined, { maximumFractionDigits: 0 })} kg`,
+      resourceValue: co2Display,
       visualColor: 'from-[#0285ff]/30 to-emerald-500/20'
     },
     'Well-Being': {
@@ -155,6 +162,25 @@ export default function EcosystemVisualization({
     }
   }[category];
 
+  const [showGroupModal, setShowGroupModal] = useState<boolean>(false);
+
+  // Group Progress & Team Milestone Calculations
+  const currentLevel = Math.floor(groupStats.collectiveScore / 100000);
+  const nextLevel = currentLevel + 1;
+  const levelFloor = currentLevel * 100000;
+  const nextLevelTarget = nextLevel * 100000;
+  const teamPtsRemaining = Math.max(0, nextLevelTarget - groupStats.collectiveScore);
+  const teamLevelProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveScore - levelFloor) / 100000) * 100)));
+  const daysToTeamMilestone = Math.max(1, Math.ceil(teamPtsRemaining / 18500));
+
+  // Individual user stacking benchmark against their team
+  const teamAverageEnergy = 35; // benchmark median CO2 score per member
+  const userVsTeamDiff = Math.round(((individualEnergy - teamAverageEnergy) / teamAverageEnergy) * 100);
+  const userTier = 
+    individualEnergy >= 100 ? 'Top 5% Contributor' :
+    individualEnergy >= 45 ? 'Top 15% Contributor' :
+    'Top 35% Contributor';
+
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Interactive Alipay-Style Ant Forest Stage */}
@@ -171,7 +197,7 @@ export default function EcosystemVisualization({
           <div className={`space-y-0.5 p-2 px-3 rounded-full border backdrop-blur-md ${
             theme === 'dark' ? 'bg-[#121214]/80 border-[#1F1F24]' : 'bg-white/90 border-[#BDE0FE] shadow-2xs'
           }`}>
-            <span className={`text-[9px] font-mono uppercase tracking-widest font-bold block ${
+            <span className={`text-[9px] font-sans uppercase tracking-wider font-bold block ${
               theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
             }`}>CO2 SCORE</span>
             <div className="flex items-center gap-1">
@@ -182,19 +208,34 @@ export default function EcosystemVisualization({
             </div>
           </div>
 
-          <div className={`text-right space-y-0.5 p-2 px-3 rounded-full border backdrop-blur-md ${
-            theme === 'dark' ? 'bg-[#121214]/80 border-[#1F1F24]' : 'bg-white/90 border-[#BDE0FE] shadow-2xs'
-          }`}>
-            <span className={`text-[9px] font-mono uppercase tracking-widest font-bold block ${
-              theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
-            }`}>GROUP PROGRESS</span>
-            <div className="flex items-center gap-1 justify-end">
+          {/* Group Progress interactive button with see group progress icon */}
+          <button
+            type="button"
+            onClick={() => setShowGroupModal(true)}
+            className={`text-right space-y-0.5 p-2 px-3 rounded-full border backdrop-blur-md transition-all cursor-pointer group hover:scale-[1.03] active:scale-[0.98] ${
+              theme === 'dark' 
+                ? 'bg-[#121214]/80 hover:bg-[#1A1A1E] border-[#1F1F24] hover:border-[#0080FF]/50 text-white' 
+                : 'bg-white/90 hover:bg-white border-[#BDE0FE] hover:border-[#0080FF]/50 text-[#1C1C1E] shadow-2xs'
+            }`}
+            title="See group progress & how you stack up against your team"
+            aria-label="See group progress"
+          >
+            <div className="flex items-center justify-end gap-1">
+              <span className={`text-[9px] font-sans uppercase tracking-wider font-bold block ${
+                theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
+              }`}>GROUP PROGRESS</span>
+              <Info className="w-2.5 h-2.5 text-[#0080FF] opacity-80 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="flex items-center gap-1.5 justify-end">
               <Users className="w-3.5 h-3.5 text-[#0080FF]" />
               <span className={`text-xs font-sans font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
-              }`}>Level {Math.floor(groupStats.collectiveScore / 100000)}</span>
+              }`}>Level {currentLevel}</span>
+              <span className="text-[10px] text-[#0080FF] font-medium group-hover:translate-x-0.5 transition-transform">
+                &rarr;
+              </span>
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Floating Monochromatic Cloud Outlines */}
@@ -844,7 +885,14 @@ export default function EcosystemVisualization({
               Community Challenge
             </h4>
           </div>
-          <span className={`text-[10px] font-mono uppercase font-semibold ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>90-Day Campaign</span>
+          <button
+            type="button"
+            onClick={() => setShowGroupModal(true)}
+            className="flex items-center gap-1 text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer group"
+          >
+            <span>See Group Progress</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+          </button>
         </div>
 
         <div className="space-y-1">
@@ -860,7 +908,7 @@ export default function EcosystemVisualization({
           <div className={`p-3 border rounded-[14px] text-center space-y-0.5 ${
             theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
           }`}>
-            <span className={`text-[9px] font-mono font-bold uppercase tracking-wider block ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>GROUP SCORE</span>
+            <span className={`text-[9px] font-sans font-bold uppercase tracking-wider block ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>GROUP SCORE</span>
             <span className="text-sm font-serif text-[#0080FF] font-semibold block">
               {groupStats.collectiveScore.toLocaleString()} pts
             </span>
@@ -869,13 +917,189 @@ export default function EcosystemVisualization({
           <div className={`p-3 border rounded-[14px] text-center space-y-0.5 ${
             theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
           }`}>
-            <span className={`text-[9px] font-mono font-bold uppercase tracking-wider block ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>{groupStats.resourceLabel.toUpperCase()}</span>
+            <span className={`text-[9px] font-sans font-bold uppercase tracking-wider block ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>{groupStats.resourceLabel.toUpperCase()}</span>
             <span className={`text-sm font-serif font-semibold block ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
               {groupStats.resourceValue}
             </span>
           </div>
         </div>
       </div>
+
+      {/* Group Progress & Team Stacking Modal */}
+      <AnimatePresence>
+        {showGroupModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-black/65 backdrop-blur-xs select-none">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className={`w-full max-w-sm rounded-[24px] border shadow-2xl p-5 overflow-hidden flex flex-col gap-4 max-h-[90%] overflow-y-auto ${
+                theme === 'dark' 
+                  ? 'bg-[#121214] border-[#1F1F24] text-white' 
+                  : 'bg-white border-[#BDE0FE] text-[#1C1C1E]'
+              }`}
+            >
+              {/* Modal Header */}
+              <div className={`flex items-start justify-between gap-3 pb-3 border-b ${
+                theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
+              }`}>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#0080FF]/15 flex items-center justify-center text-[#0080FF] shrink-0">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-sans font-bold leading-tight">
+                      Group Progress & Standing
+                    </h3>
+                    <p className={`text-[11px] font-sans truncate max-w-[210px] ${
+                      theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                    }`}>
+                      {groupStats.groupName}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowGroupModal(false)}
+                  className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                    theme === 'dark' ? 'hover:bg-[#1F1F24] text-[#8E8E93] hover:text-white' : 'hover:bg-[#F2F2F7] text-[#6C6C70] hover:text-[#1C1C1E]'
+                  }`}
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Individual vs Team Stacking Card */}
+              <div className={`p-3.5 rounded-[16px] border flex flex-col gap-2.5 ${
+                theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F8FC] border-[#D0E6FC]'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#0080FF]">
+                    How You Stack Up
+                  </span>
+                  <span className="text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/15 text-[#0080FF]">
+                    {userTier}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-center pt-1">
+                  <div className={`p-2.5 rounded-[12px] border ${
+                    theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E2EDF9]'
+                  }`}>
+                    <span className={`text-[9px] font-sans font-bold uppercase tracking-wider block ${
+                      theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+                    }`}>YOUR SCORE</span>
+                    <span className="text-base font-serif font-bold text-[#0080FF] block">
+                      {individualEnergy}g
+                    </span>
+                    <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
+                      {streak}-day streak
+                    </span>
+                  </div>
+
+                  <div className={`p-2.5 rounded-[12px] border ${
+                    theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E2EDF9]'
+                  }`}>
+                    <span className={`text-[9px] font-sans font-bold uppercase tracking-wider block ${
+                      theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+                    }`}>TEAM MEDIAN</span>
+                    <span className={`text-base font-serif font-bold block ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
+                      {teamAverageEnergy}g
+                    </span>
+                    <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
+                      4.2-day streak
+                    </span>
+                  </div>
+                </div>
+
+                <p className={`text-[11px] font-sans leading-relaxed pt-1 ${
+                  theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
+                }`}>
+                  {userVsTeamDiff >= 0 ? (
+                    <>You're contributing <strong className="text-[#34C759]">+{userVsTeamDiff}% more CO2 score</strong> than the team median! You are a key pacesetter for this challenge.</>
+                  ) : (
+                    <>You're within <strong className="text-[#0080FF]">{Math.abs(userVsTeamDiff)}% of the team median</strong>. Popping today's 3 clouds (+30g) will elevate you into the top tier!</>
+                  )}
+                </p>
+              </div>
+
+              {/* Group Next Milestone Roadmap */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Trophy className="w-3.5 h-3.5 text-[#0080FF]" />
+                    <span className="text-xs font-sans font-bold">
+                      Team Level {nextLevel} Milestone
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold text-[#0080FF]">
+                    {teamLevelProgressPercent}%
+                  </span>
+                </div>
+
+                {/* Team Progress Bar */}
+                <div className={`w-full h-2.5 rounded-full overflow-hidden border ${
+                  theme === 'dark' ? 'bg-[#1F1F24] border-[#2C2C30]' : 'bg-[#E5E5EA] border-[#D1D1D6]'
+                }`}>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${teamLevelProgressPercent}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-[#0080FF] to-[#38BDF8] rounded-full"
+                  />
+                </div>
+
+                <div className={`flex justify-between text-[10px] font-mono ${
+                  theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+                }`}>
+                  <span>{groupStats.collectiveScore.toLocaleString()} pts</span>
+                  <span>Target: {nextLevelTarget.toLocaleString()} pts</span>
+                </div>
+
+                {/* Clear Explanation of How the Group Gets to the Next Milestone */}
+                <div className={`p-3 rounded-[14px] border space-y-2 ${
+                  theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
+                }`}>
+                  <h4 className="text-[11px] font-sans font-bold text-[#0080FF] flex items-center gap-1.5">
+                    <span>🚀 How the Team Unlocks Level {nextLevel}</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-[11px] font-sans leading-relaxed">
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#0080FF] font-bold">•</span>
+                      <span>
+                        <strong>Team Power:</strong> With <strong>{groupStats.activeMembers} active members</strong> logging daily habits and popping clouds, the group accumulates ~<strong>18,500 pts daily</strong>.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#0080FF] font-bold">•</span>
+                      <span>
+                        <strong>Milestone Forecast:</strong> At this velocity, our community will unlock <strong>Level {nextLevel} in ~{daysToTeamMilestone} {daysToTeamMilestone === 1 ? 'day' : 'days'}</strong> ({teamPtsRemaining.toLocaleString()} pts remaining).
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#0080FF] font-bold">•</span>
+                      <span>
+                        <strong>Your Daily Impact:</strong> Popping your 3 daily clouds (+30g) and checking off your habit contributes directly to the team total and keeps your plant hydrated.
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setShowGroupModal(false)}
+                className="w-full h-[42px] bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-semibold rounded-full transition-all cursor-pointer shadow-sm"
+              >
+                Back to Ecosystem
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

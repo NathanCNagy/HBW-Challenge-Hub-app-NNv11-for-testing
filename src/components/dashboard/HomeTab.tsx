@@ -59,11 +59,11 @@ export default function HomeTab({
       }`}>
         <div className="flex flex-col gap-1.5 z-10">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#0080FF]">
+            <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D]">
               Today's Focus
             </span>
             {hasLoggedToday && (
-              <span className="text-[10px] font-mono font-bold text-[#34C759] flex items-center gap-1">
+              <span className="text-[10px] font-sans font-semibold text-[#34C759] flex items-center gap-1">
                 <CheckCircle className="w-3.5 h-3.5" /> Logged Today
               </span>
             )}
@@ -85,7 +85,9 @@ export default function HomeTab({
               <span className={`text-[11px] font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
                 Pace:
               </span>
-              <span className="text-[11px] font-mono font-semibold text-[#0080FF] truncate">
+              <span className={`text-[11px] font-sans font-semibold truncate ${
+                theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'
+              }`}>
                 {activeGoal.selectedOption?.title?.split('(')[0]?.trim() || activeGoal.implementationOptions?.[0]?.title?.split('(')[0]?.trim() || 'Standard Plan'}
               </span>
             </div>
@@ -99,20 +101,20 @@ export default function HomeTab({
           </div>
         </div>
 
-        {/* Link to Progress Tab for habit tracking & logging */}
+        {/* Navigation link to Progress Tab for habit tracking & logging */}
         <button
           onClick={() => onNavigateToTab('progress')}
-          className={`h-[46px] w-full px-6 rounded-full font-sans font-semibold text-xs sm:text-[13px] transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-xs active:scale-[0.99] ${
-            hasLoggedToday
-              ? theme === 'dark'
-                ? 'bg-[#0080FF]/15 hover:bg-[#0080FF]/25 text-[#0080FF] border border-[#0080FF]/30'
-                : 'bg-[#0080FF]/10 hover:bg-[#0080FF]/15 text-[#0080FF] border border-[#0080FF]/20'
-              : 'bg-[#0080FF] hover:bg-[#0066CC] text-white'
+          className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between cursor-pointer border ${
+            theme === 'dark'
+              ? 'bg-[#18181B] hover:bg-[#202024] text-[#E5E5EA] border-[#27272A]'
+              : 'bg-[#F5F5F7] hover:bg-[#EAEAEA] text-[#1C1C1E] border-[#E5E5EA]'
           }`}
         >
-          <Calendar className="w-4 h-4 shrink-0" />
-          <span className="truncate">{hasLoggedToday ? "View Today's Progress & Checklist" : "Log Habits in Progress Tab"}</span>
-          <ArrowRight className="w-4 h-4 shrink-0" />
+          <div className="flex items-center gap-2 truncate">
+            <Calendar className="w-4 h-4 text-[#0080FF] shrink-0" />
+            <span className="truncate">{hasLoggedToday ? "View Today's Progress & Checklist" : "Go to Progress Tab to log habits"}</span>
+          </div>
+          <ArrowRight className="w-4 h-4 text-[#0080FF] shrink-0" />
         </button>
       </div>
 
@@ -181,7 +183,7 @@ export default function HomeTab({
                 Smart Habit Reminders
               </h4>
             </div>
-            <span className="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-[#FF9500]/15 text-[#FF9500] shrink-0">
+            <span className="text-[9px] font-sans font-semibold uppercase px-2 py-0.5 rounded-full bg-[#FF9500]/15 text-[#FF9500] shrink-0">
               Not Set Up
             </span>
           </div>
@@ -214,7 +216,7 @@ export default function HomeTab({
             <div>
               <p className="text-xs font-bold leading-tight flex items-center gap-1.5">
                 <span>Reminders Active</span>
-                <span className="text-[9px] font-mono font-bold text-[#34C759] bg-[#34C759]/15 px-1.5 py-0.2 rounded-full">
+                <span className="text-[9px] font-sans font-bold text-[#34C759] bg-[#34C759]/15 px-1.5 py-0.2 rounded-full">
                   ON
                 </span>
               </p>
@@ -238,7 +240,7 @@ export default function HomeTab({
       }`}>
         <div className="flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-[#0080FF]" />
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#0080FF]">
+          <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D]">
             Daily Motivation
           </span>
         </div>

@@ -341,7 +341,7 @@ export default function DashboardSimulation({
           aria-label="Return to Home Tab"
         >
           <HBWLogo variant="favicon" size="sm" className="h-7 w-7" theme={theme} />
-          <span className="font-mono text-[10px] text-[#0080FF] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#0080FF]/10 border border-[#0080FF]/20 group-hover:bg-[#0080FF]/15 transition-colors">
+          <span className="font-sans text-[10px] text-[#0080FF] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#0080FF]/10 border border-[#0080FF]/20 group-hover:bg-[#0080FF]/15 transition-colors">
             Hub
           </span>
         </button>

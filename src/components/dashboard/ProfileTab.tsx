@@ -105,7 +105,7 @@ export default function ProfileTab({
               <h4 className="text-sm font-bold leading-tight">
                 {user?.displayName || 'My Profile'}
               </h4>
-              <p className={`text-[10px] font-mono uppercase tracking-wider font-bold ${
+              <p className={`text-[10px] font-sans uppercase tracking-wider font-semibold ${
                 user ? 'text-[#34C759]' : 'text-[#FF9500]'
               }`}>
                 {user ? 'Verified Account' : 'Guest Account'}
@@ -125,7 +125,7 @@ export default function ProfileTab({
         {isEditingProfile ? (
           <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs leading-tight pt-1">
             <div className="flex flex-col gap-1">
-              <label className={`font-mono text-[9px] uppercase ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Age</label>
+              <label className={`font-sans text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Age</label>
               <input
                 type="text"
                 value={editAge}
@@ -136,7 +136,7 @@ export default function ProfileTab({
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className={`font-mono text-[9px] uppercase ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Gender</label>
+              <label className={`font-sans text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Gender</label>
               <select
                 value={editGender}
                 onChange={(e) => setEditGender(e.target.value)}
@@ -171,16 +171,16 @@ export default function ProfileTab({
           <div className="space-y-3 pt-1">
             <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs leading-tight">
               <div className="flex flex-col">
-                <span className={`font-mono text-[9px] uppercase ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Age</span>
+                <span className={`font-sans text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Age</span>
                 <span className="font-semibold text-sm">{answers.age || 'N/A'}</span>
               </div>
               <div className="flex flex-col">
-                <span className={`font-mono text-[9px] uppercase ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Gender</span>
+                <span className={`font-sans text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Gender</span>
                 <span className="font-semibold text-sm">{answers.gender || 'N/A'}</span>
               </div>
               {user && (
                 <div className={`flex flex-col col-span-2 border-t pt-1.5 ${theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'}`}>
-                  <span className={`font-mono text-[9px] uppercase ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Account Email</span>
+                  <span className={`font-sans text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>Account Email</span>
                   <span className="font-semibold truncate text-xs font-mono">{user.email}</span>
                 </div>
               )}
@@ -256,8 +256,8 @@ export default function ProfileTab({
                   }`}>
                     Choose Your Pace
                   </h4>
-                  <span className={`text-[10px] font-mono font-semibold px-2.5 py-0.5 rounded-full ${
-                    theme === 'dark' ? 'bg-[#0080FF]/15 text-[#0080FF]' : 'bg-[#E5F1FF] text-[#0066CC]'
+                  <span className={`text-[10px] font-sans font-medium px-2.5 py-0.5 rounded-full border ${
+                    theme === 'dark' ? 'bg-[#1F1F24] text-[#E5E5EA] border-[#27272A]' : 'bg-[#E5E5EA]/70 text-[#1C1C1E] border-[#E5E5EA]'
                   }`}>
                     {currentOption.title.split('(')[0].trim()}
                   </span>
@@ -426,8 +426,8 @@ export default function ProfileTab({
             <Globe className="w-4 h-4 text-[#0080FF]" />
             <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Impact Measurements</h4>
           </div>
-          <span className="text-[10px] font-mono font-semibold text-[#0080FF] bg-[#0080FF]/15 px-2.5 py-0.5 rounded-full">
-            {unitSystem === 'imperial' ? 'US (mi)' : 'Metric (km)'}
+          <span className="text-[10px] font-sans font-semibold text-[#0080FF] bg-[#0080FF]/15 px-2.5 py-0.5 rounded-full">
+            {unitSystem === 'imperial' ? 'US (mi, lbs)' : 'Metric (km, kg)'}
           </span>
         </div>
 
@@ -445,7 +445,7 @@ export default function ProfileTab({
                   : 'text-[#6C6C70] hover:text-[#1C1C1E]'
             }`}
           >
-            <span>US (mi)</span>
+            <span>US (mi, lbs)</span>
           </button>
           <button
             type="button"
@@ -458,14 +458,14 @@ export default function ProfileTab({
                   : 'text-[#6C6C70] hover:text-[#1C1C1E]'
             }`}
           >
-            <span>Metric (km)</span>
+            <span>Metric (km, kg)</span>
           </button>
         </div>
       </div>
 
       {/* Permanent Smart Reminders & Notification Settings */}
       <div className="flex flex-col gap-2">
-        <h3 className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#0080FF] px-1">
+        <h3 className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D] px-1">
           Reminders & Notifications
         </h3>
         <SmartAlerts

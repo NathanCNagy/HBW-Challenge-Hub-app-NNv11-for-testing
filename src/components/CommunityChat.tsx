@@ -264,9 +264,7 @@ export default function CommunityChat({ category, goalTitle, theme = 'light' }: 
                     className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-xs ${
                       isRsvped
                         ? 'bg-[#34C759] text-white hover:bg-[#2EB04E]'
-                        : theme === 'dark'
-                        ? 'bg-white text-black hover:bg-[#E5E5EA]'
-                        : 'bg-[#1C1C1E] hover:bg-black text-white'
+                        : 'bg-[#0080FF] hover:bg-[#0066CC] text-white'
                     }`}
                   >
                     {isRsvped ? (
@@ -392,9 +390,7 @@ export default function CommunityChat({ category, goalTitle, theme = 'light' }: 
                 className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-xs ${
                   rsvpedEvents[selectedEvent.id]
                     ? 'bg-[#34C759] hover:bg-[#2EB04E] text-white'
-                    : theme === 'dark'
-                    ? 'bg-white text-black hover:bg-[#E5E5EA]'
-                    : 'bg-[#1C1C1E] hover:bg-black text-white'
+                    : 'bg-[#0080FF] hover:bg-[#0066CC] text-white'
                 }`}
               >
                 {rsvpedEvents[selectedEvent.id] ? (

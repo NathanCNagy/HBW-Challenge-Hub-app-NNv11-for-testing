@@ -24,6 +24,8 @@ export default function HBWLogo({
       xl: 'h-20 w-20',
     };
 
+    const outlineStroke = theme === 'dark' ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.18)';
+
     return (
       <svg 
         className={`shrink-0 select-none ${faviconSizeClasses[size]} ${className}`} 
@@ -33,10 +35,26 @@ export default function HBWLogo({
         role="img"
         aria-label={ariaLabel}
       >
+        {/* Full white circular base so the right white hemisphere is solid */}
+        <circle 
+          cx="50" 
+          cy="50" 
+          r="44" 
+          fill="#FFFFFF" 
+        />
         {/* Left semi-circle: vibrant blue (#0080FF) from Favicon version */}
         <path 
           d="M 50 6 A 44 44 0 0 0 50 94 Z" 
           fill="#0080FF" 
+        />
+        {/* Light outline around the entire circular icon so the white circle part doesn't blend into the background */}
+        <circle 
+          cx="50" 
+          cy="50" 
+          r="44" 
+          fill="none" 
+          stroke={outlineStroke} 
+          strokeWidth="3" 
         />
       </svg>
     );

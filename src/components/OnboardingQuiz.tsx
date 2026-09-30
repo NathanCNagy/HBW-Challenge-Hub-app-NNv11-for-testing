@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { QuizAnswers, Category } from '../types';
-import { Leaf, Heart, Users, Brain, ChevronLeft } from 'lucide-react';
+import { Leaf, Heart, Bot, Activity, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HBWLogo from './HBWLogo';
 
@@ -46,7 +46,7 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
       name: 'Compassion',
       title: 'Compassion',
       description: 'Cultivate kindness and community connection',
-      icon: <Users className="w-5 h-5 text-[#8E8E93]" />
+      icon: <Heart className="w-5 h-5 text-[#8E8E93]" />
     },
     {
       name: 'Environment',
@@ -58,13 +58,13 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
       name: 'Responsible AI',
       title: 'Responsible AI',
       description: 'Foster digital ethics and mindfulness',
-      icon: <Users className="w-5 h-5 text-[#8E8E93]" />
+      icon: <Bot className="w-5 h-5 text-[#8E8E93]" />
     },
     {
       name: 'Well-Being',
       title: 'Well-being',
       description: 'Nurture mental clarity and physical habits',
-      icon: <Brain className="w-5 h-5 text-[#8E8E93]" />
+      icon: <Activity className="w-5 h-5 text-[#8E8E93]" />
     }
   ];
 

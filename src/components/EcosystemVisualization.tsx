@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud } from 'lucide-react';
+import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, Info, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface EcosystemVisualizationProps {
@@ -16,24 +16,21 @@ interface EcosystemVisualizationProps {
   children?: React.ReactNode;
 }
 
-interface Milestone {
-  days: number;
-  label: string;
-  y: number;
-}
-
-interface Milestone {
-  days: number;
+interface Co2Milestone {
+  targetScore: number;
+  prevScore: number;
   label: string;
   stageName: string;
 }
 
-const STAGE_CONFIG = [
-  { maxDays: 3, prevDays: 0, label: '3d Sprout', stageName: 'Sprout' },
-  { maxDays: 7, prevDays: 3, label: '7d Sapling', stageName: 'Sapling' },
-  { maxDays: 14, prevDays: 7, label: '14d Canopy', stageName: 'Canopy' },
-  { maxDays: 30, prevDays: 14, label: '30d Bloom', stageName: 'Full Bloom' }
+const CO2_MILESTONES: Co2Milestone[] = [
+  { targetScore: 100, prevScore: 0, label: '100g Sprout', stageName: 'Sprout' },
+  { targetScore: 250, prevScore: 100, label: '250g Sapling', stageName: 'Sapling' },
+  { targetScore: 500, prevScore: 250, label: '500g Canopy', stageName: 'Canopy' },
+  { targetScore: 1000, prevScore: 500, label: '1,000g Bloom', stageName: 'Full Bloom' }
 ];
+
+const DAILY_CO2_SCORE = 30; // 3 daily clouds × 10g average = 30g CO2 score / day
 
 export default function EcosystemVisualization({
   category,
@@ -51,41 +48,44 @@ export default function EcosystemVisualization({
   const [raindrops, setRaindrops] = useState<{ id: string; startX: number; startY: number; targetX: number; delay: number; size: number }[]>([]);
   const [isHydrating, setIsHydrating] = useState<boolean>(false);
   const [hydrationMessage, setHydrationMessage] = useState<string>('');
+  const [showMilestoneInfo, setShowMilestoneInfo] = useState<boolean>(false);
 
   // Target milestone is anchored slightly lower than the Habits energy label (y = 74)
-  const currentStage = STAGE_CONFIG.find(s => streak < s.maxDays) || STAGE_CONFIG[STAGE_CONFIG.length - 1];
+  const currentMilestone = CO2_MILESTONES.find(m => individualEnergy < m.targetScore) || CO2_MILESTONES[CO2_MILESTONES.length - 1];
   const targetMilestoneY = 74;
-  const nextMilestone = { days: currentStage.maxDays, label: currentStage.label, y: targetMilestoneY, stageName: currentStage.stageName };
-  const isMastered = streak >= 30;
-  const daysToNext = isMastered ? 0 : Math.max(0, currentStage.maxDays - streak);
+  const isMastered = individualEnergy >= 1000;
+  const co2Remaining = isMastered ? 0 : Math.max(0, currentMilestone.targetScore - individualEnergy);
+  const daysToNext = isMastered ? 0 : Math.max(1, Math.ceil(co2Remaining / DAILY_CO2_SCORE));
 
   // Progress within the current milestone stage (0.0 to 1.0)
-  const stageSpan = currentStage.maxDays - currentStage.prevDays;
+  const stageSpan = currentMilestone.targetScore - currentMilestone.prevScore;
   const stageProgress = isMastered 
     ? 1 
-    : Math.min(1, Math.max(0, (streak - currentStage.prevDays) / stageSpan));
+    : Math.min(1, Math.max(0, (individualEnergy - currentMilestone.prevScore) / stageSpan));
 
   // Dynamic botanical scaling: plant grows upward toward the milestone line (y = 74)
+  const milestoneIndex = CO2_MILESTONES.indexOf(currentMilestone);
   const stageBaseTipY = 
-    streak < 3 ? 295 :
-    streak < 7 ? 225 :
-    streak < 14 ? 160 :
+    milestoneIndex === 0 ? 295 :
+    milestoneIndex === 1 ? 225 :
+    milestoneIndex === 2 ? 160 :
     115;
 
   const stageTargetTipY = 
-    streak < 3 ? 200 :
-    streak < 7 ? 140 :
-    streak < 14 ? 96 :
+    milestoneIndex === 0 ? 200 :
+    milestoneIndex === 1 ? 140 :
+    milestoneIndex === 2 ? 96 :
     targetMilestoneY;
 
   const plantTipY = isMastered 
     ? targetMilestoneY 
     : Math.round(stageBaseTipY - stageProgress * (stageBaseTipY - stageTargetTipY));
 
-  const trunkTopY = Math.min(322, Math.round(plantTipY + (streak === 0 ? 16 : streak < 3 ? 24 : streak < 7 ? 40 : streak < 14 ? 54 : 66)));
+  const trunkTopY = Math.min(322, Math.round(plantTipY + (individualEnergy < 100 ? 20 : individualEnergy < 250 ? 36 : individualEnergy < 500 ? 52 : 66)));
   const foliageCenterY = Math.round((plantTipY + trunkTopY) / 2);
-  const canopyW = Math.min(68, Math.round(26 + streak * 1.4));
-  const canopyH = Math.min(60, Math.round(22 + streak * 1.3));
+  const progressRatio = Math.min(1, individualEnergy / 1000);
+  const canopyW = Math.min(70, Math.round(26 + progressRatio * 44));
+  const canopyH = Math.min(62, Math.round(22 + progressRatio * 40));
 
   const handlePopBubble = (id: number, value: number, cx: number, cy: number) => {
     setIndividualEnergy(prev => prev + value);
@@ -173,9 +173,9 @@ export default function EcosystemVisualization({
           }`}>
             <span className={`text-[9px] font-mono uppercase tracking-widest font-bold block ${
               theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
-            }`}>HABIT ENERGY</span>
+            }`}>CO2 SCORE</span>
             <div className="flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-[#0080FF] fill-[#0080FF]" />
+              <Cloud className="w-3.5 h-3.5 text-[#0080FF]" />
               <span className={`text-sm font-serif font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
               }`}>{individualEnergy} g</span>
@@ -421,17 +421,17 @@ export default function EcosystemVisualization({
                   fill="#0080FF" 
                 />
 
-                {/* Milestone label with larger, prominent text */}
+                {/* Milestone label with clear CO2 score target */}
                 <text 
                   x="34" 
                   y={targetMilestoneY - 6} 
-                  fontSize="12" 
+                  fontSize="11" 
                   fontFamily="monospace" 
                   fontWeight="bold" 
                   fill="#0080FF"
                   className="select-none tracking-wide"
                 >
-                  NEXT MILESTONE: {nextMilestone.days}D {nextMilestone.stageName?.toUpperCase() || 'STAGE'} ({daysToNext}d left)
+                  NEXT MILESTONE: {currentMilestone.targetScore}g CO2 {currentMilestone.stageName?.toUpperCase()} ({co2Remaining}g left • ~{daysToNext}d)
                 </text>
               </g>
             ) : (
@@ -451,13 +451,13 @@ export default function EcosystemVisualization({
                 <text 
                   x="34" 
                   y={targetMilestoneY - 6} 
-                  fontSize="12" 
+                  fontSize="11" 
                   fontFamily="monospace" 
                   fontWeight="bold" 
                   fill="#34C759"
                   className="select-none tracking-wide"
                 >
-                  MILESTONE REACHED: 30D FULL BLOOM 🌟
+                  MILESTONE REACHED: 1,000g CO2 FULL BLOOM 🌟
                 </text>
               </g>
             )}
@@ -745,18 +745,86 @@ export default function EcosystemVisualization({
         </div>
 
         {/* Bottom banner warning and hints */}
-        <div className="absolute inset-x-0 bottom-2 flex flex-col items-center justify-center z-10 px-4 text-center">
-          <p className={`text-[10px] font-sans font-semibold tracking-wide flex flex-col sm:flex-row items-center gap-1 p-1 px-3.5 rounded-full border backdrop-blur-md ${
-            theme === 'dark' ? 'bg-[#121214]/90 border-[#1F1F24] text-white' : 'bg-white/90 border-[#BDE0FE] text-[#1C1C1E] shadow-2xs'
+        <div className="absolute inset-x-0 bottom-2 flex flex-col items-center justify-center z-30 px-3 text-center">
+          <AnimatePresence>
+            {showMilestoneInfo && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className={`mb-2 max-w-[340px] w-full p-3.5 rounded-[16px] border shadow-2xl backdrop-blur-xl text-left text-xs ${
+                  theme === 'dark' 
+                    ? 'bg-[#121214]/98 border-[#1F1F24] text-white' 
+                    : 'bg-white/98 border-[#BDE0FE] text-[#1C1C1E] shadow-lg'
+                }`}
+              >
+                <div className={`flex items-center justify-between pb-2 mb-2 border-b ${
+                  theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
+                }`}>
+                  <div className="flex items-center gap-1.5 font-bold font-sans text-xs">
+                    <Cloud className="w-3.5 h-3.5 text-[#0080FF]" />
+                    <span>CO2 Milestone Progress</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowMilestoneInfo(false)}
+                    className="p-1 -mr-1 rounded-full text-[#8E8E93] hover:text-[#0080FF] transition-colors cursor-pointer"
+                    aria-label="Close info"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="space-y-2 text-[11px] leading-relaxed">
+                  <p className="flex items-start gap-1.5">
+                    <span className="shrink-0 text-sm">☁️</span>
+                    <span>
+                      <strong>Daily CO2 Score:</strong> You can earn up to <strong className="text-[#0080FF]">30g CO2 score</strong> each day by popping the 3 floating clouds.
+                    </span>
+                  </p>
+                  <p className="flex items-start gap-1.5">
+                    <span className="shrink-0 text-sm">🎯</span>
+                    <span>
+                      <strong>Next Milestone:</strong> <strong className="text-[#0080FF]">{currentMilestone.targetScore}g CO2 ({currentMilestone.stageName})</strong>. You have <strong>{co2Remaining}g</strong> left to reach it.
+                    </span>
+                  </p>
+                  <div className={`p-2 rounded-[10px] border flex items-start gap-1.5 ${
+                    theme === 'dark' 
+                      ? 'bg-[#0080FF]/15 border-[#0080FF]/30 text-[#BAE6FD]' 
+                      : 'bg-[#E5F1FF] border-[#0080FF]/25 text-[#0055AA]'
+                  }`}>
+                    <span className="shrink-0 text-sm">⏳</span>
+                    <span>
+                      <strong>Milestone Timeline:</strong> Earning your 30g CO2 score daily will unlock the next milestone in <strong>{daysToNext} {daysToNext === 1 ? 'day' : 'days'}</strong>!
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <p className={`text-[10px] font-sans font-semibold tracking-wide flex items-center justify-center gap-1.5 p-1 px-3.5 rounded-full border backdrop-blur-md transition-all ${
+            theme === 'dark' ? 'bg-[#121214]/90 border-[#1F1F24] text-white' : 'bg-white/95 border-[#BDE0FE] text-[#1C1C1E] shadow-2xs'
           }`}>
             <span className={hasLoggedToday ? "text-[#0080FF]" : "text-[#FF9500]"}>
-              {hasLoggedToday ? "💧 Ecosystem hydrated!" : "🌱 Nurture your plant today!"}
+              {hasLoggedToday ? "💧 Hydrated" : "🌱 Active"}
             </span>
-            <span className="text-[#98989D] sm:before:content-['•'] sm:before:mx-1">
-              {streak >= 30 
-                ? "Full Bloom reached! Keep your streak alive." 
-                : `${daysToNext} ${daysToNext === 1 ? 'day' : 'days'} to ${nextMilestone.label}`}
+            <span className="text-[#98989D]">•</span>
+            <span>
+              {isMastered 
+                ? "Full Bloom Reached (1,000g CO2)!" 
+                : `${individualEnergy}g / ${currentMilestone.targetScore}g CO2 (${co2Remaining}g left • ~${daysToNext}d)`}
             </span>
+            <button
+              type="button"
+              onClick={() => setShowMilestoneInfo(prev => !prev)}
+              className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#0080FF]/15 hover:bg-[#0080FF]/30 text-[#0080FF] transition-all cursor-pointer ml-0.5 active:scale-90"
+              title="Click to see daily CO2 score and milestone timeline"
+              aria-label="Milestone info"
+            >
+              <Info className="w-2.5 h-2.5" />
+            </button>
           </p>
         </div>
       </div>

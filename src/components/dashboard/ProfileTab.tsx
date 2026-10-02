@@ -423,9 +423,6 @@ export default function ProfileTab({
             {theme === 'dark' ? <Moon className="w-4 h-4 text-[#0080FF]" /> : <Sun className="w-4 h-4 text-amber-500" />}
             <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Appearance</h4>
           </div>
-          <span className="text-[10px] font-mono font-semibold text-[#0080FF] bg-[#0080FF]/15 px-2.5 py-0.5 rounded-full">
-            {theme === 'dark' ? 'Dark' : 'Light'}
-          </span>
         </div>
 
         <p className={`text-xs leading-relaxed font-sans ${
@@ -476,9 +473,6 @@ export default function ProfileTab({
             <Globe className="w-4 h-4 text-[#0080FF]" />
             <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Impact Measurements</h4>
           </div>
-          <span className="text-[10px] font-sans font-semibold text-[#0080FF] bg-[#0080FF]/15 px-2.5 py-0.5 rounded-full">
-            {unitSystem === 'imperial' ? 'US (mi, lbs)' : 'Metric (km, kg)'}
-          </span>
         </div>
 
         <div className={`p-1 rounded-full border grid grid-cols-2 gap-1 ${

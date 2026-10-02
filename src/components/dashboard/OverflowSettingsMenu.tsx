@@ -242,9 +242,6 @@ export default function OverflowSettingsMenu({
                   )}
                   <span className="text-xs font-bold font-sans">Appearance</span>
                 </div>
-                <span className="text-[10px] font-mono font-semibold text-[#0080FF] bg-[#0080FF]/15 px-2 py-0.5 rounded-full">
-                  {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
-                </span>
               </div>
 
               <p className={`text-[11px] font-sans leading-normal ${
@@ -297,9 +294,6 @@ export default function OverflowSettingsMenu({
                   <Globe className="w-3.5 h-3.5 text-[#0080FF]" />
                   <span className="text-xs font-bold font-sans">Units & Measures</span>
                 </div>
-                <span className="text-[10px] font-sans text-[#0080FF] font-semibold">
-                  {unitSystem === 'imperial' ? 'US (mi, lbs)' : 'Metric (km, kg)'}
-                </span>
               </div>
 
               <div className={`p-1 rounded-full border grid grid-cols-2 gap-1 mt-0.5 ${

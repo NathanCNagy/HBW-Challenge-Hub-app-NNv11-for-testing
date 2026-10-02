@@ -57,7 +57,6 @@ export default function ProgressTab({
   };
 
   const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
-  const paceLabel = activeGoal.selectedOption?.scheduleText || (isWeekly ? 'Weekly' : 'Daily');
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -87,7 +86,7 @@ export default function ProgressTab({
               {isWeekly ? 'Habit Checklist' : 'Daily Checklist'}
             </h4>
             <span className={`text-[10px] font-sans text-right leading-tight ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-              {isWeekly ? `Pace: ${paceLabel} · Tap to check & hydrate plant` : 'Tap to check & unlock clouds to hydrate plant'}
+              Tap to check & unlock clouds to hydrate plant
             </span>
           </div>
 

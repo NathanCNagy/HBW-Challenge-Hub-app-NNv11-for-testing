@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Bell, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { HabitTrigger } from '../types';
 import TriggerItem from './alerts/TriggerItem';
 import TriggerForm from './alerts/TriggerForm';
@@ -219,22 +219,17 @@ export default function SmartAlerts({
             isDark ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
           }`}
         >
-          <div className="flex items-start gap-2.5 min-w-0 flex-1">
-            <div className="w-7 h-7 rounded-full bg-[#0080FF]/15 flex items-center justify-center shrink-0 mt-0.5">
-              <Bell className="w-4 h-4 text-[#0080FF]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-sans font-bold uppercase tracking-wider">
-                Habit Anchors & Cues
-              </h4>
-              <p
-                className={`text-[11px] leading-relaxed mt-0.5 pr-2 ${
-                  isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                }`}
-              >
-                Pair your habit with existing routines to trigger consistency
-              </p>
-            </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-xs font-sans font-bold uppercase tracking-wider">
+              Habit Anchors & Cues
+            </h4>
+            <p
+              className={`text-[11px] leading-relaxed mt-0.5 pr-2 ${
+                isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
+              }`}
+            >
+              Pair your habit with existing routines to trigger consistency
+            </p>
           </div>
 
           {!isAdding && (

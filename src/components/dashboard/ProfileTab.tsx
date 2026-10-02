@@ -7,9 +7,6 @@ import React, { useState } from 'react';
 import { 
   User, 
   LogOut, 
-  Sun, 
-  Moon, 
-  Globe,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -419,10 +416,7 @@ export default function ProfileTab({
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {theme === 'dark' ? <Moon className="w-4 h-4 text-[#0080FF]" /> : <Sun className="w-4 h-4 text-amber-500" />}
-            <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Appearance</h4>
-          </div>
+          <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Appearance</h4>
         </div>
 
         <p className={`text-xs leading-relaxed font-sans ${
@@ -437,7 +431,7 @@ export default function ProfileTab({
           <button
             type="button"
             onClick={() => onToggleTheme && onToggleTheme('light')}
-            className={`py-2 px-3 rounded-full text-xs font-sans font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            className={`py-2 px-3 rounded-full text-xs font-sans font-semibold flex items-center justify-center transition-all cursor-pointer ${
               theme === 'light'
                 ? 'bg-[#0080FF] text-white shadow-xs'
                 : theme === 'dark'
@@ -445,20 +439,18 @@ export default function ProfileTab({
                   : 'text-[#6C6C70] hover:text-[#1C1C1E]'
             }`}
           >
-            <Sun className="w-4 h-4" />
             <span>Light</span>
           </button>
 
           <button
             type="button"
             onClick={() => onToggleTheme && onToggleTheme('dark')}
-            className={`py-2 px-3 rounded-full text-xs font-sans font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            className={`py-2 px-3 rounded-full text-xs font-sans font-semibold flex items-center justify-center transition-all cursor-pointer ${
               theme === 'dark'
                 ? 'bg-[#0080FF] text-white shadow-xs'
                 : 'text-[#6C6C70] hover:text-[#1C1C1E]'
             }`}
           >
-            <Moon className="w-4 h-4" />
             <span>Dark</span>
           </button>
         </div>
@@ -469,10 +461,7 @@ export default function ProfileTab({
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-[#0080FF]" />
-            <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Impact Measurements</h4>
-          </div>
+          <h4 className="text-xs font-sans font-bold uppercase tracking-wider">Impact Measurements</h4>
         </div>
 
         <div className={`p-1 rounded-full border grid grid-cols-2 gap-1 ${

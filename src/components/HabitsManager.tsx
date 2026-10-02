@@ -50,8 +50,8 @@ export default function HabitsManager({ activeGoal, setActiveGoal, onResetQuiz, 
               My Active Habits
             </h4>
           </div>
-          <p className={`text-xs leading-relaxed font-sans font-semibold ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-            Focusing on one habit at a time makes you 80% more likely to succeed.
+          <p className={`text-xs leading-relaxed font-sans font-normal ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
+            Focusing on <span className={`font-semibold ${isDark ? 'text-white' : 'text-[#1C1C1E]'}`}>one habit at a time</span> makes you <span className={`font-semibold ${isDark ? 'text-white' : 'text-[#1C1C1E]'}`}>80% more likely to succeed</span>.
           </p>
         </div>
         

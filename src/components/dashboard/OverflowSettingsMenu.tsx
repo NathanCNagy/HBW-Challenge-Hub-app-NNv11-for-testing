@@ -11,7 +11,8 @@ import {
   Moon, 
   User, 
   LogOut, 
-  Globe
+  Globe,
+  AlertCircle
 } from 'lucide-react';
 import { QuizAnswers } from '../../types';
 import { useHabit } from '../../context/HabitContext';
@@ -47,6 +48,13 @@ export default function OverflowSettingsMenu({
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
   const [editAge, setEditAge] = useState<string>(answers.age);
   const [editGender, setEditGender] = useState<string>(answers.gender);
+  const [confirmSignOut, setConfirmSignOut] = useState<boolean>(false);
+
+  const handleClose = () => {
+    setConfirmSignOut(false);
+    setIsEditingProfile(false);
+    onClose();
+  };
 
   const handleStartEdit = () => {
     setEditAge(answers.age);
@@ -72,7 +80,7 @@ export default function OverflowSettingsMenu({
           {/* Backdrop */}
           <div 
             className="absolute inset-0 z-40 bg-black/20 backdrop-blur-xs transition-opacity"
-            onClick={onClose}
+            onClick={handleClose}
           />
           
           <motion.div
@@ -97,7 +105,7 @@ export default function OverflowSettingsMenu({
               </span>
               <button 
                 id="close-menu-btn"
-                onClick={onClose}
+                onClick={handleClose}
                 className={`p-1 rounded-full transition-colors cursor-pointer ${
                   theme === 'dark' ? 'hover:bg-[#1F1F24] text-[#98989D] hover:text-white' : 'hover:bg-[#F5F5F7] text-[#6C6C70] hover:text-[#1C1C1E]'
                 }`}
@@ -202,43 +210,21 @@ export default function OverflowSettingsMenu({
                     )}
                   </div>
 
-                  <div className={`pt-2 border-t ${theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'}`}>
-                    {user ? (
+                  {!user && (
+                    <div className={`pt-2 border-t ${theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'}`}>
                       <button
+                        type="button"
                         onClick={() => {
-                          if (onSignOut) onSignOut();
-                          onClose();
+                          if (onOpenAuth) onOpenAuth();
+                          handleClose();
                         }}
-                        className="w-full py-2 bg-[#FF3B30]/10 hover:bg-[#FF3B30]/20 text-[#FF3B30] text-xs font-bold rounded-full transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5"
+                        className="w-full py-2 bg-[#0080FF] hover:bg-[#0066CC] text-white text-xs font-semibold rounded-full transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5 shadow-xs"
                       >
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Log Out of Account</span>
+                        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span>Sign Up / Sync Account</span>
                       </button>
-                    ) : (
-                      <div className="flex flex-col gap-1.5">
-                        <button
-                          onClick={() => {
-                            if (onOpenAuth) onOpenAuth();
-                            onClose();
-                          }}
-                          className="w-full py-2 bg-[#0080FF] hover:bg-[#0066CC] text-white text-xs font-semibold rounded-full transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5 shadow-xs"
-                        >
-                          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                          <span>Sign Up / Sync Account</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (onSignOut) onSignOut();
-                            onClose();
-                          }}
-                          className="w-full py-1.5 bg-[#FF3B30]/10 hover:bg-[#FF3B30]/20 text-[#FF3B30] text-xs font-bold rounded-full transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5"
-                        >
-                          <LogOut className="w-3.5 h-3.5" />
-                          <span>Log Out / Exit Guest Session</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -347,6 +333,77 @@ export default function OverflowSettingsMenu({
                   <span>Metric (km, kg)</span>
                 </button>
               </div>
+            </div>
+
+            {/* Plain text-style Log Out row at the bottom of Settings with confirmation */}
+            <div className={`pt-2.5 border-t mt-0.5 ${
+              theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
+            }`}>
+              {confirmSignOut ? (
+                <div className={`p-3 rounded-[14px] border flex flex-col gap-2.5 transition-all ${
+                  theme === 'dark' 
+                    ? 'bg-[#18181B] border-[#27272A]' 
+                    : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-[#FF3B30] shrink-0 mt-0.5" />
+                    <div className="text-xs font-sans">
+                      <p className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
+                        Confirm Sign Out?
+                      </p>
+                      <p className={`text-[11px] leading-relaxed mt-0.5 ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
+                        {user 
+                          ? 'Are you sure you want to log out of your account?' 
+                          : 'Are you sure you want to exit your guest session?'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={`flex items-center justify-end gap-2 pt-1 border-t border-dashed ${
+                    theme === 'dark' ? 'border-[#27272A]' : 'border-[#E5E5EA]'
+                  }`}>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmSignOut(false)}
+                      className={`px-3 py-1 rounded-full text-xs font-sans font-medium transition-colors cursor-pointer ${
+                        theme === 'dark' ? 'text-[#98989D] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
+                      }`}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setConfirmSignOut(false);
+                        if (onSignOut) onSignOut();
+                        handleClose();
+                      }}
+                      className="px-3.5 py-1 bg-[#FF3B30] hover:bg-[#D70015] text-white text-xs font-sans font-semibold rounded-full transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                    >
+                      {user ? 'Log Out' : 'Exit Guest'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  id="settings-logout-btn"
+                  onClick={() => setConfirmSignOut(true)}
+                  className={`w-full py-1.5 px-2 flex items-center justify-between text-xs font-sans font-medium rounded-lg transition-colors cursor-pointer group ${
+                    theme === 'dark'
+                      ? 'text-[#FF3B30] hover:bg-[#FF3B30]/10'
+                      : 'text-[#FF3B30] hover:bg-[#FF3B30]/10'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <LogOut className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                    <span>{user ? 'Log Out' : 'Exit Guest Session'}</span>
+                  </span>
+                  <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#8E8E93]'}`}>
+                    {user ? 'Sign out' : 'Guest'}
+                  </span>
+                </button>
+              )}
             </div>
           </motion.div>
         </>

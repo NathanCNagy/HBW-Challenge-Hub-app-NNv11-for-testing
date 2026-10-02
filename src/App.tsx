@@ -126,9 +126,9 @@ function AppContent() {
                     setAnswers={updateAnswers}
                     onSubmit={handleSubmitQuiz}
                     isLoading={isLoading}
-                    skipDemographics={!!user}
+                    skipDemographics={false}
                     theme={theme}
-                    onBack={!user ? goToAuth : undefined}
+                    onBack={!user ? goToAuth : handleSignOut}
                   />
                 )}
 

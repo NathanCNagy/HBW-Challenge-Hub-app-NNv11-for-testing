@@ -38,18 +38,19 @@ export default function NotificationPreviewCard({
         isDark ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <span
-          className={`text-[10px] font-mono uppercase tracking-widest font-bold ${
+          className={`text-[10px] font-mono uppercase tracking-widest font-bold shrink-0 ${
             isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
           }`}
         >
           Notification Preview
         </span>
         <span
-          className={`text-[10px] font-mono ${
+          className={`text-[10px] font-mono truncate text-right ${
             isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
           }`}
+          title={`${formatTimeDisplay(primaryTrigger.time)} • ${formatDaysSummary(primaryTrigger.days)}`}
         >
           {formatTimeDisplay(primaryTrigger.time)} • {formatDaysSummary(primaryTrigger.days)}
         </span>

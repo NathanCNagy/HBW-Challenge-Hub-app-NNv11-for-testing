@@ -49,15 +49,9 @@ export default function HabitsManager({ activeGoal, setActiveGoal, onResetQuiz, 
             <h4 className={`text-xs font-sans font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-[#1C1C1E]'}`}>
               My Active Habits
             </h4>
-            <span className={`text-[10px] font-sans font-medium px-2.5 py-0.5 rounded-full border ${
-              isDark ? 'text-[#98989D] bg-[#1F1F24] border-[#27272A]' : 'text-[#6C6C70] bg-[#E5E5EA]/70 border-[#E5E5EA]'
-            }`}>
-              The One Habit Rule
-            </span>
           </div>
-          <p className={`text-xs leading-relaxed font-sans flex items-center gap-1.5 ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-            <span className="text-sm shrink-0" role="img" aria-label="caution">⚠️</span>
-            <span>Focusing on one habit at a time makes you 80% more likely to succeed.</span>
+          <p className={`text-xs leading-relaxed font-sans font-semibold ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
+            Focusing on one habit at a time makes you 80% more likely to succeed.
           </p>
         </div>
         

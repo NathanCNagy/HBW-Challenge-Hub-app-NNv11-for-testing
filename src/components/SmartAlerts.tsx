@@ -76,9 +76,9 @@ export default function SmartAlerts({
 
   // Helper to categorize and sort triggers by time of day
   const timeGroups = [
-    { id: 'morning' as const, label: 'Morning', range: '4:00 AM – 11:59 AM', icon: '🌅' },
-    { id: 'afternoon' as const, label: 'Afternoon', range: '12:00 PM – 4:59 PM', icon: '☀️' },
-    { id: 'evening' as const, label: 'Evening', range: '5:00 PM – 3:59 AM', icon: '🌙' },
+    { id: 'morning' as const, label: 'Morning', range: '4:00 AM – 11:59 AM' },
+    { id: 'afternoon' as const, label: 'Afternoon', range: '12:00 PM – 4:59 PM' },
+    { id: 'evening' as const, label: 'Evening', range: '5:00 PM – 3:59 AM' },
   ];
 
   const getTimeGroup = (timeStr?: string) => {
@@ -215,20 +215,20 @@ export default function SmartAlerts({
         }`}
       >
         <div
-          className={`flex items-center justify-between border-b pb-2.5 ${
+          className={`flex items-start justify-between gap-3.5 border-b pb-3 ${
             isDark ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
           }`}
         >
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-[#0080FF]/15 flex items-center justify-center shrink-0">
+          <div className="flex items-start gap-2.5 min-w-0 flex-1">
+            <div className="w-7 h-7 rounded-full bg-[#0080FF]/15 flex items-center justify-center shrink-0 mt-0.5">
               <Bell className="w-4 h-4 text-[#0080FF]" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <h4 className="text-xs font-sans font-bold uppercase tracking-wider">
                 Habit Anchors & Cues
               </h4>
               <p
-                className={`text-[10px] ${
+                className={`text-[11px] leading-relaxed mt-0.5 pr-2 ${
                   isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
                 }`}
               >
@@ -241,7 +241,7 @@ export default function SmartAlerts({
             <button
               type="button"
               onClick={handleStartAdd}
-              className="inline-flex items-center gap-1 text-xs font-sans font-semibold text-[#0080FF] hover:text-[#0066CC] transition-colors px-2.5 py-1 rounded-full border border-[#0080FF]/30 hover:bg-[#0080FF]/10 cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-sans font-semibold text-[#0080FF] hover:text-[#0066CC] transition-colors px-3 py-1.5 rounded-full border border-[#0080FF]/30 hover:bg-[#0080FF]/10 cursor-pointer shrink-0 mt-0.5 active:scale-95"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add</span>
@@ -261,7 +261,6 @@ export default function SmartAlerts({
                   <span className={`text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 ${
                     isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
                   }`}>
-                    <span>{group.icon}</span>
                     <span>{group.label}</span>
                     <span className="font-normal opacity-70">({group.range})</span>
                   </span>

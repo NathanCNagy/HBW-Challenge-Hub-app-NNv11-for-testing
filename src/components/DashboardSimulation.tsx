@@ -65,7 +65,7 @@ export default function DashboardSimulation({
   const [streak, setStreak] = useState<number>(3);
   const [hasLoggedToday, setHasLoggedToday] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
-  const [individualEnergy, setIndividualEnergy] = useState<number>(45); // Ant Forest points
+  const [individualEnergy, setIndividualEnergy] = useState<number>(14); // Completed tasks & popped clouds
   const [dismissedBubbleAlert, setDismissedBubbleAlert] = useState<boolean>(false);
 
   // Notification configuration state
@@ -75,27 +75,27 @@ export default function DashboardSimulation({
   // Shared Bubble State for Ecosystem Tree (percentages for responsiveness)
   const [bubbles, setBubbles] = useState<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }[]>([]);
 
-  // Category bubble types
+  // Category bubble types - each cloud is worth 1 task
   const bubbleTypesByCategory: Record<string, Array<{ type: string; label: string; value: number }>> = {
     'Environment': [
-      { type: 'co2', label: 'CO2 Offset', value: 5 },
-      { type: 'water', label: 'Water Drop', value: 15 },
-      { type: 'land', label: 'Soil Nutrient', value: 10 }
+      { type: 'co2', label: 'Eco Action', value: 1 },
+      { type: 'water', label: 'Water Save', value: 1 },
+      { type: 'land', label: 'Green Step', value: 1 }
     ],
     'Well-Being': [
-      { type: 'focus', label: 'Focus Boost', value: 10 },
-      { type: 'sleep', label: 'Rest Energy', value: 15 },
-      { type: 'mind', label: 'Dopamine Check', value: 5 }
+      { type: 'focus', label: 'Focus Boost', value: 1 },
+      { type: 'sleep', label: 'Rest Habit', value: 1 },
+      { type: 'mind', label: 'Mindful Step', value: 1 }
     ],
     'Compassion': [
-      { type: 'kind', label: 'Kindness Unit', value: 15 },
-      { type: 'bond', label: 'Social Tie', value: 10 },
-      { type: 'warmth', label: 'Oxytocin', value: 5 }
+      { type: 'kind', label: 'Kindness Unit', value: 1 },
+      { type: 'bond', label: 'Social Tie', value: 1 },
+      { type: 'warmth', label: 'Daily Care', value: 1 }
     ],
     'Responsible AI': [
-      { type: 'verify', label: 'Fact Guard', value: 10 },
-      { type: 'compute', label: 'Cycle Saved', value: 15 },
-      { type: 'mind', label: 'Original Thought', value: 5 }
+      { type: 'verify', label: 'Fact Guard', value: 1 },
+      { type: 'compute', label: 'Cycle Saved', value: 1 },
+      { type: 'mind', label: 'Original Thought', value: 1 }
     ]
   };
 
@@ -155,7 +155,7 @@ export default function DashboardSimulation({
   const handleLogSuccess = () => {
     if (hasLoggedToday) return;
     setStreak((prev) => prev + 1);
-    setIndividualEnergy((prev) => prev + 25);
+    setIndividualEnergy((prev) => prev + 1); // +1 completed task
     setHasLoggedToday(true);
     setDismissedBubbleAlert(false);
     setShowConfetti(true);
@@ -163,7 +163,7 @@ export default function DashboardSimulation({
 
     // Spawn a glowing bubble immediately in the shared state
     const category = activeGoal.category;
-    const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Habit Point', value: 10 }];
+    const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Habit Point', value: 1 }];
     const randomType = bubbleTypes[Math.floor(Math.random() * bubbleTypes.length)];
     
     setBubbles(prev => {
@@ -174,9 +174,9 @@ export default function DashboardSimulation({
           id: Math.floor(Math.random() * 10000000) + 1000,
           cx: 20 + Math.random() * 60,
           cy: 20 + Math.random() * 50,
-          value: randomType.value + 5,
+          value: 1,
           type: randomType.type,
-          label: `${randomType.label} (Daily Bonus)`,
+          label: `${randomType.label} (Bonus Cloud)`,
           isNew: true
         }
       ];
@@ -404,7 +404,7 @@ export default function DashboardSimulation({
       {/* Confetti Micro-Simulator Alert */}
       {showConfetti && (
         <div className="mx-4 mt-2 text-center p-2.5 bg-[#0080FF] text-white font-sans text-xs font-semibold rounded-full animate-bounce shadow-md">
-          🎉 Incredible! Microchange recorded. +25g Energy added.
+          🎉 Incredible! Microchange recorded. +1 Task added to your milestone.
         </div>
       )}
 

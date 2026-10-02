@@ -203,8 +203,15 @@ The topGoal must have a unique ID like "ai-top", the alternatives should have ID
     }
 
     if (hasDistBundle) {
-      app.use(express.static(distPath));
+      app.use(express.static(distPath, {
+        etag: false,
+        maxAge: 0,
+        setHeaders: (res) => {
+          res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        }
+      }));
       app.get('*', (req, res) => {
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.sendFile(path.join(distPath, 'index.html'));
       });
       console.log('Serving production static distribution from:', distPath);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Goal, QuizAnswers, ImplementationOption } from '../types';
-import { RefreshCw, Trophy, Sparkles, ArrowRight, Zap, CheckCircle2, Sliders, Gauge, Info, ShieldCheck, ChevronDown, ChevronUp, ChevronLeft } from 'lucide-react';
+import { RefreshCw, Trophy, Sparkles, ArrowRight, Zap, CheckCircle2, Sliders, Gauge, ShieldCheck, ChevronDown, ChevronUp, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HBWLogo from './HBWLogo';
 import { useHabit } from '../context/HabitContext';
@@ -216,17 +216,6 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden space-y-3 pt-2"
               >
-                <div className={`p-3 rounded-[12px] text-xs leading-relaxed flex items-start gap-2 border ${
-                  isDark
-                    ? 'bg-[#0A0A0C]/80 border-[#1F1F24] text-[#98989D]'
-                    : 'bg-[#F2F2F7] border-[#E5E5EA] text-[#6C6C70]'
-                }`}>
-                  <Info className="w-4 h-4 text-[#0080FF] shrink-0 mt-0.5" />
-                  <span>
-                    <strong className={isDark ? 'text-white font-medium' : 'text-[#1C1C1E] font-semibold'}>Quick tip:</strong> Starting small makes habits stick. Pick what feels 100% doable today—you can always level up later.
-                  </span>
-                </div>
-
                 {/* Implementation Options Radio List */}
                 <div className="space-y-2">
                   {activeGoal.implementationOptions.map((option) => {

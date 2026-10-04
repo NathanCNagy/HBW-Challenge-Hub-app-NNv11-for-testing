@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Info,
   Sliders,
   AlertCircle
 } from 'lucide-react';
@@ -338,17 +337,6 @@ export default function ProfileTab({
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden space-y-3 pt-1.5"
                 >
-                  <div className={`p-3 rounded-[12px] text-xs leading-relaxed flex items-start gap-2 border ${
-                    theme === 'dark'
-                      ? 'bg-[#0A0A0C]/80 border-[#1F1F24] text-[#98989D]'
-                      : 'bg-[#F2F2F7] border-[#E5E5EA] text-[#6C6C70]'
-                  }`}>
-                    <Info className="w-4 h-4 text-[#0080FF] shrink-0 mt-0.5" />
-                    <span>
-                      <strong className={theme === 'dark' ? 'text-white font-medium' : 'text-[#1C1C1E] font-semibold'}>Quick tip:</strong> Starting small makes habits stick. Pick what feels 100% doable today—you can always level up later.
-                    </span>
-                  </div>
-
                   {/* Implementation Options Radio List */}
                   <div className="space-y-2">
                     {activeGoal.implementationOptions.map((option) => {

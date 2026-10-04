@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Flame, Zap, Check, CheckCircle, RefreshCw, Smartphone, Trees, Sparkles, AlertCircle, Info } from 'lucide-react';
+import { Bell, Flame, Zap, Check, CheckCircle, RefreshCw, Smartphone, Trees, Sparkles, AlertCircle } from 'lucide-react';
 
 interface WatchNotification {
   id: number;
@@ -446,8 +446,7 @@ export default function SmartwatchSimulator() {
         </div>
 
         {/* Status of last vibration/alert */}
-        <div className="text-[8px] font-mono text-slate-500 leading-tight flex items-start gap-1">
-          <Info className="w-2.5 h-2.5 text-slate-600 shrink-0 mt-0.5" />
+        <div className="text-[8px] font-mono text-slate-500 leading-tight">
           <p>
             {lastBeepTime 
               ? `Watch received phone payload & buzzed at ${lastBeepTime}.`

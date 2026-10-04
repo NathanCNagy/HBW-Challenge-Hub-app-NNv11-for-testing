@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, Info, X, ArrowRight } from 'lucide-react';
+import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useHabit } from '../context/HabitContext';
 
@@ -49,7 +49,6 @@ export default function EcosystemVisualization({
   const [raindrops, setRaindrops] = useState<{ id: string; startX: number; startY: number; targetX: number; delay: number; size: number }[]>([]);
   const [isHydrating, setIsHydrating] = useState<boolean>(false);
   const [hydrationMessage, setHydrationMessage] = useState<string>('');
-  const [showMilestoneInfo, setShowMilestoneInfo] = useState<boolean>(false);
   const { unitSystem } = useHabit();
 
   // Target milestone is anchored slightly lower than the Habits energy label (y = 74)
@@ -191,7 +190,7 @@ export default function EcosystemVisualization({
       groupName: 'The Plant-Forward Kitchen & Active Travelers',
       subgroup: 'Environmental Challenge Group',
       activeMembers: '24,198',
-      collectiveScore: 762340 + streak * 140,
+      collectiveTasks: 76240 + individualEnergy,
       planetMetricLabel: 'Environment Impact',
       planetMetricValue: `~${Math.max(2, individualEnergy * 2)} hrs`,
       planetMetricSubtext: 'Keeping a light off',
@@ -205,7 +204,7 @@ export default function EcosystemVisualization({
       groupName: 'Universal Vitality & Digital Mindfulness',
       subgroup: 'Well-Being Challenge Group',
       activeMembers: '18,402',
-      collectiveScore: 341200 + streak * 98,
+      collectiveTasks: 34120 + individualEnergy,
       planetMetricLabel: 'Environment Impact',
       planetMetricValue: `~${Math.max(2, Math.round(individualEnergy * 1.5))} hrs`,
       planetMetricSubtext: 'Powering down devices',
@@ -219,7 +218,7 @@ export default function EcosystemVisualization({
       groupName: 'Everyday Kindness & Food Security allies',
       subgroup: 'Kindness Challenge Group',
       activeMembers: '15,221',
-      collectiveScore: 182340 + streak * 74,
+      collectiveTasks: 18230 + individualEnergy,
       planetMetricLabel: 'Community Impact',
       planetMetricValue: `${individualEnergy} acts`,
       planetMetricSubtext: 'Acts of kindness',
@@ -233,7 +232,7 @@ export default function EcosystemVisualization({
       groupName: 'Cognitive Integrity & AI Fact-Checkers',
       subgroup: 'Mindful AI Challenge Group',
       activeMembers: '9,812',
-      collectiveScore: 98420 + streak * 52,
+      collectiveTasks: 9840 + individualEnergy,
       planetMetricLabel: 'Environment Impact',
       planetMetricValue: `~${Math.max(8, individualEnergy * 8)} queries`,
       planetMetricSubtext: 'Compute energy saved',
@@ -247,14 +246,16 @@ export default function EcosystemVisualization({
 
   const [showGroupModal, setShowGroupModal] = useState<boolean>(false);
 
-  // Group Progress & Team Milestone Calculations
-  const currentLevel = Math.floor(groupStats.collectiveScore / 100000);
+  // Group Progress & Team Milestone Calculations (measured in completed tasks)
+  const tasksPerLevel = 10000;
+  const currentLevel = Math.max(1, Math.floor(groupStats.collectiveTasks / tasksPerLevel));
   const nextLevel = currentLevel + 1;
-  const levelFloor = currentLevel * 100000;
-  const nextLevelTarget = nextLevel * 100000;
-  const teamPtsRemaining = Math.max(0, nextLevelTarget - groupStats.collectiveScore);
-  const teamLevelProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveScore - levelFloor) / 100000) * 100)));
-  const daysToTeamMilestone = Math.max(1, Math.ceil(teamPtsRemaining / 18500));
+  const levelFloor = currentLevel * tasksPerLevel;
+  const nextLevelTasksTarget = nextLevel * tasksPerLevel;
+  const teamTasksRemaining = Math.max(0, nextLevelTasksTarget - groupStats.collectiveTasks);
+  const teamLevelProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveTasks - levelFloor) / tasksPerLevel) * 100)));
+  const dailyTeamVelocity = 1850; // community average tasks logged per day
+  const daysToTeamMilestone = Math.max(1, Math.ceil(teamTasksRemaining / dailyTeamVelocity));
 
   // Individual user stacking benchmark against their team
   const teamAverageTasks = 12; // benchmark median tasks completed per member
@@ -306,11 +307,10 @@ export default function EcosystemVisualization({
             title="See group progress & how you stack up against your team"
             aria-label="See group progress"
           >
-            <div className="flex items-center justify-end gap-1">
+            <div className="flex items-center justify-end">
               <span className={`text-[9px] font-sans uppercase tracking-wider font-bold block ${
                 theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
               }`}>GROUP PROGRESS</span>
-              <Info className="w-2.5 h-2.5 text-[#0080FF] opacity-80 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className="flex items-center gap-1.5 justify-end">
               <Users className="w-3.5 h-3.5 text-[#0080FF]" />
@@ -870,107 +870,6 @@ export default function EcosystemVisualization({
             )}
           </svg>
         </div>
-
-        {/* Bottom banner warning and hints */}
-        <div className="absolute inset-x-0 bottom-2 flex flex-col items-center justify-center z-30 px-3 text-center">
-          <AnimatePresence>
-            {showMilestoneInfo && (
-              <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className={`mb-2 max-w-[340px] w-full p-3.5 rounded-[16px] border shadow-2xl backdrop-blur-xl text-left text-xs ${
-                  theme === 'dark' 
-                    ? 'bg-[#121214]/98 border-[#1F1F24] text-white' 
-                    : 'bg-white/98 border-[#BDE0FE] text-[#1C1C1E] shadow-lg'
-                }`}
-              >
-                <div className={`flex items-center justify-between pb-2 mb-2.5 border-b ${
-                  theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
-                }`}>
-                  <div className="flex items-center gap-1.5 font-bold font-sans text-xs">
-                    <Cloud className="w-3.5 h-3.5 text-[#0080FF]" />
-                    <span>Milestone & Real-World Impact</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowMilestoneInfo(false)}
-                    className="p-1 -mr-1 rounded-full text-[#8E8E93] hover:text-[#0080FF] transition-colors cursor-pointer"
-                    aria-label="Close info"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2.5 text-[11px] leading-relaxed">
-                  {/* Next Milestone (Moved to Top) */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-[10px] font-sans font-semibold">
-                      <span className="flex items-center gap-1">
-                        <span>🎯</span> Next Milestone: <strong>{currentMilestone.stageName}</strong>
-                      </span>
-                      <span className="text-[#0080FF] font-bold font-mono">
-                        {tasksRemaining} {tasksRemaining === 1 ? 'task' : 'tasks'} left
-                      </span>
-                    </div>
-                    <div className={`w-full h-1.5 rounded-full overflow-hidden ${
-                      theme === 'dark' ? 'bg-[#1F1F24]' : 'bg-[#E5E5EA]'
-                    }`}>
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#0080FF] to-[#38BDF8] rounded-full transition-all duration-300"
-                        style={{ width: `${Math.round(stageProgress * 100)}%` }}
-                      />
-                    </div>
-                    <p className={`text-[11px] leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'}`}>
-                      Complete <strong>{tasksRemaining} more {tasksRemaining === 1 ? 'task' : 'tasks'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong>~{daysToNext} {daysToNext === 1 ? 'day' : 'days'}</strong>).
-                    </p>
-                  </div>
-
-                  {/* Compact, Integrated Real-World Impact to Date */}
-                  <div className={`p-2.5 rounded-[12px] border flex items-center justify-between gap-3 ${
-                    theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
-                  }`}>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#0080FF] block">
-                        REAL-WORLD IMPACT TO DATE
-                      </span>
-                      <p className={`text-xs font-serif font-bold leading-snug mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
-                        {currentImpact.headline}
-                      </p>
-                      <span className={`text-[10px] font-sans block mt-0.5 ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-                        From your {individualEnergy} {individualEnergy === 1 ? 'completed task' : 'completed tasks'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <p className={`text-[10px] font-sans font-semibold tracking-wide flex items-center justify-center gap-1.5 p-1 px-3.5 rounded-full border backdrop-blur-md transition-all ${
-            theme === 'dark' ? 'bg-[#121214]/90 border-[#1F1F24] text-white' : 'bg-white/95 border-[#BDE0FE] text-[#1C1C1E] shadow-2xs'
-          }`}>
-            <span className={hasLoggedToday ? "text-[#0080FF]" : "text-[#FF9500]"}>
-              {hasLoggedToday ? "💧 Hydrated" : "🌱 Active"}
-            </span>
-            <span className="text-[#98989D]">•</span>
-            <span>
-              {isMastered 
-                ? "Full Bloom Reached (100 Tasks)!" 
-                : `${individualEnergy} / ${currentMilestone.targetTasks} Tasks (${tasksRemaining} left • ~${daysToNext}d)`}
-            </span>
-            <button
-              type="button"
-              onClick={() => setShowMilestoneInfo(prev => !prev)}
-              className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#0080FF]/15 hover:bg-[#0080FF]/30 text-[#0080FF] transition-all cursor-pointer ml-0.5 active:scale-90"
-              title="Click to see real-world impact and milestone timeline"
-              aria-label="Milestone info"
-            >
-              <Info className="w-2.5 h-2.5" />
-            </button>
-          </p>
-        </div>
       </div>
 
       {children}
@@ -1063,44 +962,35 @@ export default function EcosystemVisualization({
         </div>
       </div>
 
-      {/* Group Progress & Team Stacking Modal */}
+      {/* Group Progress & Standing Modal */}
       <AnimatePresence>
         {showGroupModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-black/65 backdrop-blur-xs select-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none">
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 15 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
               className={`w-full max-w-sm rounded-[24px] border shadow-2xl p-5 overflow-hidden flex flex-col gap-4 max-h-[90%] overflow-y-auto ${
                 theme === 'dark' 
                   ? 'bg-[#121214] border-[#1F1F24] text-white' 
-                  : 'bg-white border-[#BDE0FE] text-[#1C1C1E]'
+                  : 'bg-white border-[#E5E5EA] text-[#1C1C1E]'
               }`}
             >
-              {/* Modal Header */}
-              <div className={`flex items-start justify-between gap-3 pb-3 border-b ${
-                theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
-              }`}>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#0080FF]/15 flex items-center justify-center text-[#0080FF] shrink-0">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-sans font-bold leading-tight">
-                      Group Progress & Standing
-                    </h3>
-                    <p className={`text-[11px] font-sans truncate max-w-[210px] ${
-                      theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                    }`}>
-                      {groupStats.groupName}
-                    </p>
-                  </div>
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-0.5">
+                  <h3 className="text-base font-sans font-bold leading-tight">
+                    Group Progress & Standing
+                  </h3>
+                  <p className={`text-xs font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
+                    {groupStats.groupName} • {groupStats.activeMembers} members
+                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowGroupModal(false)}
-                  className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                  className={`p-1.5 -mr-1.5 -mt-1 rounded-full transition-colors cursor-pointer ${
                     theme === 'dark' ? 'hover:bg-[#1F1F24] text-[#8E8E93] hover:text-white' : 'hover:bg-[#F2F2F7] text-[#6C6C70] hover:text-[#1C1C1E]'
                   }`}
                   aria-label="Close"
@@ -1109,162 +999,100 @@ export default function EcosystemVisualization({
                 </button>
               </div>
 
-              {/* Individual vs Team Stacking Card */}
-              <div className={`p-3.5 rounded-[16px] border flex flex-col gap-2.5 ${
-                theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F8FC] border-[#D0E6FC]'
+              {/* Team Milestone Progress */}
+              <div className={`p-4 rounded-[16px] border flex flex-col gap-2.5 ${
+                theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
               }`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#0080FF]">
-                    How You Stack Up
-                  </span>
-                  <span className="text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/15 text-[#0080FF]">
-                    {userTier}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-center pt-1">
-                  <div className={`p-2.5 rounded-[12px] border ${
-                    theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E2EDF9]'
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
                   }`}>
-                    <span className={`text-[9px] font-sans font-bold uppercase tracking-wider block ${
-                      theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
-                    }`}>YOUR TASKS</span>
-                    <span className="text-base font-serif font-bold text-[#0080FF] block">
-                      {individualEnergy} {individualEnergy === 1 ? 'task' : 'tasks'}
-                    </span>
-                    <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
-                      {streak}-day streak
-                    </span>
-                  </div>
-
-                  <div className={`p-2.5 rounded-[12px] border ${
-                    theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E2EDF9]'
-                  }`}>
-                    <span className={`text-[9px] font-sans font-bold uppercase tracking-wider block ${
-                      theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
-                    }`}>TEAM MEDIAN</span>
-                    <span className={`text-base font-serif font-bold block ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
-                      {teamAverageTasks} tasks
-                    </span>
-                    <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
-                      4.2-day streak
-                    </span>
-                  </div>
-                </div>
-
-                <p className={`text-[11px] font-sans leading-relaxed pt-1 ${
-                  theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
-                }`}>
-                  {userVsTeamDiff >= 0 ? (
-                    <>You've completed <strong className="text-[#34C759]">+{userVsTeamDiff}% more tasks</strong> than the team median! You are a key pacesetter for this challenge.</>
-                  ) : (
-                    <>You're within <strong className="text-[#0080FF]">{Math.abs(userVsTeamDiff)}% of the team median</strong>. Popping today's 3 clouds (+3 tasks) will elevate you into the top tier!</>
-                  )}
-                </p>
-              </div>
-
-              {/* Reusable Real-World Impact Graphic & Concept Card */}
-              <div className={`p-3 rounded-[14px] border flex items-center gap-3 ${
-                theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
-              }`}>
-                <div className="relative w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-[#0080FF]/10 border border-[#0080FF]/25">
-                  <svg width="34" height="34" viewBox="0 0 40 40" className="overflow-visible">
-                    <path
-                      d="M 10 16 C 6 16, 2 13, 3 9 C 4 5, 8 2, 12 3 C 15 -1, 21 -1, 25 1 C 30 2, 33 6, 34 10 C 38 10, 41 13, 40 17 C 39 21, 35 22, 31 22 Z"
-                      fill={theme === 'dark' ? 'rgba(0, 128, 255, 0.3)' : 'rgba(255, 255, 255, 0.95)'}
-                      stroke="#0080FF"
-                      strokeWidth="1.5"
-                      transform="scale(0.65) translate(4, 2)"
-                    />
-                    <path d="M 14 20 L 14 24 M 20 18 L 20 25 M 26 21 L 26 25" stroke="#38BDF8" strokeWidth="1.5" strokeLinecap="round" />
-                    <path d="M 20 35 L 20 28" stroke={theme === 'dark' ? '#34C759' : '#15803D'} strokeWidth="2" strokeLinecap="round" />
-                    <path d="M 20 30 C 16 27, 13 28, 14 31 C 15 34, 18 32, 20 31" fill={theme === 'dark' ? '#34C759' : '#16A34A'} />
-                    <path d="M 20 28 C 24 25, 27 26, 26 29 C 25 32, 22 30, 20 29" fill={theme === 'dark' ? '#34C759' : '#16A34A'} />
-                  </svg>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#0080FF] block">
-                    YOUR REAL-WORLD IMPACT CONTRIBUTION
+                    TEAM MILESTONE
                   </span>
-                  <p className={`text-xs font-serif font-bold leading-tight mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
-                    {currentImpact.headline}
-                  </p>
-                  <span className={`text-[10px] font-sans leading-tight block mt-0.5 ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-                    Contributing {groupStats.planetMetricValue} while earning {groupStats.personalMetricValue}.
-                  </span>
-                </div>
-              </div>
-
-              {/* Group Next Milestone Roadmap */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Trophy className="w-3.5 h-3.5 text-[#0080FF]" />
-                    <span className="text-xs font-sans font-bold">
-                      Team Level {nextLevel} Milestone
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-mono font-bold text-[#0080FF]">
-                    {teamLevelProgressPercent}%
+                  <span className="text-xs font-mono font-bold text-[#0080FF]">
+                    Level {nextLevel} ({teamLevelProgressPercent}%)
                   </span>
                 </div>
 
-                {/* Team Progress Bar */}
-                <div className={`w-full h-2.5 rounded-full overflow-hidden border ${
-                  theme === 'dark' ? 'bg-[#1F1F24] border-[#2C2C30]' : 'bg-[#E5E5EA] border-[#D1D1D6]'
+                {/* Progress Bar */}
+                <div className={`w-full h-2 rounded-full overflow-hidden ${
+                  theme === 'dark' ? 'bg-[#1F1F24]' : 'bg-[#E5E5EA]'
                 }`}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${teamLevelProgressPercent}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="h-full bg-gradient-to-r from-[#0080FF] to-[#38BDF8] rounded-full"
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-[#0080FF] to-[#3892FF] rounded-full"
                   />
                 </div>
 
-                <div className={`flex justify-between text-[10px] font-mono ${
+                <div className={`flex items-center justify-between text-[11px] font-sans ${
                   theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
                 }`}>
-                  <span>{groupStats.collectiveScore.toLocaleString()} pts</span>
-                  <span>Target: {nextLevelTarget.toLocaleString()} pts</span>
-                </div>
-
-                {/* Clear Explanation of How the Group Gets to the Next Milestone */}
-                <div className={`p-3 rounded-[14px] border space-y-2 ${
-                  theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
-                }`}>
-                  <h4 className="text-[11px] font-sans font-bold text-[#0080FF] flex items-center gap-1.5">
-                    <span>🚀 How the Team Unlocks Level {nextLevel}</span>
-                  </h4>
-                  <ul className="space-y-1.5 text-[11px] font-sans leading-relaxed">
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#0080FF] font-bold">•</span>
-                      <span>
-                        <strong>Team Power:</strong> With <strong>{groupStats.activeMembers} active members</strong> logging habits and popping clouds, the group accumulates ~<strong>18,500 pts daily</strong>.
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#0080FF] font-bold">•</span>
-                      <span>
-                        <strong>Milestone Forecast:</strong> At this velocity, our community will unlock <strong>Level {nextLevel} in ~{daysToTeamMilestone} {daysToTeamMilestone === 1 ? 'day' : 'days'}</strong> ({teamPtsRemaining.toLocaleString()} pts remaining).
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#0080FF] font-bold">•</span>
-                      <span>
-                        <strong>Your Habit Impact:</strong> Popping your floating clouds and checking off your habit contributes directly to the team total and keeps your plant hydrated.
-                      </span>
-                    </li>
-                  </ul>
+                  <span className="font-mono">{groupStats.collectiveTasks.toLocaleString()} / {nextLevelTasksTarget.toLocaleString()} tasks</span>
+                  <span>~{daysToTeamMilestone} {daysToTeamMilestone === 1 ? 'day' : 'days'} left</span>
                 </div>
               </div>
 
-              {/* Close Button */}
+              {/* Individual Standing */}
+              <div className={`p-4 rounded-[16px] border flex flex-col gap-3 ${
+                theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className={`text-[10px] font-sans font-bold uppercase tracking-wider ${
+                    theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+                  }`}>
+                    YOUR STANDING
+                  </span>
+                  <span className="text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/10 text-[#0080FF]">
+                    {userTier}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className={`py-2.5 px-3 rounded-[12px] border ${
+                    theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
+                  }`}>
+                    <span className={`text-[10px] font-sans block ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
+                      You
+                    </span>
+                    <span className="text-lg font-serif font-bold text-[#0080FF] block mt-0.5">
+                      {individualEnergy} {individualEnergy === 1 ? 'task' : 'tasks'}
+                    </span>
+                  </div>
+
+                  <div className={`py-2.5 px-3 rounded-[12px] border ${
+                    theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
+                  }`}>
+                    <span className={`text-[10px] font-sans block ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
+                      Team Median
+                    </span>
+                    <span className={`text-lg font-serif font-bold block mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
+                      {teamAverageTasks} tasks
+                    </span>
+                  </div>
+                </div>
+
+                <p className={`text-xs font-sans text-center leading-normal ${
+                  theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                }`}>
+                  {userVsTeamDiff > 0 ? (
+                    <span>You're <strong className="text-[#34C759]">+{userVsTeamDiff}%</strong> above the team median.</span>
+                  ) : userVsTeamDiff < 0 ? (
+                    <span>You're <strong className="text-[#0080FF]">{Math.abs(userVsTeamDiff)}%</strong> from the team median.</span>
+                  ) : (
+                    <span>You're right at the team median.</span>
+                  )}
+                </p>
+              </div>
+
+              {/* Done Button */}
               <button
                 type="button"
                 onClick={() => setShowGroupModal(false)}
-                className="w-full h-[42px] bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-semibold rounded-full transition-all cursor-pointer shadow-sm"
+                className="w-full h-11 bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-semibold rounded-full transition-all cursor-pointer shadow-xs"
               >
-                Back to Ecosystem
+                Done
               </button>
             </motion.div>
           </div>

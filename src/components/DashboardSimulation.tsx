@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Goal, QuizAnswers } from '../types';
 import { 
   Home, 
@@ -12,8 +12,11 @@ import {
   User, 
   Sun, 
   Moon, 
-  MoreVertical 
+  MoreVertical,
+  CheckCircle,
+  X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import HBWLogo from './HBWLogo';
 import CommunityChat from './CommunityChat';
 import HomeTab from './dashboard/HomeTab';
@@ -124,6 +127,59 @@ export default function DashboardSimulation({
     reflectDone: false
   });
 
+  // Undo Toast state for 4-second error recovery
+  interface UndoSnapshot {
+    previousChecklist: { habitDone: boolean; anchorDone: boolean; reflectDone: boolean };
+    previousStreak: number;
+    previousEnergy: number;
+    previousHasLoggedToday: boolean;
+    message: string;
+  }
+  const [undoToast, setUndoToast] = useState<UndoSnapshot | null>(null);
+  const undoTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerUndoToast = (snapshot: UndoSnapshot) => {
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+    }
+    setUndoToast(snapshot);
+    undoTimerRef.current = setTimeout(() => {
+      setUndoToast(null);
+    }, 4000);
+  };
+
+  const handleUndo = () => {
+    if (!undoToast) return;
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+    }
+    setChecklist(undoToast.previousChecklist);
+    setStreak(undoToast.previousStreak);
+    setIndividualEnergy(undoToast.previousEnergy);
+    setHasLoggedToday(undoToast.previousHasLoggedToday);
+    setShowConfetti(false);
+    setUndoToast(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    };
+  }, []);
+
+  // Global Escape key listener to dismiss overlays & toasts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showOverflowMenu) setShowOverflowMenu(false);
+        if (showScreenshotModal) setShowScreenshotModal(false);
+        if (undoToast) setUndoToast(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showOverflowMenu, showScreenshotModal, undoToast]);
+
   // Encouraging psychological motivational quotes
   const [motivationalQuote, setMotivationalQuote] = useState<string>(
     "Every small habit you build is a step toward a better world. Start small, think big."
@@ -139,27 +195,49 @@ export default function DashboardSimulation({
   ];
 
   const handleCheckItem = (item: 'habitDone' | 'anchorDone' | 'reflectDone') => {
-    const updated = { ...checklist, [item]: !checklist[item] };
+    const isChecking = !checklist[item];
+    const previousSnapshot: UndoSnapshot = {
+      previousChecklist: { ...checklist },
+      previousStreak: streak,
+      previousEnergy: individualEnergy,
+      previousHasLoggedToday: hasLoggedToday,
+      message: item === 'habitDone' ? 'Habit marked done' : item === 'anchorDone' ? 'Anchor cue routine completed' : 'Reflection completed'
+    };
+
+    const updated = { ...checklist, [item]: isChecking };
     setChecklist(updated);
 
     // Dynamic quote update on checking items
     const randomQuote = quotesList[Math.floor(Math.random() * quotesList.length)];
     setMotivationalQuote(randomQuote);
 
-    // Auto log if all items are checked
-    if (updated.habitDone && updated.anchorDone && updated.reflectDone && !hasLoggedToday) {
-      handleLogSuccess();
+    // If checking this item completed all 3 items and habit wasn't logged today:
+    if (isChecking && updated.habitDone && updated.anchorDone && updated.reflectDone && !hasLoggedToday) {
+      handleLogSuccess(previousSnapshot);
+    } else if (isChecking) {
+      triggerUndoToast(previousSnapshot);
     }
   };
 
-  const handleLogSuccess = () => {
+  const handleLogSuccess = (customSnapshot?: UndoSnapshot) => {
     if (hasLoggedToday) return;
+
+    const snapshot: UndoSnapshot = customSnapshot || {
+      previousChecklist: { ...checklist },
+      previousStreak: streak,
+      previousEnergy: individualEnergy,
+      previousHasLoggedToday: hasLoggedToday,
+      message: "Today's habit logged! (+1 Task, Streak +1)"
+    };
+
     setStreak((prev) => prev + 1);
     setIndividualEnergy((prev) => prev + 1); // +1 completed task
     setHasLoggedToday(true);
     setDismissedBubbleAlert(false);
     setShowConfetti(true);
     setChecklist({ habitDone: true, anchorDone: true, reflectDone: true });
+
+    triggerUndoToast(snapshot);
 
     // Spawn a glowing bubble immediately in the shared state
     const category = activeGoal.category;
@@ -478,6 +556,47 @@ export default function DashboardSimulation({
         )}
 
       </div>
+
+      {/* Floating 4-second Undo Toast for Habit/Checklist Actions */}
+      <AnimatePresence>
+        {undoToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className={`absolute bottom-[72px] left-3 right-3 z-50 py-2.5 px-3.5 rounded-2xl shadow-2xl border flex items-center justify-between gap-3 backdrop-blur-md select-none ${
+              theme === 'dark'
+                ? 'bg-[#18181B]/95 border-[#27272A] text-white shadow-black/80'
+                : 'bg-[#1C1C1E]/95 border-[#2C2C2E] text-white shadow-black/40'
+            }`}
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <CheckCircle className="w-4 h-4 text-[#34C759] shrink-0" />
+              <span className="text-xs font-sans font-medium truncate">
+                {undoToast.message}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleUndo}
+                className="text-xs font-sans font-bold text-white px-2.5 py-1 rounded-lg bg-[#0080FF] hover:bg-[#0066CC] active:scale-95 transition-all cursor-pointer shadow-xs"
+              >
+                Undo
+              </button>
+              <button
+                type="button"
+                onClick={() => setUndoToast(null)}
+                className="text-[#8E8E93] hover:text-white p-1 rounded-full transition-colors cursor-pointer"
+                aria-label="Dismiss toast"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Bottom Navigation Bar */}
       <div className={`border-t h-[64px] grid grid-cols-4 items-center shrink-0 z-20 transition-colors duration-200 ${

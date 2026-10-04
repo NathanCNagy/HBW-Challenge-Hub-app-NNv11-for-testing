@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Smartphone, Monitor, ShieldCheck, HeartHandshake, Eye, Sparkles, X, Download, FileText, Camera } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import HBWLogo from './HBWLogo';
@@ -16,6 +16,19 @@ export default function DeviceSimulator({ children, theme = 'light' }: DeviceSim
   const [showScreenshotModal, setShowScreenshotModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const isDark = theme === 'dark';
+
+  // Close modals on Escape key
+  useEffect(() => {
+    if (!showFlowModal && !showScreenshotModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowFlowModal(false);
+        setShowScreenshotModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showFlowModal, showScreenshotModal]);
 
   const downloadUserFlowPDF = () => {
     setIsExporting(true);

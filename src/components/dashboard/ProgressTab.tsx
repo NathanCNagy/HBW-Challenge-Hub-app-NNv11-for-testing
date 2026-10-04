@@ -86,7 +86,7 @@ export default function ProgressTab({
               {isWeekly ? 'Habit Checklist' : 'Daily Checklist'}
             </h4>
             <span className={`text-[10px] font-sans text-right leading-tight ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-              Tap to check & unlock clouds to hydrate plant
+              Tap to check & unlock clouds to water plant
             </span>
           </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight } from 'lucide-react';
+import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight, CheckCircle2, Droplets, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useHabit } from '../context/HabitContext';
 
@@ -51,9 +51,9 @@ export default function EcosystemVisualization({
   const [hydrationMessage, setHydrationMessage] = useState<string>('');
   const { unitSystem } = useHabit();
 
-  // Target milestone is anchored slightly lower than the Habits energy label (y = 74)
+  // Target milestone is anchored cleanly below the top stat pills (y = 88)
   const currentMilestone = TASK_MILESTONES.find(m => individualEnergy < m.targetTasks) || TASK_MILESTONES[TASK_MILESTONES.length - 1];
-  const targetMilestoneY = 74;
+  const targetMilestoneY = 88;
   const isMastered = individualEnergy >= 100;
   const tasksRemaining = isMastered ? 0 : Math.max(0, currentMilestone.targetTasks - individualEnergy);
   const daysToNext = isMastered ? 0 : Math.max(1, Math.ceil(tasksRemaining / DAILY_TASKS_TARGET));
@@ -64,18 +64,18 @@ export default function EcosystemVisualization({
     ? 1 
     : Math.min(1, Math.max(0, (individualEnergy - currentMilestone.prevTasks) / stageSpan));
 
-  // Dynamic botanical scaling: plant grows upward toward the milestone line (y = 74)
+  // Dynamic botanical scaling: plant grows upward toward the milestone line (y = 88)
   const milestoneIndex = TASK_MILESTONES.indexOf(currentMilestone);
   const stageBaseTipY = 
-    milestoneIndex === 0 ? 295 :
-    milestoneIndex === 1 ? 225 :
-    milestoneIndex === 2 ? 160 :
-    115;
+    milestoneIndex === 0 ? 305 :
+    milestoneIndex === 1 ? 235 :
+    milestoneIndex === 2 ? 170 :
+    125;
 
   const stageTargetTipY = 
-    milestoneIndex === 0 ? 200 :
-    milestoneIndex === 1 ? 140 :
-    milestoneIndex === 2 ? 96 :
+    milestoneIndex === 0 ? 210 :
+    milestoneIndex === 1 ? 150 :
+    milestoneIndex === 2 ? 106 :
     targetMilestoneY;
 
   const plantTipY = isMastered 
@@ -245,6 +245,20 @@ export default function EcosystemVisualization({
   }[category];
 
   const [showGroupModal, setShowGroupModal] = useState<boolean>(false);
+  const [showGrowthModal, setShowGrowthModal] = useState<boolean>(false);
+
+  // Close modals on Escape key press
+  useEffect(() => {
+    if (!showGroupModal && !showGrowthModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowGroupModal(false);
+        setShowGrowthModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showGroupModal, showGrowthModal]);
 
   // Group Progress & Team Milestone Calculations (measured in completed tasks)
   const tasksPerLevel = 10000;
@@ -268,7 +282,7 @@ export default function EcosystemVisualization({
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Interactive Alipay-Style Ant Forest Stage */}
-      <div className={`relative w-full h-[370px] rounded-[20px] overflow-hidden flex flex-col justify-between p-4 transition-all duration-300 border ${
+      <div className={`relative w-full h-[420px] rounded-[20px] overflow-hidden flex flex-col justify-between p-4 transition-all duration-300 border ${
         theme === 'dark' 
           ? 'bg-[#0A0A0C] border-[#1F1F24] shadow-md text-white' 
           : 'bg-gradient-to-b from-[#EBF5FF] via-[#E2F0FE] to-[#D5E8FC] border-[#BDE0FE] shadow-sm text-[#1C1C1E]'
@@ -472,7 +486,7 @@ export default function EcosystemVisualization({
 
         {/* The Growth Visual Tree / Plant with Left Height Ruler extending all the way to top of tile */}
         <div 
-          className="absolute inset-0 flex justify-center pointer-events-none z-10"
+          className="absolute inset-x-0 top-0 bottom-12 flex justify-center pointer-events-none z-10"
         >
           <svg width="360" height="370" viewBox="0 0 360 370" className={`w-full h-full max-w-[370px] ${theme === 'dark' ? "drop-shadow-[0_0_18px_rgba(0,128,255,0.25)]" : "drop-shadow-[0_4px_12px_rgba(0,128,255,0.18)]"}`}>
             <defs>
@@ -870,6 +884,24 @@ export default function EcosystemVisualization({
             )}
           </svg>
         </div>
+
+        {/* One-Sentence Explanation on the empty blue space under the plant */}
+        <div className="z-20 mt-auto w-full flex items-center justify-between gap-2.5 px-1 pt-1 pb-0.5">
+          <p className={`text-[11px] sm:text-[11.5px] font-sans font-medium leading-tight flex-1 ${
+            theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#2C4F70]'
+          }`}>
+            Unlock clouds by completing tasks - Click them to water plant and help it grow
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowGrowthModal(true)}
+            className="w-7 h-7 rounded-full bg-[#0080FF] hover:bg-[#0066CC] active:scale-90 text-white flex items-center justify-center transition-all shadow-xs cursor-pointer shrink-0"
+            title="How to grow your tree guide"
+            aria-label="How to grow your tree guide"
+          >
+            <Info className="w-4 h-4 text-white" />
+          </button>
+        </div>
       </div>
 
       {children}
@@ -1093,6 +1125,128 @@ export default function EcosystemVisualization({
                 className="w-full h-11 bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-semibold rounded-full transition-all cursor-pointer shadow-xs"
               >
                 Done
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Pop-up Panel Modal: "How to Grow Your Tree" Infographic Card */}
+      <AnimatePresence>
+        {showGrowthModal && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowGrowthModal(false);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className={`w-full max-w-sm rounded-[24px] border p-5 shadow-2xl relative flex flex-col gap-4 overflow-hidden ${
+                theme === 'dark' 
+                  ? 'bg-[#121214] border-[#1F1F24] text-white shadow-black/80' 
+                  : 'bg-white border-[#E5E5EA] text-[#1C1C1E] shadow-xl'
+              }`}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#0080FF]/15 flex items-center justify-center text-[#0080FF] shrink-0">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-serif font-bold leading-tight">
+                      How to Grow Your Tree
+                    </h3>
+                    <p className={`text-xs font-sans mt-0.5 ${
+                      theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+                    }`}>
+                      The daily habit growth loop
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowGrowthModal(false)}
+                  className={`p-1.5 -mr-1 -mt-1 rounded-full transition-colors cursor-pointer ${
+                    theme === 'dark' ? 'text-[#8E8E93] hover:text-white hover:bg-white/10' : 'text-[#8E8E93] hover:text-[#1C1C1E] hover:bg-black/5'
+                  }`}
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* 3-Step Infographic Flow */}
+              <div className="flex flex-col gap-2.5 pt-1">
+                {/* Step 1 */}
+                <div className={`p-3 rounded-[16px] border flex items-center gap-3 transition-colors ${
+                  theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                }`}>
+                  <div className="w-9 h-9 rounded-full bg-[#34C759]/15 flex items-center justify-center text-[#34C759] shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs font-sans font-bold block leading-tight">
+                      1. Complete a Task
+                    </span>
+                    <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
+                      theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                    }`}>
+                      Check off your daily habit in the checklist to log completed actions.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className={`p-3 rounded-[16px] border flex items-center gap-3 transition-colors ${
+                  theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                }`}>
+                  <div className="w-9 h-9 rounded-full bg-[#3892FF]/15 flex items-center justify-center text-[#3892FF] shrink-0">
+                    <Cloud className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs font-sans font-bold block leading-tight">
+                      2. Unlock Energy Clouds
+                    </span>
+                    <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
+                      theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                    }`}>
+                      Completed tasks release floating energy clouds in the sky above.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className={`p-3 rounded-[16px] border flex items-center gap-3 transition-colors ${
+                  theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                }`}>
+                  <div className="w-9 h-9 rounded-full bg-[#0080FF]/15 flex items-center justify-center text-[#0080FF] shrink-0">
+                    <Droplets className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs font-sans font-bold block leading-tight">
+                      3. Tap Cloud to Water
+                    </span>
+                    <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
+                      theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                    }`}>
+                      Click any cloud to trigger rainfall, nourish your tree, and watch it grow!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                type="button"
+                onClick={() => setShowGrowthModal(false)}
+                className="w-full h-11 bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-bold rounded-full transition-all cursor-pointer shadow-xs mt-1"
+              >
+                Got it, let's grow!
               </button>
             </motion.div>
           </div>

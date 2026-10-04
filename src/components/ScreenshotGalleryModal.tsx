@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, 
@@ -41,6 +41,22 @@ export default function ScreenshotGalleryModal({
   const [zipProgress, setZipProgress] = useState<{ current: number; total: number } | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<'.png' | '.pgn'>('.png');
   const [inspectedScreenshot, setInspectedScreenshot] = useState<AppScreenDefinition | null>(null);
+
+  // Close modal or sub-inspector on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (inspectedScreenshot) {
+          setInspectedScreenshot(null);
+        } else {
+          onClose();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, inspectedScreenshot, onClose]);
 
   // References to actual phone viewport elements for full-fidelity rasterization
   const screenRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});

@@ -40,6 +40,7 @@ interface HomeTabProps {
 export default function HomeTab({
   activeGoal,
   hasLoggedToday,
+  onLogSuccess,
   bubbles,
   dismissedBubbleAlert,
   setDismissedBubbleAlert,
@@ -103,21 +104,33 @@ export default function HomeTab({
           </div>
         </div>
 
-        {/* Navigation link to Progress Tab for habit tracking & logging */}
-        <button
-          onClick={() => onNavigateToTab('progress')}
-          className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between cursor-pointer border ${
+        {/* Habit Quick Logging Action */}
+        {!hasLoggedToday ? (
+          <button
+            onClick={() => onLogSuccess && onLogSuccess()}
+            className="h-[44px] w-full px-4 rounded-full font-sans font-semibold text-xs sm:text-[13px] bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+          >
+            <CheckCircle className="w-4 h-4 text-white shrink-0" />
+            <span>{isWeekly ? 'Log Habit for This Week (+1 Task)' : 'Log Habit for Today (+1 Task)'}</span>
+          </button>
+        ) : (
+          <div className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between border ${
             theme === 'dark'
-              ? 'bg-[#18181B] hover:bg-[#202024] text-[#E5E5EA] border-[#27272A]'
-              : 'bg-[#F5F5F7] hover:bg-[#EAEAEA] text-[#1C1C1E] border-[#E5E5EA]'
-          }`}
-        >
-          <div className="flex items-center gap-2 truncate">
-            <Calendar className="w-4 h-4 text-[#0080FF] shrink-0" />
-            <span className="truncate">{hasLoggedToday ? (isWeekly ? "View Habit Progress & Checklist" : "View Today's Progress & Checklist") : (isWeekly ? "Go to Progress Tab to log habit" : "Go to Progress Tab to log habits")}</span>
+              ? 'bg-[#18181B] text-[#34C759] border-[#34C759]/30'
+              : 'bg-[#34C759]/10 text-[#248A3D] border-[#34C759]/30'
+          }`}>
+            <div className="flex items-center gap-2 truncate pl-1">
+              <CheckCircle className="w-4 h-4 text-[#34C759] shrink-0" />
+              <span className="truncate font-semibold">{isWeekly ? 'Logged for Target!' : 'Logged for Today!'}</span>
+            </div>
+            <button
+              onClick={() => onNavigateToTab('progress')}
+              className="text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0 ml-2 pr-1"
+            >
+              View in Progress &rarr;
+            </button>
           </div>
-          <ArrowRight className="w-4 h-4 text-[#0080FF] shrink-0" />
-        </button>
+        )}
       </div>
 
       {/* Energy Harvest Banner (if bubbles are waiting) */}

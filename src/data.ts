@@ -7,7 +7,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
     category: 'Environment',
     badgeLabel: '#1 Planet Impact Habit',
     action: 'Swap animal protein for beans, lentils, or organic tofu.',
-    impact: 'Switching to plant proteins is the ultimate win-win: you cut greenhouse emissions equivalent to hundreds of driving mi while trimming $200+ from your grocery bill.',
+    impact: 'Switching to plant proteins is the ultimate win-win: you cut energy draw equivalent to keeping lights off for hours while saving $60+ on groceries.',
     defaultOptionId: 'opt-env-full',
     implementationOptions: [
       {
@@ -19,12 +19,12 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '1 meal per week',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Driving emissions avoided',
-          primaryValue: 460,
-          primaryUnit: 'mi',
+          primaryLabel: 'Keeping a light off',
+          primaryValue: 28,
+          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Grocery budget saved',
-          secondaryValue: 210,
+          secondaryLabel: 'saved in groceries',
+          secondaryValue: 63,
           secondaryUnit: 'dollars'
         }
       },
@@ -37,12 +37,12 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '2 meals cut by 50%',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Driving emissions avoided',
-          primaryValue: 345,
-          primaryUnit: 'mi',
+          primaryLabel: 'Keeping a light off',
+          primaryValue: 21,
+          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Grocery budget saved',
-          secondaryValue: 160,
+          secondaryLabel: 'saved in groceries',
+          secondaryValue: 45,
           secondaryUnit: 'dollars'
         }
       },
@@ -55,12 +55,12 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '1 meal every 2 weeks',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Driving emissions avoided',
-          primaryValue: 185,
-          primaryUnit: 'mi',
+          primaryLabel: 'Keeping a light off',
+          primaryValue: 12,
+          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Grocery budget saved',
-          secondaryValue: 85,
+          secondaryLabel: 'saved in groceries',
+          secondaryValue: 25,
           secondaryUnit: 'dollars'
         }
       }
@@ -84,11 +84,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '60 min before bed nightly',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Standby power saved',
+          primaryLabel: 'Powering down devices',
           primaryValue: 90,
           primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Deep sleep gained',
+          secondaryLabel: 'saved in deep sleep',
           secondaryValue: 68,
           secondaryUnit: 'hrs'
         }
@@ -102,11 +102,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '30 min before bed nightly',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Standby power saved',
+          primaryLabel: 'Powering down devices',
           primaryValue: 45,
           primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Deep sleep gained',
+          secondaryLabel: 'saved in deep sleep',
           secondaryValue: 45,
           secondaryUnit: 'hrs'
         }
@@ -120,11 +120,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '15 min before bed nightly',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Standby power saved',
+          primaryLabel: 'Powering down devices',
           primaryValue: 22,
           primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Deep sleep gained',
+          secondaryLabel: 'saved in deep sleep',
           secondaryValue: 23,
           secondaryUnit: 'hrs'
         }
@@ -149,11 +149,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '5 acts, 1 day / week',
         metrics: {
           primaryBadge: 'Community Win',
-          primaryLabel: 'People brightened',
+          primaryLabel: 'Acts of kindness',
           primaryValue: 60,
           primaryUnit: 'people',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Mood & resilience lift',
+          secondaryLabel: 'boost in mood vitality',
           secondaryValue: 35,
           secondaryUnit: '%'
         }
@@ -167,11 +167,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '3 acts, 1 day / week',
         metrics: {
           primaryBadge: 'Community Win',
-          primaryLabel: 'People brightened',
+          primaryLabel: 'Acts of kindness',
           primaryValue: 36,
           primaryUnit: 'people',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Mood & resilience lift',
+          secondaryLabel: 'boost in mood vitality',
           secondaryValue: 25,
           secondaryUnit: '%'
         }
@@ -185,11 +185,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '1 gesture, 2x / week',
         metrics: {
           primaryBadge: 'Community Win',
-          primaryLabel: 'People brightened',
+          primaryLabel: 'Acts of kindness',
           primaryValue: 24,
           primaryUnit: 'people',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Mood & resilience lift',
+          secondaryLabel: 'boost in mood vitality',
           secondaryValue: 15,
           secondaryUnit: '%'
         }
@@ -202,7 +202,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
     category: 'Responsible AI',
     badgeLabel: '#1 Digital Integrity Habit',
     action: 'Verify key facts in AI responses and draft your own ideas first.',
-    impact: 'Fact-checking and mindful prompting saves data-center energy and water while preserving 85% of your independent critical thinking.',
+    impact: 'Fact-checking and mindful prompting saves data-center energy and water while preserving deep critical thinking.',
     defaultOptionId: 'opt-rai-full',
     implementationOptions: [
       {
@@ -214,13 +214,13 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: 'Every AI session',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Data center power saved',
-          primaryValue: 18,
-          primaryUnit: 'kWh',
+          primaryLabel: 'Compute queries saved',
+          primaryValue: 112,
+          primaryUnit: 'queries',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Critical thinking kept',
-          secondaryValue: 85,
-          secondaryUnit: '%'
+          secondaryLabel: 'saved in deep focus',
+          secondaryValue: 10.5,
+          secondaryUnit: 'hrs'
         }
       },
       {
@@ -232,13 +232,13 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: 'Key work sessions',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Data center power saved',
-          primaryValue: 12,
-          primaryUnit: 'kWh',
+          primaryLabel: 'Compute queries saved',
+          primaryValue: 72,
+          primaryUnit: 'queries',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Critical thinking kept',
-          secondaryValue: 65,
-          secondaryUnit: '%'
+          secondaryLabel: 'saved in deep focus',
+          secondaryValue: 7,
+          secondaryUnit: 'hrs'
         }
       },
       {
@@ -250,13 +250,13 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         scheduleText: '1 claim per day',
         metrics: {
           primaryBadge: 'Planet Win',
-          primaryLabel: 'Data center power saved',
-          primaryValue: 7,
-          primaryUnit: 'kWh',
+          primaryLabel: 'Compute queries saved',
+          primaryValue: 36,
+          primaryUnit: 'queries',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'Critical thinking kept',
-          secondaryValue: 35,
-          secondaryUnit: '%'
+          secondaryLabel: 'saved in deep focus',
+          secondaryValue: 3.5,
+          secondaryUnit: 'hrs'
         }
       }
     ]

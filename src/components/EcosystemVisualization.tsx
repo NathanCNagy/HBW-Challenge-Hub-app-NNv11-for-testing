@@ -128,12 +128,12 @@ export default function EcosystemVisualization({
           ? `${Math.round(tasks * 5.2)} lbs CO2 avoided`
           : `${(tasks * 2.4).toFixed(1)} kg CO2 avoided`;
         return {
-          headline: `~${lightHours} hrs lights off & $${dollarsSaved} saved`,
+          headline: `~${lightHours} hrs lights off & $${dollarsSaved} saved in groceries`,
           tangibleShort: `${lightHours} hrs lights off`,
           metric1Label: 'ENVIRONMENT IMPACT',
           metric1Value: `~${lightHours} hrs lights off`,
           metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `$${dollarsSaved} saved`,
+          metric2Value: `$${dollarsSaved}`,
           context: `Each completed task cuts energy like keeping lights off for 2 hours while saving ~$4.50 on groceries and reducing heart risk (${co2Val}).`
         };
       }
@@ -141,23 +141,23 @@ export default function EcosystemVisualization({
         const sleepHours = Math.round(tasks * 2.5);
         const gridHours = Math.max(2, Math.round(tasks * 1.5));
         return {
-          headline: `~${gridHours} hrs grid saved & +${sleepHours} hrs sleep`,
+          headline: `~${gridHours} hrs grid saved & +${sleepHours} hrs deep sleep`,
           tangibleShort: `~${gridHours} hrs grid saved`,
           metric1Label: 'ENVIRONMENT IMPACT',
           metric1Value: `~${gridHours} hrs grid saved`,
           metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `+${sleepHours} hrs sleep`,
+          metric2Value: `+${sleepHours} hrs`,
           context: 'Powering down screens saves grid electricity while restoring deep restorative sleep cycles.'
         };
       }
       case 'Compassion': {
         return {
-          headline: `${tasks} neighbor acts & +35% mood vitality`,
+          headline: `${tasks} acts of kindness & +35% mood lift`,
           tangibleShort: `${tasks} kindness acts`,
           metric1Label: 'COMMUNITY IMPACT',
           metric1Value: `${tasks} neighbor acts`,
           metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `+35% mood vitality`,
+          metric2Value: `+35%`,
           context: 'Intentional acts of connection strengthen community support and elevate daily emotional resilience.'
         };
       }
@@ -166,12 +166,12 @@ export default function EcosystemVisualization({
         const queriesSaved = Math.max(8, tasks * 8);
         const focusHours = (tasks * 0.75).toFixed(1);
         return {
-          headline: `${queriesSaved} queries saved & +${focusHours} hrs focus`,
+          headline: `${queriesSaved} queries saved & +${focusHours} hrs deep focus`,
           tangibleShort: `${queriesSaved} queries saved`,
           metric1Label: 'ENVIRONMENT IMPACT',
           metric1Value: `${queriesSaved} queries saved`,
           metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `+${focusHours} hrs focus`,
+          metric2Value: `+${focusHours} hrs`,
           context: 'Mindful computing eliminates wasted datacenter power and protects cognitive stamina.'
         };
       }
@@ -193,11 +193,11 @@ export default function EcosystemVisualization({
       activeMembers: '24,198',
       collectiveScore: 762340 + streak * 140,
       planetMetricLabel: 'Environment Impact',
-      planetMetricValue: `~${Math.max(2, individualEnergy * 2)} hrs lights off`,
-      planetMetricSubtext: 'Power & emissions cut',
+      planetMetricValue: `~${Math.max(2, individualEnergy * 2)} hrs`,
+      planetMetricSubtext: 'Keeping a light off',
       personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `$${Math.round(individualEnergy * 4.5)} saved`,
-      personalMetricSubtext: 'Grocery spend & heart health',
+      personalMetricValue: `$${Math.round(individualEnergy * 4.5)}`,
+      personalMetricSubtext: 'saved in groceries',
       dualExplanation: 'Every habit you log cuts environmental draw—like keeping household lights off for 2 hours—while trimming ~$4.50 from your grocery expenses and lowering cardiovascular risk.',
       visualColor: 'from-[#0285ff]/30 to-emerald-500/20'
     },
@@ -207,11 +207,11 @@ export default function EcosystemVisualization({
       activeMembers: '18,402',
       collectiveScore: 341200 + streak * 98,
       planetMetricLabel: 'Environment Impact',
-      planetMetricValue: `~${Math.max(2, Math.round(individualEnergy * 1.5))} hrs grid saved`,
-      planetMetricSubtext: 'Standby power reduced',
+      planetMetricValue: `~${Math.max(2, Math.round(individualEnergy * 1.5))} hrs`,
+      planetMetricSubtext: 'Powering down devices',
       personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `+${Math.round(individualEnergy * 2.5)} hrs sleep`,
-      personalMetricSubtext: 'Restorative rest gained',
+      personalMetricValue: `+${Math.round(individualEnergy * 2.5)} hrs`,
+      personalMetricSubtext: 'saved in deep sleep',
       dualExplanation: 'Powering down devices saves grid electricity while giving you deeper, restorative sleep cycles and lowering chronic stress.',
       visualColor: 'from-[#0285ff]/30 to-indigo-500/20'
     },
@@ -221,11 +221,11 @@ export default function EcosystemVisualization({
       activeMembers: '15,221',
       collectiveScore: 182340 + streak * 74,
       planetMetricLabel: 'Community Impact',
-      planetMetricValue: `${individualEnergy} neighbor acts`,
-      planetMetricSubtext: 'Local care sparked',
+      planetMetricValue: `${individualEnergy} acts`,
+      planetMetricSubtext: 'Acts of kindness',
       personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `+35% mood vitality`,
-      personalMetricSubtext: 'Lower anxiety & stress',
+      personalMetricValue: `+35%`,
+      personalMetricSubtext: 'lift in mood vitality',
       dualExplanation: 'Connecting with neighbors strengthens community solidarity while boosting your own mood and emotional resilience.',
       visualColor: 'from-[#0285ff]/30 to-pink-500/20'
     },
@@ -235,11 +235,11 @@ export default function EcosystemVisualization({
       activeMembers: '9,812',
       collectiveScore: 98420 + streak * 52,
       planetMetricLabel: 'Environment Impact',
-      planetMetricValue: `~${Math.max(8, individualEnergy * 8)} queries saved`,
-      planetMetricSubtext: 'Datacenter compute cut',
+      planetMetricValue: `~${Math.max(8, individualEnergy * 8)} queries`,
+      planetMetricSubtext: 'Compute energy saved',
       personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `+${(individualEnergy * 0.75).toFixed(1)} hrs focus`,
-      personalMetricSubtext: 'Less digital fatigue',
+      personalMetricValue: `+${(individualEnergy * 0.75).toFixed(1)} hrs`,
+      personalMetricSubtext: 'saved in deep focus',
       dualExplanation: 'Mindful computing prevents datacenter power spikes while freeing up hours of deep focus for your own projects.',
       visualColor: 'from-[#0285ff]/30 to-teal-500/20'
     }
@@ -886,12 +886,12 @@ export default function EcosystemVisualization({
                     : 'bg-white/98 border-[#BDE0FE] text-[#1C1C1E] shadow-lg'
                 }`}
               >
-                <div className={`flex items-center justify-between pb-2 mb-2 border-b ${
+                <div className={`flex items-center justify-between pb-2 mb-2.5 border-b ${
                   theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
                 }`}>
                   <div className="flex items-center gap-1.5 font-bold font-sans text-xs">
                     <Cloud className="w-3.5 h-3.5 text-[#0080FF]" />
-                    <span>Real-World Impact & Milestone</span>
+                    <span>Milestone & Real-World Impact</span>
                   </div>
                   <button
                     type="button"
@@ -904,63 +904,15 @@ export default function EcosystemVisualization({
                 </div>
 
                 <div className="space-y-2.5 text-[11px] leading-relaxed">
-                  {/* Reused Graphic & Concept: Cloud watering plant -> Real World Impact */}
-                  <div className={`p-2.5 rounded-[12px] border flex items-center gap-3 ${
-                    theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
-                  }`}>
-                    {/* Visual Graphic Representation */}
-                    <div className="relative w-12 h-12 shrink-0 flex items-center justify-center rounded-xl bg-[#0080FF]/10 border border-[#0080FF]/25">
-                      <svg width="40" height="40" viewBox="0 0 40 40" className="overflow-visible">
-                        <path
-                          d="M 10 16 C 6 16, 2 13, 3 9 C 4 5, 8 2, 12 3 C 15 -1, 21 -1, 25 1 C 30 2, 33 6, 34 10 C 38 10, 41 13, 40 17 C 39 21, 35 22, 31 22 Z"
-                          fill={theme === 'dark' ? 'rgba(0, 128, 255, 0.3)' : 'rgba(255, 255, 255, 0.95)'}
-                          stroke="#0080FF"
-                          strokeWidth="1.5"
-                          transform="scale(0.65) translate(4, 2)"
-                        />
-                        <path d="M 14 20 L 14 24 M 20 18 L 20 25 M 26 21 L 26 25" stroke="#38BDF8" strokeWidth="1.5" strokeLinecap="round" />
-                        <path d="M 20 35 L 20 28" stroke={theme === 'dark' ? '#34C759' : '#15803D'} strokeWidth="2" strokeLinecap="round" />
-                        <path d="M 20 30 C 16 27, 13 28, 14 31 C 15 34, 18 32, 20 31" fill={theme === 'dark' ? '#34C759' : '#16A34A'} />
-                        <path d="M 20 28 C 24 25, 27 26, 26 29 C 25 32, 22 30, 20 29" fill={theme === 'dark' ? '#34C759' : '#16A34A'} />
-                      </svg>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#0080FF] block">
-                        REAL-WORLD IMPACT TO DATE
-                      </span>
-                      <p className={`text-xs font-serif font-bold leading-tight mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
-                        {currentImpact.headline}
-                      </p>
-                      <span className={`text-[10px] font-sans block mt-0.5 ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-                        From {individualEnergy} {individualEnergy === 1 ? 'task' : 'tasks'} & clouds popped in your plan
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Impact breakdown stats */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className={`p-2.5 rounded-[10px] border text-center flex items-center justify-center ${
-                      theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
-                    }`}>
-                      <span className="text-xs font-serif font-bold text-[#0080FF] block">
-                        {currentImpact.metric1Value}
-                      </span>
-                    </div>
-                    <div className={`p-2.5 rounded-[10px] border text-center flex items-center justify-center ${
-                      theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
-                    }`}>
-                      <span className="text-xs font-serif font-bold text-[#34C759] block">
-                        {currentImpact.metric2Value}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Next Milestone target & estimated days */}
-                  <div className="space-y-1.5 pt-1.5 border-t border-[#0080FF]/15">
+                  {/* Next Milestone (Moved to Top) */}
+                  <div className="space-y-1.5">
                     <div className="flex justify-between items-center text-[10px] font-sans font-semibold">
-                      <span>Next Milestone: {currentMilestone.stageName} ({currentMilestone.targetTasks} Tasks)</span>
-                      <span className="text-[#0080FF] font-bold">{tasksRemaining} tasks left</span>
+                      <span className="flex items-center gap-1">
+                        <span>🎯</span> Next Milestone: <strong>{currentMilestone.stageName}</strong>
+                      </span>
+                      <span className="text-[#0080FF] font-bold font-mono">
+                        {tasksRemaining} {tasksRemaining === 1 ? 'task' : 'tasks'} left
+                      </span>
                     </div>
                     <div className={`w-full h-1.5 rounded-full overflow-hidden ${
                       theme === 'dark' ? 'bg-[#1F1F24]' : 'bg-[#E5E5EA]'
@@ -971,15 +923,26 @@ export default function EcosystemVisualization({
                       />
                     </div>
                     <p className={`text-[11px] leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'}`}>
-                      🎯 Complete <strong>{tasksRemaining} more {tasksRemaining === 1 ? 'task' : 'tasks'}</strong> to unlock <strong>{currentMilestone.stageName}</strong> (estimated in <strong>~{daysToNext} {daysToNext === 1 ? 'day' : 'days'}</strong>).
+                      Complete <strong>{tasksRemaining} more {tasksRemaining === 1 ? 'task' : 'tasks'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong>~{daysToNext} {daysToNext === 1 ? 'day' : 'days'}</strong>).
                     </p>
                   </div>
 
-                  <p className={`text-[10px] font-sans leading-relaxed pt-0.5 ${
-                    theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                  {/* Compact, Integrated Real-World Impact to Date */}
+                  <div className={`p-2.5 rounded-[12px] border flex items-center justify-between gap-3 ${
+                    theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
                   }`}>
-                    <strong>Tangible Impact:</strong> Each completed task is like keeping a light off for 2 hours!
-                  </p>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#0080FF] block">
+                        REAL-WORLD IMPACT TO DATE
+                      </span>
+                      <p className={`text-xs font-serif font-bold leading-snug mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
+                        {currentImpact.headline}
+                      </p>
+                      <span className={`text-[10px] font-sans block mt-0.5 ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
+                        From your {individualEnergy} {individualEnergy === 1 ? 'completed task' : 'completed tasks'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -1041,21 +1004,39 @@ export default function EcosystemVisualization({
 
         <div className="grid grid-cols-2 gap-3 pt-1">
           {/* Square 1 (Left): Environment Impact Metric */}
-          <div className={`p-4 border rounded-[16px] text-center flex items-center justify-center min-h-[76px] transition-all shadow-2xs ${
-            theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
+          <div className={`py-4 px-3 sm:py-5 sm:px-4 rounded-[18px] text-center border flex flex-col justify-center items-center min-w-0 transition-all shadow-2xs ${
+            theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
           }`}>
-            <span className="text-base sm:text-lg font-serif text-[#0080FF] font-bold block leading-tight">
-              {groupStats.planetMetricValue}
-            </span>
+            <div className="w-full space-y-1.5 flex flex-col items-center justify-center">
+              <span className={`text-xl sm:text-2xl font-mono font-bold tracking-tight block w-full text-center ${
+                theme === 'dark' ? 'text-[#0080FF]' : 'text-[#0066CC]'
+              }`}>
+                {groupStats.planetMetricValue}
+              </span>
+              <span className={`text-xs sm:text-[13px] font-sans block leading-snug text-center max-w-[130px] ${
+                theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+              }`}>
+                {groupStats.planetMetricSubtext}
+              </span>
+            </div>
           </div>
 
           {/* Square 2 (Right): Personal Advantage Metric */}
-          <div className={`p-4 border rounded-[16px] text-center flex items-center justify-center min-h-[76px] transition-all shadow-2xs ${
-            theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
+          <div className={`py-4 px-3 sm:py-5 sm:px-4 rounded-[18px] text-center border flex flex-col justify-center items-center min-w-0 transition-all shadow-2xs ${
+            theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
           }`}>
-            <span className="text-base sm:text-lg font-serif font-bold text-[#34C759] block leading-tight">
-              {groupStats.personalMetricValue}
-            </span>
+            <div className="w-full space-y-1.5 flex flex-col items-center justify-center">
+              <span className={`text-xl sm:text-2xl font-mono font-bold tracking-tight block w-full text-center ${
+                theme === 'dark' ? 'text-emerald-400' : 'text-[#00875A]'
+              }`}>
+                {groupStats.personalMetricValue}
+              </span>
+              <span className={`text-xs sm:text-[13px] font-sans block leading-snug text-center max-w-[130px] ${
+                theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+              }`}>
+                {groupStats.personalMetricSubtext}
+              </span>
+            </div>
           </div>
         </div>
 

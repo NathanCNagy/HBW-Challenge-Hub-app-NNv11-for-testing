@@ -222,12 +222,13 @@ export default function DashboardSimulation({
   const handleLogSuccess = (customSnapshot?: UndoSnapshot) => {
     if (hasLoggedToday) return;
 
+    const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
     const snapshot: UndoSnapshot = customSnapshot || {
       previousChecklist: { ...checklist },
       previousStreak: streak,
       previousEnergy: individualEnergy,
       previousHasLoggedToday: hasLoggedToday,
-      message: "Today's habit logged! (+1 Task, Streak +1)"
+      message: isWeekly ? "Weekly habit logged! (+1 Task)" : "Today's habit logged! (+1 Task, Streak +1)"
     };
 
     setStreak((prev) => prev + 1);
@@ -241,7 +242,7 @@ export default function DashboardSimulation({
 
     // Spawn a glowing bubble immediately in the shared state
     const category = activeGoal.category;
-    const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Habit Point', value: 1 }];
+    const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Energy Cloud', value: 1 }];
     const randomType = bubbleTypes[Math.floor(Math.random() * bubbleTypes.length)];
     
     setBubbles(prev => {
@@ -479,7 +480,7 @@ export default function DashboardSimulation({
       {/* Confetti Micro-Simulator Alert */}
       {showConfetti && (
         <div className="mx-4 mt-2 text-center p-2.5 bg-[#0080FF] text-white font-sans text-xs font-semibold rounded-full animate-bounce shadow-md">
-          🎉 Incredible! Microchange recorded. +1 Task added to your milestone.
+          🎉 Incredible! Habit completed. +1 Task added toward your milestone.
         </div>
       )}
 

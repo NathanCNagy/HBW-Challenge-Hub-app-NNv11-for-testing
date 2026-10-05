@@ -153,7 +153,7 @@ export default function SmartAlerts({
     if (onSaveConfigured) {
       onSaveConfigured(newTrigger.name, newTrigger.time, updated);
     }
-    showSavedFeedback(`Added trigger: "${newTrigger.name}"`);
+    showSavedFeedback(`Added reminder cue: "${newTrigger.name}"`);
   };
 
   const handleStartEdit = (trigger: HabitTrigger) => {
@@ -184,7 +184,7 @@ export default function SmartAlerts({
     if (edited && onSaveConfigured) {
       onSaveConfigured(edited.name, edited.time, updated);
     }
-    showSavedFeedback(`Updated trigger: "${editName.trim()}"`);
+    showSavedFeedback(`Updated reminder cue: "${editName.trim()}"`);
   };
 
   const handleToggle = (id: string) => {
@@ -206,7 +206,7 @@ export default function SmartAlerts({
     if (remaining && onSaveConfigured) {
       onSaveConfigured(remaining.name, remaining.time, updated);
     }
-    showSavedFeedback('Trigger removed.');
+    showSavedFeedback('Reminder cue removed.');
   };
 
   return (
@@ -318,14 +318,14 @@ export default function SmartAlerts({
               }`}
             >
               <p className="text-xs">
-                No active triggers. Tap below to pair your habit with an anchor routine or cue.
+                No active reminder cues. Tap below to pair your habit with an anchor routine or cue.
               </p>
               <button
                 type="button"
                 onClick={handleStartAdd}
                 className="mt-2 text-xs font-semibold text-[#0080FF] hover:underline cursor-pointer"
               >
-                + Add your first trigger
+                + Add your first cue
               </button>
             </div>
           )}
@@ -334,7 +334,7 @@ export default function SmartAlerts({
         {/* Add Trigger Inline Form */}
         {isAdding && (
           <TriggerForm
-            title="New Trigger"
+            title="New Reminder Cue"
             name={newName}
             setName={setNewName}
             time={newTime}
@@ -345,7 +345,7 @@ export default function SmartAlerts({
             onSave={handleSaveNew}
             onCancel={() => setIsAdding(false)}
             isDark={isDark}
-            submitLabel="Add Trigger"
+            submitLabel="Save Cue"
           />
         )}
 

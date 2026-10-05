@@ -88,7 +88,7 @@ export default function HBWLogo({
 
       {/* 4-tier Stacked Brand Wordmark */}
       <g 
-        fontFamily="'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        fontFamily="'Poppins', 'Figtree', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
         fontWeight="800" 
         fontSize="21.5" 
         letterSpacing="0.04em"

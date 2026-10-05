@@ -569,7 +569,7 @@ export default function EcosystemVisualization({
                   x="34" 
                   y={targetMilestoneY - 6} 
                   fontSize="11" 
-                  fontFamily="monospace" 
+                  fontFamily="'Poppins', sans-serif" 
                   fontWeight="bold" 
                   fill="#0080FF"
                   className="select-none tracking-wide"
@@ -595,7 +595,7 @@ export default function EcosystemVisualization({
                   x="34" 
                   y={targetMilestoneY - 6} 
                   fontSize="11" 
-                  fontFamily="monospace" 
+                  fontFamily="'Poppins', sans-serif" 
                   fontWeight="bold" 
                   fill="#34C759"
                   className="select-none tracking-wide"

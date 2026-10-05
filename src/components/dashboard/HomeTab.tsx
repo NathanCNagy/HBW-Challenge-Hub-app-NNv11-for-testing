@@ -144,13 +144,13 @@ export default function HomeTab({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <span className="text-base">🌱</span>
+            <span className="text-base">🌧️</span>
             <div className="text-left">
               <span className="text-xs font-bold text-[#FF9500]">
-                {bubbles.length} Energy {bubbles.length === 1 ? 'Bubble' : 'Bubbles'} Ready!
+                {bubbles.length} Energy {bubbles.length === 1 ? 'Cloud' : 'Clouds'} Ready!
               </span>
               <p className={`text-[11px] ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-                Harvest tree energy in the Progress tab
+                Water your plant in the Progress tab
               </p>
             </div>
           </div>
@@ -173,13 +173,13 @@ export default function HomeTab({
             <X className="w-3.5 h-3.5" />
           </button>
           <p className="text-xs font-sans font-semibold text-[#0080FF] pr-4">
-            ✨ A new Energy Bubble (+15g) sprouted on your Ecosystem Tree!
+            ✨ A new Energy Cloud is ready above your plant!
           </p>
           <button
             onClick={() => onNavigateToTab('progress')}
             className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-[#0080FF] hover:underline cursor-pointer"
           >
-            Go to Progress Tab to Pop It &rarr;
+            Go to Progress Tab to Water It &rarr;
           </button>
         </motion.div>
       )}

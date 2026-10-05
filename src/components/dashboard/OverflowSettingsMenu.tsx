@@ -132,7 +132,7 @@ export default function OverflowSettingsMenu({
                     <p className={`text-[9px] font-mono uppercase tracking-wider font-bold ${
                       user ? 'text-[#34C759]' : 'text-[#FF9500]'
                     }`}>
-                      {user ? 'Verified Challenger' : 'Guest Sandbox'}
+                      {user ? 'Verified Member' : 'Guest Mode'}
                     </p>
                   </div>
                 </div>

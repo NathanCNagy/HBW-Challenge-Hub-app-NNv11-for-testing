@@ -113,7 +113,7 @@ export default function SmartwatchSimulator() {
       new CustomEvent('hbw:add-notification', {
         detail: {
           id: Date.now(),
-          title: 'Daily Microchange! 🌱',
+          title: 'Habit Reminder! 🌱',
           body: `Time to check: "${phoneState.goalTitle}". Just 5 minutes makes a big impact.`,
           type: 'achievement'
         }

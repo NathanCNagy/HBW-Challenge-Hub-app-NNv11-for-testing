@@ -266,6 +266,22 @@ export default function DashboardSimulation({
     }, 3500);
   };
 
+  const handleResetLog = () => {
+    setHasLoggedToday(false);
+    setChecklist({ habitDone: false, anchorDone: false, reflectDone: false });
+    setIndividualEnergy((prev) => Math.max(0, prev - 1));
+    setStreak((prev) => Math.max(0, prev - 1));
+    setShowConfetti(false);
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    setUndoToast({
+      previousChecklist: { habitDone: true, anchorDone: true, reflectDone: true },
+      previousStreak: streak,
+      previousEnergy: individualEnergy,
+      previousHasLoggedToday: true,
+      message: "Check-in reset. You can now re-log."
+    });
+  };
+
   // Listen for completed from watch or sync requests
   useEffect(() => {
     const handleCompleteFromWatch = () => {
@@ -495,6 +511,7 @@ export default function DashboardSimulation({
             onCheckItem={handleCheckItem}
             hasLoggedToday={hasLoggedToday}
             onLogSuccess={handleLogSuccess}
+            onResetLog={handleResetLog}
             bubbles={bubbles}
             dismissedBubbleAlert={dismissedBubbleAlert}
             setDismissedBubbleAlert={setDismissedBubbleAlert}
@@ -517,6 +534,7 @@ export default function DashboardSimulation({
             setIndividualEnergy={setIndividualEnergy}
             hasLoggedToday={hasLoggedToday}
             onLogSuccess={handleLogSuccess}
+            onResetLog={handleResetLog}
             bubbles={bubbles}
             setBubbles={setBubbles}
             checklist={checklist}

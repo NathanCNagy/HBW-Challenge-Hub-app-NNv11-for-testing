@@ -260,18 +260,27 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
       </AnimatePresence>
 
       {/* Navigation footer matching screenshot */}
-      <div className="mt-8 flex flex-col items-center gap-4">
-        {/* Step dots indicator • • • — */}
-        <div className="flex items-center justify-center gap-1.5">
+      <div className="mt-8 flex flex-col items-center gap-3">
+        {/* Step dots indicator: 2 actual steps in the quiz */}
+        <div className="flex items-center justify-center gap-1.5" aria-label={`Step ${step} of 2`}>
           <div className={`h-1.5 rounded-full transition-all duration-300 ${
-            step === 1 ? 'w-4 bg-[#0080FF]' : isDark ? 'w-1.5 bg-[#3A3A3C]' : 'w-1.5 bg-[#D1D1D6]'
+            step === 1 ? 'w-5 bg-[#0080FF]' : isDark ? 'w-2 bg-[#3A3A3C]' : 'w-2 bg-[#D1D1D6]'
           }`} />
           <div className={`h-1.5 rounded-full transition-all duration-300 ${
-            step === 2 ? 'w-4 bg-[#0080FF]' : isDark ? 'w-1.5 bg-[#3A3A3C]' : 'w-1.5 bg-[#D1D1D6]'
+            step === 2 ? 'w-5 bg-[#0080FF]' : isDark ? 'w-2 bg-[#3A3A3C]' : 'w-2 bg-[#D1D1D6]'
           }`} />
-          <div className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-[#3A3A3C]' : 'bg-[#D1D1D6]'}`} />
-          <div className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-[#3A3A3C]' : 'bg-[#D1D1D6]'}`} />
         </div>
+
+        {/* Helpful error-prevention hint when selection is incomplete */}
+        {!((step === 1 && isStep1Valid) || (step === 2 && isStep2Valid)) && (
+          <p className={`text-[11px] font-sans font-medium text-center transition-opacity duration-200 ${
+            isDark ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+          }`}>
+            {step === 1 && !answers.age.trim() && 'Please select your age range to continue'}
+            {step === 1 && answers.age.trim() !== '' && !answers.gender && 'Please select your gender to continue'}
+            {step === 2 && !isStep2Valid && 'Please choose an area of focus to continue'}
+          </p>
+        )}
 
         <button
           id="next-btn"

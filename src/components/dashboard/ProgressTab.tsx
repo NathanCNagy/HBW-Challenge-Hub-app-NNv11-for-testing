@@ -15,6 +15,7 @@ interface ProgressTabProps {
   setIndividualEnergy: React.Dispatch<React.SetStateAction<number>>;
   hasLoggedToday: boolean;
   onLogSuccess: () => void;
+  onResetLog?: () => void;
   bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>;
   setBubbles: React.Dispatch<React.SetStateAction<Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>>>;
   checklist?: {
@@ -43,6 +44,7 @@ export default function ProgressTab({
   setIndividualEnergy,
   hasLoggedToday,
   onLogSuccess,
+  onResetLog,
   bubbles,
   setBubbles,
   checklist,
@@ -199,6 +201,21 @@ export default function ProgressTab({
               </>
             )}
           </button>
+
+          {/* User Control & Freedom: Option to edit / reset check-in */}
+          {hasLoggedToday && onResetLog && (
+            <div className="flex justify-center -mt-1 pt-0.5">
+              <button
+                type="button"
+                onClick={onResetLog}
+                className={`text-[11px] font-sans font-medium hover:underline cursor-pointer transition-colors ${
+                  theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
+                }`}
+              >
+                Made a mistake? Edit check-in
+              </button>
+            </div>
+          )}
         </div>
       </EcosystemVisualization>
     </div>

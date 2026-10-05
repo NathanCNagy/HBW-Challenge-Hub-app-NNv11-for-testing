@@ -25,6 +25,7 @@ interface HomeTabProps {
   onCheckItem?: (item: 'habitDone' | 'anchorDone' | 'reflectDone') => void;
   hasLoggedToday: boolean;
   onLogSuccess?: () => void;
+  onResetLog?: () => void;
   bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>;
   dismissedBubbleAlert: boolean;
   setDismissedBubbleAlert: (dismissed: boolean) => void;
@@ -41,6 +42,7 @@ export default function HomeTab({
   activeGoal,
   hasLoggedToday,
   onLogSuccess,
+  onResetLog,
   bubbles,
   dismissedBubbleAlert,
   setDismissedBubbleAlert,
@@ -123,12 +125,26 @@ export default function HomeTab({
               <CheckCircle className="w-4 h-4 text-[#34C759] shrink-0" />
               <span className="truncate font-semibold">{isWeekly ? 'Logged for This Week!' : 'Logged for Today!'}</span>
             </div>
-            <button
-              onClick={() => onNavigateToTab('progress')}
-              className="text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0 ml-2 pr-1"
-            >
-              View in Progress &rarr;
-            </button>
+            <div className="flex items-center gap-2">
+              {onResetLog && (
+                <button
+                  type="button"
+                  onClick={onResetLog}
+                  className={`text-[11px] font-sans font-medium hover:underline cursor-pointer ${
+                    theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
+                  }`}
+                  title="Edit or undo today's check-in"
+                >
+                  Edit
+                </button>
+              )}
+              <button
+                onClick={() => onNavigateToTab('progress')}
+                className="text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0 pr-1"
+              >
+                View &rarr;
+              </button>
+            </div>
           </div>
         )}
       </div>

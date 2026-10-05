@@ -107,7 +107,7 @@ export default function EcosystemVisualization({
 
     setRaindrops(prev => [...prev, ...newRaindrops]);
     setIsHydrating(true);
-    setHydrationMessage(`+${increment} Task Completed! 💧`);
+    setHydrationMessage('Plant Watered! (+1 Growth) 💧');
 
     // Clear drops after animation
     setTimeout(() => {

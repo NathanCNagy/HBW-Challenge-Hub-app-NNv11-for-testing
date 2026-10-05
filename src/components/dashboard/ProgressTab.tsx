@@ -71,6 +71,7 @@ export default function ProgressTab({
         bubbles={bubbles}
         setBubbles={setBubbles}
         theme={theme}
+        isWeekly={isWeekly}
       >
         {/* Habit Checklist Card - directly under the plant visual */}
         <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3.5 transition-colors duration-200 ${
@@ -83,10 +84,10 @@ export default function ProgressTab({
               theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
             }`}>
               <CheckCircle className="w-4 h-4 text-[#0080FF]" />
-              {isWeekly ? 'Habit Checklist' : 'Daily Checklist'}
+              {isWeekly ? 'Weekly Checklist' : 'Daily Checklist'}
             </h4>
             <span className={`text-[10px] font-sans text-right leading-tight ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-              Tap to check & unlock clouds to water plant
+              {isWeekly ? 'Tap to check & unlock clouds for this week' : 'Tap to check & unlock clouds to water plant'}
             </span>
           </div>
 
@@ -111,7 +112,7 @@ export default function ProgressTab({
                     ? 'line-through text-[#8E8E93]' 
                     : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  Complete habit
+                  {isWeekly ? 'Complete weekly habit' : 'Complete daily habit'}
                 </span>
                 <span className={`text-[11px] block leading-normal ${
                   theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
@@ -139,11 +140,11 @@ export default function ProgressTab({
                     ? 'line-through text-[#8E8E93]' 
                     : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  {isWeekly ? 'Pair with anchor routine' : 'Pair with routine cue'}
+                  {isWeekly ? 'Pair with weekly routine' : 'Pair with routine cue'}
                 </span>
                 <span className={`text-[11px] block leading-normal ${
                   theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                }`}>Done alongside {anchorHabit || (isWeekly ? 'your chosen routine' : 'your regular routine')}.</span>
+                }`}>Done alongside {anchorHabit || (isWeekly ? 'your weekly routine (like grocery shopping)' : 'your regular routine')}.</span>
               </div>
             </button>
 
@@ -189,12 +190,12 @@ export default function ProgressTab({
             {hasLoggedToday ? (
               <>
                 <CheckCircle className="w-4 h-4 text-[#8E8E93]" />
-                <span>{isWeekly ? 'Logged for This Target' : 'Logged for Today'}</span>
+                <span>{isWeekly ? 'Logged for This Week' : 'Logged for Today'}</span>
               </>
             ) : (
               <>
                 <Calendar className="w-4 h-4" />
-                <span>{isWeekly ? 'Log Habit Completion' : "Log Today's Habit"}</span>
+                <span>{isWeekly ? 'Log Weekly Habit' : "Log Today's Habit"}</span>
               </>
             )}
           </button>

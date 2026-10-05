@@ -15,17 +15,20 @@ interface SmartAlertsProps {
   defaultAnchor?: string;
   theme?: 'dark' | 'light';
   onSaveConfigured?: (anchor: string, alertTime: string, triggers?: HabitTrigger[]) => void;
+  isWeekly?: boolean;
 }
 
 const ALL_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function SmartAlerts({ 
   goalTitle, 
-  defaultAnchor = 'pouring my morning coffee', 
+  defaultAnchor, 
   theme = 'light',
-  onSaveConfigured 
+  onSaveConfigured,
+  isWeekly = false
 }: SmartAlertsProps) {
   const isDark = theme === 'dark';
+  const resolvedDefaultAnchor = defaultAnchor || (isWeekly ? 'Sunday meal planning & grocery run' : 'pouring my morning coffee');
 
   // Load triggers from localStorage with default anchor
   const [triggers, setTriggers] = useState<HabitTrigger[]>(() => {
@@ -41,9 +44,9 @@ export default function SmartAlerts({
     return [
       {
         id: 'default-trigger-1',
-        name: defaultAnchor || 'Brewing morning coffee',
-        time: '08:00',
-        days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        name: resolvedDefaultAnchor,
+        time: isWeekly ? '10:00' : '08:00',
+        days: isWeekly ? ['Sun'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         enabled: true
       }
     ];
@@ -127,8 +130,8 @@ export default function SmartAlerts({
 
   const handleStartAdd = () => {
     setNewName('');
-    setNewTime('08:00');
-    setNewDays(ALL_DAYS);
+    setNewTime(isWeekly ? '10:00' : '08:00');
+    setNewDays(isWeekly ? ['Sun'] : ALL_DAYS);
     setIsAdding(true);
     setEditingId(null);
   };
@@ -228,7 +231,9 @@ export default function SmartAlerts({
                 isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
               }`}
             >
-              Pair your habit with existing routines to trigger consistency
+              {isWeekly
+                ? 'Set weekly cues (like grocery day or Sunday prep) to trigger consistency'
+                : 'Pair your habit with existing routines to trigger consistency'}
             </p>
           </div>
 
@@ -405,6 +410,7 @@ export default function SmartAlerts({
         primaryTrigger={primaryTrigger}
         goalTitle={goalTitle}
         isDark={isDark}
+        isWeekly={isWeekly}
       />
     </div>
   );

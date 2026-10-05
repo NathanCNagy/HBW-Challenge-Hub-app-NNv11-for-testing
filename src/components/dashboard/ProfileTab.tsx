@@ -53,6 +53,7 @@ export default function ProfileTab({
   onDownloadPDF
 }: ProfileTabProps) {
   const { unitSystem, setUnitSystem, isUS, commitGoal } = useHabit();
+  const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
   const [isScheduleExpanded, setIsScheduleExpanded] = useState<boolean>(false);
   const [editAge, setEditAge] = useState<string>(answers.age);
@@ -492,6 +493,7 @@ export default function ProfileTab({
         <SmartAlerts
           goalTitle={activeGoal.title}
           defaultAnchor={anchorHabit}
+          isWeekly={isWeekly}
           theme={theme}
           onSaveConfigured={(newAnchor) => {
             setAnchorHabit(newAnchor);

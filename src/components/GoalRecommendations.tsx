@@ -76,7 +76,7 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
         <p className={`text-xs sm:text-sm max-w-md mx-auto font-sans leading-relaxed ${
           isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
         }`}>
-          Your top-impact habit for <strong className={isDark ? 'text-white' : 'text-[#1C1C1E]'}>{activeGoal.category}</strong>. Choose a pace below that fits seamlessly into your weekly schedule and lifestyle.
+          Your top-impact habit for <strong className={isDark ? 'text-white' : 'text-[#1C1C1E]'}>{activeGoal.category}</strong>. Choose a pace below that fits seamlessly into your {selectedOption.scheduleText.toLowerCase().includes('week') ? 'weekly schedule' : 'daily routine'} and lifestyle.
         </p>
       </div>
 

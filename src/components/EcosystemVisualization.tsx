@@ -15,6 +15,7 @@ interface EcosystemVisualizationProps {
   setBubbles: React.Dispatch<React.SetStateAction<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }[]>>;
   theme?: 'dark' | 'light';
   children?: React.ReactNode;
+  isWeekly?: boolean;
 }
 
 interface TaskMilestone {
@@ -44,7 +45,8 @@ export default function EcosystemVisualization({
   bubbles,
   setBubbles,
   theme = 'light',
-  children
+  children,
+  isWeekly = false
 }: EcosystemVisualizationProps) {
   const [raindrops, setRaindrops] = useState<{ id: string; startX: number; startY: number; targetX: number; delay: number; size: number }[]>([]);
   const [isHydrating, setIsHydrating] = useState<boolean>(false);
@@ -572,7 +574,7 @@ export default function EcosystemVisualization({
                   fill="#0080FF"
                   className="select-none tracking-wide"
                 >
-                  NEXT MILESTONE: {currentMilestone.targetTasks} TASKS ({currentMilestone.stageName?.toUpperCase()}) • {tasksRemaining} LEFT (~{daysToNext}d)
+                  NEXT MILESTONE: {currentMilestone.targetTasks} TASKS ({currentMilestone.stageName?.toUpperCase()}) • {tasksRemaining} LEFT (~{isWeekly && daysToNext >= 7 ? `${Math.ceil(daysToNext / 7)}w` : `${daysToNext}d`})
                 </text>
               </g>
             ) : (
@@ -984,7 +986,7 @@ export default function EcosystemVisualization({
             </span>
           </div>
           <p className={`text-xs leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'}`}>
-            Complete <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'task' : 'tasks'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>~{daysToNext} {daysToNext === 1 ? 'day' : 'days'}</strong>).
+            Complete <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'task' : 'tasks'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7)} === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
           </p>
           <p className={`text-[11px] font-sans leading-normal pt-1 border-t border-dashed ${
             theme === 'dark' ? 'border-[#1F1F24] text-[#8E8E93]' : 'border-[#BDE0FE] text-[#6C6C70]'
@@ -1164,7 +1166,7 @@ export default function EcosystemVisualization({
                     <p className={`text-xs font-sans mt-0.5 ${
                       theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
                     }`}>
-                      The daily habit growth loop
+                      {isWeekly ? 'The weekly habit growth loop' : 'The daily habit growth loop'}
                     </p>
                   </div>
                 </div>
@@ -1196,7 +1198,9 @@ export default function EcosystemVisualization({
                     <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
                       theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                     }`}>
-                      Check off your daily habit in the checklist to log completed actions.
+                      {isWeekly 
+                        ? 'Check off your weekly habit in the checklist to log completed actions.'
+                        : 'Check off your daily habit in the checklist to log completed actions.'}
                     </p>
                   </div>
                 </div>

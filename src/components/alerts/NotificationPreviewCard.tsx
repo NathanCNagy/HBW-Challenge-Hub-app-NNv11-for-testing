@@ -12,20 +12,22 @@ interface NotificationPreviewCardProps {
   primaryTrigger: HabitTrigger;
   goalTitle: string;
   isDark: boolean;
+  isWeekly?: boolean;
 }
 
 export default function NotificationPreviewCard({
   primaryTrigger,
   goalTitle,
-  isDark
+  isDark,
+  isWeekly = false
 }: NotificationPreviewCardProps) {
   const handleTestAlert = () => {
     window.dispatchEvent(
       new CustomEvent('hbw:add-notification', {
         detail: {
           id: Date.now(),
-          title: 'Habit Reminder 🔔',
-          body: `After "${primaryTrigger.name}", take a moment for "${goalTitle}".`,
+          title: isWeekly ? 'Weekly Habit Reminder 🔔' : 'Daily Habit Reminder 🔔',
+          body: `After "${primaryTrigger.name}", take a moment for your ${isWeekly ? 'weekly' : 'daily'} "${goalTitle}".`,
           type: 'alert'
         }
       })
@@ -86,7 +88,7 @@ export default function NotificationPreviewCard({
           >
             ⏰ Reminder: Right after{' '}
             <strong>"{primaryTrigger.name}"</strong>, complete your{' '}
-            <strong>"{goalTitle}"</strong>.
+            <strong>{isWeekly ? `weekly "${goalTitle}"` : `daily "${goalTitle}"`}</strong>.
           </p>
         </div>
       </div>

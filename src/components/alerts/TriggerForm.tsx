@@ -204,6 +204,21 @@ export default function TriggerForm({
             >
               Weekends
             </button>
+            <span className="text-[#8E8E93]">•</span>
+            <button
+              type="button"
+              onClick={() => setDays(['Sun'])}
+              className={`hover:underline cursor-pointer ${
+                days.length === 1 && days.includes('Sun')
+                  ? 'text-[#0080FF] font-bold'
+                  : isDark
+                    ? 'text-[#98989D]'
+                    : 'text-[#6C6C70]'
+              }`}
+              title="Weekly cue (Once per week on Sunday)"
+            >
+              Weekly
+            </button>
           </div>
         </div>
 

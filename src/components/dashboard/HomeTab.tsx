@@ -63,11 +63,11 @@ export default function HomeTab({
         <div className="flex flex-col gap-1.5 z-10">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D]">
-              {isWeekly ? 'Current Habit Focus' : "Today's Focus"}
+              {isWeekly ? "This Week's Focus" : "Today's Focus"}
             </span>
             {hasLoggedToday && (
               <span className="text-[10px] font-sans font-semibold text-[#34C759] flex items-center gap-1">
-                <CheckCircle className="w-3.5 h-3.5" /> {isWeekly ? 'Logged for Target' : 'Logged Today'}
+                <CheckCircle className="w-3.5 h-3.5" /> {isWeekly ? 'Logged This Week' : 'Logged Today'}
               </span>
             )}
           </div>
@@ -121,7 +121,7 @@ export default function HomeTab({
           }`}>
             <div className="flex items-center gap-2 truncate pl-1">
               <CheckCircle className="w-4 h-4 text-[#34C759] shrink-0" />
-              <span className="truncate font-semibold">{isWeekly ? 'Logged for Target!' : 'Logged for Today!'}</span>
+              <span className="truncate font-semibold">{isWeekly ? 'Logged for This Week!' : 'Logged for Today!'}</span>
             </div>
             <button
               onClick={() => onNavigateToTab('progress')}

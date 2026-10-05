@@ -7,6 +7,7 @@
     "dev": "tsx server.ts",
     "build": "vite build",
     "gcp-build": "npm run build",
+    "test": "tsx -e \"import { runRecommendationUnitTests } from './src/services/testEngine.ts'; const r = runRecommendationUnitTests(); if (!r.success) process.exit(1);\"",
     "start": "node server.ts",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"

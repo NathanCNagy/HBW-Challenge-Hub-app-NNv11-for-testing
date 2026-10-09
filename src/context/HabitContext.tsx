@@ -58,7 +58,7 @@ const DEFAULT_QUIZ_ANSWERS: QuizAnswers = {
   age: '28',
   gender: 'Male',
   categories: ['Environment'],
-  currentHabitLevel: 'Rarely / Never',
+  currentHabitMilestone: 'Rarely / Never',
   timeCommitment: ['5 Minutes (Microchange)'],
   motivation: ['Personal growth & optimization'],
   friction: ['Forgetting & failing to keep track'],

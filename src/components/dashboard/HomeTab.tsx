@@ -214,7 +214,7 @@ export default function HomeTab({
                 Smart Habit Reminders
               </h4>
             </div>
-            <span className="text-[9px] font-sans font-semibold uppercase px-2 py-0.5 rounded-full bg-[#FF9500]/15 text-[#FF9500] shrink-0">
+            <span className="text-[9px] font-sans font-semibold uppercase px-2 py-0.5 rounded-full bg-[#FF9500]/15 text-[#FF9500] shrink-0 inline-block text-center">
               Not Set Up
             </span>
           </div>
@@ -249,7 +249,7 @@ export default function HomeTab({
             <div>
               <p className="text-xs font-bold leading-tight flex items-center gap-1.5">
                 <span>Reminders Active</span>
-                <span className="text-[9px] font-sans font-bold text-[#34C759] bg-[#34C759]/15 px-1.5 py-0.2 rounded-full">
+                <span className="text-[9px] font-sans font-bold text-[#34C759] bg-[#34C759]/15 px-1.5 py-0.2 rounded-full inline-block text-center">
                   ON
                 </span>
               </p>

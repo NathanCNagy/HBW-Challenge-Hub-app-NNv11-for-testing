@@ -12,7 +12,7 @@ export interface QuizAnswers {
   selectedImplementationOptionId?: string;
   livingArrangement?: string;
   primaryConstraint?: string[];
-  currentHabitLevel?: string;
+  currentHabitMilestone?: string;
   timeCommitment?: string[];
   motivation?: string[];
   friction?: string[];

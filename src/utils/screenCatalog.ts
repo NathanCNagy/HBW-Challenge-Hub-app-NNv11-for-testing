@@ -20,7 +20,7 @@ export const SAMPLE_ANSWERS: QuizAnswers = {
   gender: 'Female',
   categories: ['Environment'],
   livingArrangement: 'Apartment',
-  currentHabitLevel: 'Intermediate'
+  currentHabitMilestone: 'Intermediate'
 };
 
 export const SAMPLE_GOAL: Goal = TOP_IMPACT_GOALS['Environment'];

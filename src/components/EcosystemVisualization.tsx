@@ -263,13 +263,13 @@ export default function EcosystemVisualization({
   }, [showGroupModal, showGrowthModal]);
 
   // Group Progress & Team Milestone Calculations (measured in clouds clicked on)
-  const cloudsPerLevel = 10000;
-  const currentLevel = Math.max(1, Math.floor(groupStats.collectiveTasks / cloudsPerLevel));
-  const nextLevel = currentLevel + 1;
-  const levelFloor = currentLevel * cloudsPerLevel;
-  const nextLevelCloudsTarget = nextLevel * cloudsPerLevel;
-  const teamCloudsRemaining = Math.max(0, nextLevelCloudsTarget - groupStats.collectiveTasks);
-  const teamLevelProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveTasks - levelFloor) / cloudsPerLevel) * 100)));
+  const cloudsPerMilestone = 10000;
+  const currentTeamMilestone = Math.max(1, Math.floor(groupStats.collectiveTasks / cloudsPerMilestone));
+  const nextMilestoneNum = currentTeamMilestone + 1;
+  const milestoneFloor = currentTeamMilestone * cloudsPerMilestone;
+  const nextMilestoneCloudsTarget = nextMilestoneNum * cloudsPerMilestone;
+  const teamCloudsRemaining = Math.max(0, nextMilestoneCloudsTarget - groupStats.collectiveTasks);
+  const teamMilestoneProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveTasks - milestoneFloor) / cloudsPerMilestone) * 100)));
   const dailyTeamVelocity = 1850; // community average clouds clicked per day
   const daysToTeamMilestone = Math.max(1, Math.ceil(teamCloudsRemaining / dailyTeamVelocity));
 
@@ -332,7 +332,7 @@ export default function EcosystemVisualization({
               <Users className="w-3.5 h-3.5 text-[#0080FF]" />
               <span className={`text-xs font-sans font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
-              }`}>Level {currentLevel}</span>
+              }`}>Milestone {currentTeamMilestone}</span>
               <span className="text-[10px] text-[#0080FF] font-medium group-hover:translate-x-0.5 transition-transform">
                 &rarr;
               </span>
@@ -426,7 +426,7 @@ export default function EcosystemVisualization({
               }}
               animate={{ 
                 left: `${drop.targetX}%`, 
-                top: '78%', // Hits the plant level
+                top: '78%', // Hits the plant milestone
                 opacity: [0, 1, 1, 0.8, 0],
                 scale: [0.5, 1, 0.9, 0.3]
               }}
@@ -555,15 +555,16 @@ export default function EcosystemVisualization({
 
                 {/* Milestone label with clear cloud count target */}
                 <text 
-                  x="34" 
+                  x="180" 
                   y={targetMilestoneY - 6} 
                   fontSize="11" 
                   fontFamily="'Poppins', sans-serif" 
                   fontWeight="bold" 
                   fill="#0080FF"
+                  textAnchor="middle"
                   className="select-none tracking-wide"
                 >
-                  NEXT MILESTONE: {currentMilestone.stageName?.toUpperCase()} • {tasksRemaining} {tasksRemaining === 1 ? 'CLOUD' : 'CLOUDS'} TO CLICK LEFT
+                  {tasksRemaining} {tasksRemaining === 1 ? 'CLOUD' : 'CLOUDS'} LEFT TO NEXT MILESTONE: {currentMilestone.stageName?.toUpperCase()}
                 </text>
               </g>
             ) : (
@@ -581,12 +582,13 @@ export default function EcosystemVisualization({
                 <circle cx="24" cy={targetMilestoneY} r="3.5" fill="#34C759" />
                 <circle cx="336" cy={targetMilestoneY} r="3.5" fill="#34C759" />
                 <text 
-                  x="34" 
+                  x="180" 
                   y={targetMilestoneY - 6} 
                   fontSize="11" 
                   fontFamily="'Poppins', sans-serif" 
                   fontWeight="bold" 
                   fill="#34C759"
+                  textAnchor="middle"
                   className="select-none tracking-wide"
                 >
                   MILESTONE REACHED: 100 TASKS FULL BLOOM 🌟
@@ -1033,7 +1035,7 @@ export default function EcosystemVisualization({
                     TEAM MILESTONE
                   </span>
                   <span className="text-xs font-mono font-bold text-[#0080FF]">
-                    Level {nextLevel} ({teamLevelProgressPercent}%)
+                    Milestone {nextMilestoneNum} ({teamMilestoneProgressPercent}%)
                   </span>
                 </div>
 
@@ -1043,7 +1045,7 @@ export default function EcosystemVisualization({
                 }`}>
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${teamLevelProgressPercent}%` }}
+                    animate={{ width: `${teamMilestoneProgressPercent}%` }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
                     className="h-full bg-gradient-to-r from-[#0080FF] to-[#3892FF] rounded-full"
                   />
@@ -1052,7 +1054,7 @@ export default function EcosystemVisualization({
                 <div className={`flex items-center justify-between text-[11px] font-sans ${
                   theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
                 }`}>
-                  <span className="font-mono">{groupStats.collectiveTasks.toLocaleString()} / {nextLevelCloudsTarget.toLocaleString()} clouds clicked</span>
+                  <span className="font-mono">{groupStats.collectiveTasks.toLocaleString()} / {nextMilestoneCloudsTarget.toLocaleString()} clouds clicked</span>
                   <span>~{daysToTeamMilestone} {daysToTeamMilestone === 1 ? 'day' : 'days'} left</span>
                 </div>
               </div>
@@ -1227,7 +1229,7 @@ export default function EcosystemVisualization({
                     <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
                       theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                     }`}>
-                      Click any cloud to trigger rainfall, nourish your tree, and watch it grow! Clicking enough clouds over time advances you to the next level.
+                      Click any cloud to trigger rainfall, nourish your tree, and watch it grow! Clicking enough clouds over time advances you to the next milestone.
                     </p>
                   </div>
                 </div>

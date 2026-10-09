@@ -262,20 +262,20 @@ export default function EcosystemVisualization({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showGroupModal, showGrowthModal]);
 
-  // Group Progress & Team Milestone Calculations (measured in completed tasks)
-  const tasksPerLevel = 10000;
-  const currentLevel = Math.max(1, Math.floor(groupStats.collectiveTasks / tasksPerLevel));
+  // Group Progress & Team Milestone Calculations (measured in clouds clicked on)
+  const cloudsPerLevel = 10000;
+  const currentLevel = Math.max(1, Math.floor(groupStats.collectiveTasks / cloudsPerLevel));
   const nextLevel = currentLevel + 1;
-  const levelFloor = currentLevel * tasksPerLevel;
-  const nextLevelTasksTarget = nextLevel * tasksPerLevel;
-  const teamTasksRemaining = Math.max(0, nextLevelTasksTarget - groupStats.collectiveTasks);
-  const teamLevelProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveTasks - levelFloor) / tasksPerLevel) * 100)));
-  const dailyTeamVelocity = 1850; // community average tasks logged per day
-  const daysToTeamMilestone = Math.max(1, Math.ceil(teamTasksRemaining / dailyTeamVelocity));
+  const levelFloor = currentLevel * cloudsPerLevel;
+  const nextLevelCloudsTarget = nextLevel * cloudsPerLevel;
+  const teamCloudsRemaining = Math.max(0, nextLevelCloudsTarget - groupStats.collectiveTasks);
+  const teamLevelProgressPercent = Math.min(100, Math.max(0, Math.round(((groupStats.collectiveTasks - levelFloor) / cloudsPerLevel) * 100)));
+  const dailyTeamVelocity = 1850; // community average clouds clicked per day
+  const daysToTeamMilestone = Math.max(1, Math.ceil(teamCloudsRemaining / dailyTeamVelocity));
 
-  // Individual user stacking benchmark against their team
-  const teamAverageTasks = 12; // benchmark median tasks completed per member
-  const userVsTeamDiff = teamAverageTasks > 0 ? Math.round(((individualEnergy - teamAverageTasks) / teamAverageTasks) * 100) : 0;
+  // Individual user stacking benchmark against their team (measured in clouds clicked)
+  const teamAverageClouds = 12; // benchmark median clouds clicked per member
+  const userVsTeamDiff = teamAverageClouds > 0 ? Math.round(((individualEnergy - teamAverageClouds) / teamAverageClouds) * 100) : 0;
   const userTier = 
     individualEnergy >= 25 ? 'Top 10% Impact Contributor 🏆' :
     individualEnergy >= 12 ? 'Above Team Median 🌟' :
@@ -299,14 +299,14 @@ export default function EcosystemVisualization({
           }`}>
             <span className={`text-[9px] font-sans uppercase tracking-wider font-bold block ${
               theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
-            }`}>TASKS COMPLETED</span>
+            }`}>CLOUDS CLICKED</span>
             <div className="flex items-center gap-1.5">
               <Cloud className="w-3.5 h-3.5 text-[#0080FF]" />
               <span className={`text-sm font-serif font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
               }`}>{individualEnergy}</span>
               <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
-                {individualEnergy === 1 ? 'task' : 'tasks'}
+                {individualEnergy === 1 ? 'cloud' : 'clouds'}
               </span>
             </div>
           </div>
@@ -396,27 +396,16 @@ export default function EcosystemVisualization({
                       />
                     </svg>
 
-                    {/* Centered Task Amount (+1) & Type Tag */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-0.5 pointer-events-none">
-                      <span className={`text-[11px] font-mono font-bold tracking-tight leading-none ${
+                    {/* Centered +1 only with no other text */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className={`text-[12px] font-mono font-bold tracking-tight leading-none ${
                         bubble.isNew
                           ? 'text-[#0080FF] font-extrabold'
                           : theme === 'dark' ? 'text-white' : 'text-[#0080FF]'
                       }`}>
-                        +{bubble.value || 1}
-                      </span>
-                      <span className={`text-[7px] font-sans font-bold uppercase tracking-wider leading-none mt-1 ${
-                        theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'
-                      }`}>
-                        TASK
+                        +1
                       </span>
                     </div>
-
-                    {bubble.isNew && (
-                      <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[7px] font-mono font-bold uppercase tracking-wide bg-[#0080FF] text-white rounded-full shadow-xs">
-                        NEW
-                      </span>
-                    )}
                   </div>
                 </motion.button>
               </div>
@@ -564,7 +553,7 @@ export default function EcosystemVisualization({
                   fill="#0080FF" 
                 />
 
-                {/* Milestone label with clear task count target */}
+                {/* Milestone label with clear cloud count target */}
                 <text 
                   x="34" 
                   y={targetMilestoneY - 6} 
@@ -574,7 +563,7 @@ export default function EcosystemVisualization({
                   fill="#0080FF"
                   className="select-none tracking-wide"
                 >
-                  NEXT MILESTONE: {currentMilestone.targetTasks} TASKS ({currentMilestone.stageName?.toUpperCase()}) • {tasksRemaining} LEFT (~{isWeekly && daysToNext >= 7 ? `${Math.ceil(daysToNext / 7)}w` : `${daysToNext}d`})
+                  NEXT MILESTONE: {currentMilestone.stageName?.toUpperCase()} • {tasksRemaining} {tasksRemaining === 1 ? 'CLOUD' : 'CLOUDS'} TO CLICK LEFT
                 </text>
               </g>
             ) : (
@@ -982,11 +971,11 @@ export default function EcosystemVisualization({
               <span>🎯</span> Next Milestone: {currentMilestone.stageName}
             </span>
             <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/15 text-[#0080FF]">
-              {individualEnergy} / {currentMilestone.targetTasks} tasks
+              {individualEnergy} / {currentMilestone.targetTasks} clouds
             </span>
           </div>
           <p className={`text-xs leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'}`}>
-            Complete <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'task' : 'tasks'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7)} === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
+            Click <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'cloud' : 'clouds'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7)} === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
           </p>
           <p className={`text-[11px] font-sans leading-normal pt-1 border-t border-dashed ${
             theme === 'dark' ? 'border-[#1F1F24] text-[#8E8E93]' : 'border-[#BDE0FE] text-[#6C6C70]'
@@ -1063,7 +1052,7 @@ export default function EcosystemVisualization({
                 <div className={`flex items-center justify-between text-[11px] font-sans ${
                   theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
                 }`}>
-                  <span className="font-mono">{groupStats.collectiveTasks.toLocaleString()} / {nextLevelTasksTarget.toLocaleString()} tasks</span>
+                  <span className="font-mono">{groupStats.collectiveTasks.toLocaleString()} / {nextLevelCloudsTarget.toLocaleString()} clouds clicked</span>
                   <span>~{daysToTeamMilestone} {daysToTeamMilestone === 1 ? 'day' : 'days'} left</span>
                 </div>
               </div>
@@ -1091,7 +1080,7 @@ export default function EcosystemVisualization({
                       You
                     </span>
                     <span className="text-lg font-serif font-bold text-[#0080FF] block mt-0.5">
-                      {individualEnergy} {individualEnergy === 1 ? 'task' : 'tasks'}
+                      {individualEnergy} {individualEnergy === 1 ? 'cloud clicked' : 'clouds clicked'}
                     </span>
                   </div>
 
@@ -1102,7 +1091,7 @@ export default function EcosystemVisualization({
                       Team Median
                     </span>
                     <span className={`text-lg font-serif font-bold block mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
-                      {teamAverageTasks} tasks
+                      {teamAverageClouds} clouds clicked
                     </span>
                   </div>
                 </div>
@@ -1238,7 +1227,7 @@ export default function EcosystemVisualization({
                     <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
                       theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                     }`}>
-                      Click any cloud to trigger rainfall, nourish your tree, and watch it grow!
+                      Click any cloud to trigger rainfall, nourish your tree, and watch it grow! Clicking enough clouds over time advances you to the next level.
                     </p>
                   </div>
                 </div>

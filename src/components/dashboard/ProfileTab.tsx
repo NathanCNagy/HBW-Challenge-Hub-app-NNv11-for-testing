@@ -77,7 +77,7 @@ export default function ProfileTab({
     setIsEditingProfile(false);
   };
 
-  const handleSelectPace = (option: ImplementationOption) => {
+  const handleSelectOption = (option: ImplementationOption) => {
     const updatedGoal: Goal = {
       ...activeGoal,
       selectedOption: option,
@@ -266,7 +266,7 @@ export default function ProfileTab({
         )}
       </div>
 
-      {/* Adapt Plan & Choose Your Pace Card (Expandable Dropdown) */}
+      {/* Adapt Plan & Choose Your Option Card (Expandable Dropdown) */}
       {activeGoal.implementationOptions && activeGoal.implementationOptions.length > 0 && (() => {
         const currentOption = activeGoal.selectedOption || activeGoal.implementationOptions[0];
         return (
@@ -301,7 +301,7 @@ export default function ProfileTab({
                   <h4 className={`text-sm font-sans font-bold ${
                     theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                   }`}>
-                    Choose Your Pace
+                    Choose Your Option
                   </h4>
                   <span className={`text-[10px] font-sans font-medium px-2.5 py-0.5 rounded-full border ${
                     theme === 'dark' ? 'bg-[#1F1F24] text-[#E5E5EA] border-[#27272A]' : 'bg-[#E5E5EA]/70 text-[#1C1C1E] border-[#E5E5EA]'
@@ -346,7 +346,7 @@ export default function ProfileTab({
                         <button
                           key={option.id}
                           type="button"
-                          onClick={() => handleSelectPace(option)}
+                          onClick={() => handleSelectOption(option)}
                           className={`w-full p-3.5 rounded-[14px] border text-left transition-all flex items-start gap-3 cursor-pointer ${
                             isSelected
                               ? theme === 'dark'

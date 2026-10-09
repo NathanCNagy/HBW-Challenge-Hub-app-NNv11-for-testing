@@ -420,10 +420,10 @@ export default function DashboardSimulation({
       <div className={`px-4 py-2 border-b flex items-center justify-between shadow-xs shrink-0 z-20 transition-colors duration-200 ${
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24] text-white' : 'bg-white border-[#E5E5EA] text-[#1C1C1E]'
       }`}>
-        {/* HBW Hub Logo on Top Left - Tap to navigate to Home tab */}
+        {/* HBW Logo on Top Left - Tap to navigate to Home tab */}
         <button
           type="button"
-          id="hbw-hub-home-btn"
+          id="hbw-home-btn"
           onClick={() => {
             setActiveTab('home');
             setShowOverflowMenu(false);
@@ -433,8 +433,8 @@ export default function DashboardSimulation({
           aria-label="Return to Home Tab"
         >
           <HBWLogo variant="favicon" size="sm" className="h-7 w-7" theme={theme} />
-          <span className="font-sans text-[10px] text-[#0080FF] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#0080FF]/10 border border-[#0080FF]/20 group-hover:bg-[#0080FF]/15 transition-colors">
-            Hub
+          <span className="font-['Poppins',sans-serif] font-extrabold text-[15px] tracking-[0.04em] uppercase text-[#1C1C1E] dark:text-white select-none">
+            H<span className="text-[#0080FF]">B</span>W
           </span>
         </button>
 

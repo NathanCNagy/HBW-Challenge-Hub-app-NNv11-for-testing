@@ -76,7 +76,7 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
         <p className={`text-xs sm:text-sm max-w-md mx-auto font-sans leading-relaxed ${
           isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
         }`}>
-          Your top-impact habit for <strong className={isDark ? 'text-white' : 'text-[#1C1C1E]'}>{activeGoal.category}</strong>. Choose a pace below that fits seamlessly into your {selectedOption.scheduleText.toLowerCase().includes('week') ? 'weekly schedule' : 'daily routine'} and lifestyle.
+          Your top-impact habit for <strong className={isDark ? 'text-white' : 'text-[#1C1C1E]'}>{activeGoal.category}</strong>. Choose an option below that fits seamlessly into your {selectedOption.scheduleText.toLowerCase().includes('week') ? 'weekly schedule' : 'daily routine'} and lifestyle.
         </p>
       </div>
 
@@ -179,7 +179,7 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
                 <h4 className={`text-sm font-sans font-bold ${
                   isDark ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  Choose Your Pace
+                  Choose Your Option
                 </h4>
                 <span className={`text-[10px] font-mono font-semibold px-2.5 py-0.5 rounded-full ${
                   isDark ? 'bg-[#0080FF]/15 text-[#0080FF]' : 'bg-[#E5F1FF] text-[#0066CC]'
@@ -280,8 +280,8 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
         <div className={`space-y-2.5 z-10 border-t pt-4 ${
           isDark ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
         }`}>
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="flex items-center gap-1.5 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 flex-wrap">
+            <div className="flex items-center gap-1.5 min-w-0 shrink-0">
               <Zap className={`w-4 h-4 shrink-0 ${isDark ? 'text-amber-400 fill-amber-400' : 'text-amber-600 fill-amber-600'}`} />
               <h4 className={`text-sm font-mono font-bold uppercase tracking-wider ${
                 isDark ? 'text-amber-400' : 'text-amber-700'
@@ -290,8 +290,8 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
               </h4>
             </div>
             <span className={`text-xs ${isDark ? 'text-[#48484A]' : 'text-[#AEAEB2]'}`}>•</span>
-            <span className={`text-xs font-mono font-medium ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-              Pace: {Math.round(selectedOption.impactMultiplier * 100)}%
+            <span className={`text-xs font-mono font-medium truncate ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
+              option: <span className={`font-semibold ${isDark ? 'text-white' : 'text-[#1C1C1E]'}`}>{selectedOption.title}</span>
             </span>
           </div>
 

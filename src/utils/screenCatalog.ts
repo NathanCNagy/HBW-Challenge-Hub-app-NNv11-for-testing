@@ -64,7 +64,7 @@ export const REAL_APP_SCREENS: AppScreenDefinition[] = [
     subtitle: 'Active Streak & Daily Habit Checklist',
     category: 'Daily Routine',
     fileName: '05_daily_action_dashboard.png',
-    description: 'Primary daily check-in hub with 3-part micro checklist, 14-day streak, and smart anchor cues.'
+    description: 'Primary daily check-in HBW view with 3-part micro checklist, 14-day streak, and smart anchor cues.'
   },
   {
     id: 'screen-ecosystem-tree',

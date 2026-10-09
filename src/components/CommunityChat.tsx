@@ -109,7 +109,7 @@ export default function CommunityChat({ category, goalTitle, theme = 'light' }: 
       googleCalendarUrl: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Neighborhood+Seed+%26+Plant+Swap&details=Bring+seeds+or+cuttings+to+swap.&location=Greenhouse+Community+Pavilion',
       attendees: 29,
       description: 'Exchange homegrown herb seeds, organic produce cuttings, and practical soil care tips with local neighbors and garden enthusiasts.',
-      hostName: 'Green Neighborhood Hub'
+      hostName: 'Green Neighborhood HBW'
     }
   ];
 

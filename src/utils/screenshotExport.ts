@@ -37,7 +37,7 @@ export const APP_SCREENSHOTS_CATALOG: AppScreenshotItem[] = [
     title: 'Daily Action Dashboard',
     subtitle: 'Active Streak & Habit Check-in',
     category: 'Daily Routine',
-    description: 'Real-time habit execution hub with instant logging, streak counters, daily tips, and contextual behavioral prompts.',
+    description: 'Real-time habit execution HBW view with instant logging, streak counters, daily tips, and contextual behavioral prompts.',
     fileName: '03_daily_action_dashboard.png'
   },
   {

@@ -307,11 +307,11 @@ export default function SmartwatchSimulator() {
               </div>
             )}
 
-            {/* 3. Watch Quick Menu / App Hub */}
+            {/* 3. Watch Quick Menu / App HBW */}
             {screenState === 'app' && (
               <div className="flex-1 w-full flex flex-col justify-between py-1 px-0.5">
                 <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest text-center border-b border-neutral-900 pb-1 select-none">
-                  Watch Hub
+                  HBW Watch
                 </span>
                 
                 <div className="flex-1 overflow-y-auto flex flex-col gap-1 my-1 pr-0.5">

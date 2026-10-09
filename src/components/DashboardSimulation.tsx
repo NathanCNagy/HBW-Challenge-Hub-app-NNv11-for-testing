@@ -422,11 +422,16 @@ export default function DashboardSimulation({
         onToggleTheme={(t) => onToggleTheme && onToggleTheme(t)}
         user={user}
         answers={answers}
+        activeGoal={activeGoal}
         onUpdateAnswers={onUpdateAnswers}
         onSignOut={onSignOut}
         onOpenAuth={onOpenAuth}
         onDownloadPDF={handleDownloadPDF}
         onOpenScreenshots={() => setShowScreenshotModal(true)}
+        onOpenProfile={() => {
+          setActiveTab('profile');
+          setShowOverflowMenu(false);
+        }}
       />
 
       {/* Screenshot Export & Gallery Modal */}

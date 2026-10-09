@@ -11,7 +11,6 @@ import {
   Moon, 
   User, 
   LogOut, 
-  Globe,
   AlertCircle,
   Sliders,
   ChevronRight
@@ -164,24 +163,6 @@ export default function OverflowSettingsMenu({
               )}
             </div>
 
-            {/* "More Settings & Profile" Action Button */}
-            <button
-              type="button"
-              id="open-profile-tab-btn"
-              onClick={handleOpenFullProfile}
-              className={`w-full py-2 px-3 rounded-[12px] border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer shadow-xs ${
-                theme === 'dark'
-                  ? 'bg-[#18181C] border-[#27272A] hover:bg-[#222226] text-white'
-                  : 'bg-white border-[#E5E5EA] hover:bg-[#F5F5F7] text-[#1C1C1E]'
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <Sliders className="w-3.5 h-3.5 text-[#0080FF]" />
-                <span>More Settings & Profile</span>
-              </span>
-              <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`} />
-            </button>
-
             {/* Combined Preferences Card: Appearance & Units */}
             <div className={`p-2.5 border rounded-[14px] flex flex-col gap-2 ${
               theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
@@ -189,19 +170,7 @@ export default function OverflowSettingsMenu({
               {/* Appearance Subsection */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 font-bold font-sans">
-                    {theme === 'dark' ? (
-                      <Moon className="w-3.5 h-3.5 text-[#0080FF]" />
-                    ) : (
-                      <Sun className="w-3.5 h-3.5 text-amber-500" />
-                    )}
-                    <span>Appearance</span>
-                  </div>
-                  <span className={`text-[10px] font-mono uppercase ${
-                    theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                  }`}>
-                    {theme === 'dark' ? 'Dark' : 'Light'}
-                  </span>
+                  <span className="font-bold font-sans">Appearance</span>
                 </div>
 
                 <div className={`p-0.5 rounded-full border grid grid-cols-2 gap-1 ${
@@ -245,15 +214,7 @@ export default function OverflowSettingsMenu({
               {/* Units & Measures Subsection */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 font-bold font-sans">
-                    <Globe className="w-3.5 h-3.5 text-[#0080FF]" />
-                    <span>Units & Measures</span>
-                  </div>
-                  <span className={`text-[10px] font-mono uppercase ${
-                    theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                  }`}>
-                    {unitSystem === 'imperial' ? 'US' : 'Metric'}
-                  </span>
+                  <span className="font-bold font-sans">Units & Measures</span>
                 </div>
 
                 <div className={`p-0.5 rounded-full border grid grid-cols-2 gap-1 ${
@@ -289,6 +250,24 @@ export default function OverflowSettingsMenu({
                 </div>
               </div>
             </div>
+
+            {/* "More Settings & Profile" Action Button (Moved below Units & Measures) */}
+            <button
+              type="button"
+              id="open-profile-tab-btn"
+              onClick={handleOpenFullProfile}
+              className={`w-full py-2 px-3 rounded-[12px] border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer shadow-xs ${
+                theme === 'dark'
+                  ? 'bg-[#18181C] border-[#27272A] hover:bg-[#222226] text-white'
+                  : 'bg-white border-[#E5E5EA] hover:bg-[#F5F5F7] text-[#1C1C1E]'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Sliders className="w-3.5 h-3.5 text-[#0080FF]" />
+                <span>More Settings & Profile</span>
+              </span>
+              <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`} />
+            </button>
 
             {/* Log Out / Exit Guest Session */}
             <div className={`pt-2 border-t mt-0.5 ${

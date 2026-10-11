@@ -12,10 +12,12 @@ interface OnboardingQuizProps {
   skipDemographics?: boolean;
   theme?: 'dark' | 'light';
   onBack?: () => void;
+  initialStep?: number;
+  onStepChange?: (step: number) => void;
 }
 
-export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoading, skipDemographics = false, theme = 'light', onBack }: OnboardingQuizProps) {
-  const [step, setStep] = useState<number>(skipDemographics ? 2 : 1);
+export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoading, skipDemographics = false, theme = 'light', onBack, initialStep = 1, onStepChange }: OnboardingQuizProps) {
+  const [step, setStep] = useState<number>(skipDemographics ? 2 : initialStep);
   const isDark = theme === 'dark';
 
   // Validate step inputs
@@ -24,7 +26,9 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
 
   const handleNext = () => {
     if (step === 1) {
-      setStep(2);
+      const nextS = 2;
+      setStep(nextS);
+      onStepChange?.(nextS);
     } else {
       onSubmit();
     }
@@ -32,7 +36,9 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
 
   const handleBack = () => {
     if (step > 1 && !skipDemographics) {
-      setStep(1);
+      const prevS = step - 1;
+      setStep(prevS);
+      onStepChange?.(prevS);
     } else if (onBack) {
       onBack();
     }

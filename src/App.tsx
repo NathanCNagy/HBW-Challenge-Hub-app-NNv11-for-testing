@@ -34,6 +34,7 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState<'quiz' | 'recommendations' | 'dashboard'>(() => {
     return committedGoal ? 'dashboard' : 'quiz';
   });
+  const [quizStep, setQuizStep] = useState<number>(1);
 
   // Recommendation outputs
   const [topGoal, setTopGoal] = useState<Goal | null>(null);
@@ -66,10 +67,16 @@ function AppContent() {
     setCurrentPage('dashboard');
   };
 
+  const handleBackToImpact = () => {
+    setQuizStep(2);
+    setCurrentPage('quiz');
+  };
+
   const handleResetQuiz = () => {
     setTopGoal(null);
     setAlternatives([]);
     resetGoal();
+    setQuizStep(1);
     setCurrentPage('quiz');
   };
 
@@ -129,6 +136,8 @@ function AppContent() {
                     skipDemographics={false}
                     theme={theme}
                     onBack={!user ? goToAuth : handleSignOut}
+                    initialStep={quizStep}
+                    onStepChange={setQuizStep}
                   />
                 )}
 
@@ -138,7 +147,7 @@ function AppContent() {
                     topGoal={topGoal}
                     alternatives={alternatives}
                     onCommit={handleCommitGoal}
-                    onReset={handleResetQuiz}
+                    onReset={handleBackToImpact}
                     hasAI={hasAI}
                     theme={theme}
                   />

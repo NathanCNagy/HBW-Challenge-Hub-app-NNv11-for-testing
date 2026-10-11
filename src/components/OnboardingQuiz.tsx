@@ -20,6 +20,12 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
   const [step, setStep] = useState<number>(skipDemographics ? 2 : initialStep);
   const isDark = theme === 'dark';
 
+  React.useEffect(() => {
+    if (initialStep) {
+      setStep(skipDemographics ? 2 : initialStep);
+    }
+  }, [initialStep, skipDemographics]);
+
   // Validate step inputs
   const isStep1Valid = answers.age.trim() !== '' && answers.gender !== '';
   const isStep2Valid = answers.categories && answers.categories.length === 1;

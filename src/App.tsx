@@ -76,7 +76,7 @@ function AppContent() {
     setTopGoal(null);
     setAlternatives([]);
     resetGoal();
-    setQuizStep(1);
+    setQuizStep(2);
     setCurrentPage('quiz');
   };
 
@@ -84,6 +84,7 @@ function AppContent() {
     setCurrentPage('quiz');
     setTopGoal(null);
     setAlternatives([]);
+    setQuizStep(1);
     await signOutUser();
   };
 
@@ -129,6 +130,7 @@ function AppContent() {
               <>
                 {effectivePage === 'quiz' && (
                   <OnboardingQuiz
+                    key={`quiz-step-${quizStep}`}
                     answers={answers}
                     setAnswers={updateAnswers}
                     onSubmit={handleSubmitQuiz}

@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for replacing the Daily Quote with personalized Daily Habit Tips tailored to the user's age, gender, and committed habit category. Features a curated static tip library with verified sources/links, stable daily tip rotation with a shuffle button, and direct integration into HomeTab.",
+  "updatedAt":  "2026-10-11T21:49:18.276909977Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

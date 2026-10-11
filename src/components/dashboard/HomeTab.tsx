@@ -3,20 +3,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   CheckCircle, 
   Calendar, 
   Sparkles, 
   Bell, 
   X,
-  ArrowRight
+  ArrowRight,
+  Lightbulb,
+  RefreshCw,
+  ExternalLink,
+  CheckCircle2
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Goal } from '../../types';
+import { Goal, QuizAnswers } from '../../types';
+import { getDailyHabitTip } from '../../utils/tipSelector';
 
 interface HomeTabProps {
   activeGoal: Goal;
+  answers?: QuizAnswers;
   checklist?: {
     habitDone: boolean;
     anchorDone: boolean;
@@ -29,7 +35,7 @@ interface HomeTabProps {
   bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>;
   dismissedBubbleAlert: boolean;
   setDismissedBubbleAlert: (dismissed: boolean) => void;
-  motivationalQuote: string;
+  motivationalQuote?: string;
   hasConfiguredNotifications: boolean;
   anchorHabit?: string;
   setAnchorHabit?: (anchor: string) => void;
@@ -40,6 +46,7 @@ interface HomeTabProps {
 
 export default function HomeTab({
   activeGoal,
+  answers,
   hasLoggedToday,
   onLogSuccess,
   onResetLog,
@@ -55,6 +62,9 @@ export default function HomeTab({
   theme
 }: HomeTabProps) {
   const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
+  const [tipOffset, setTipOffset] = useState<number>(0);
+
+  const currentTip = getDailyHabitTip(activeGoal.category, answers, tipOffset);
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -267,21 +277,93 @@ export default function HomeTab({
         </div>
       )}
 
-      {/* Motivational Psychology Card (at the bottom of home screen) */}
-      <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-2 relative overflow-hidden transition-colors duration-200 ${
+      {/* Daily Habit Tip Card (Demographically Catered & Verified Source) */}
+      <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3 relative overflow-hidden transition-colors duration-200 ${
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}>
-        <div className="flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-[#0080FF]" />
-          <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D]">
-            Daily Motivation
-          </span>
+        {/* Card Header with Category & Shuffle */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <div className="w-6 h-6 rounded-full bg-[#0080FF]/15 flex items-center justify-center shrink-0">
+              <Lightbulb className="w-3.5 h-3.5 text-[#0080FF]" />
+            </div>
+            <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#0080FF] truncate">
+              Daily Tip
+            </span>
+            <span className={`text-[10px] font-sans font-medium px-2 py-0.5 rounded-full shrink-0 ${
+              theme === 'dark' ? 'bg-[#1F1F24] text-[#8E8E93]' : 'bg-[#F5F5F7] text-[#6C6C70]'
+            }`}>
+              {activeGoal.category}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setTipOffset((prev) => prev + 1)}
+            className={`p-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1 text-[11px] font-sans font-medium shrink-0 active:scale-95 ${
+              theme === 'dark'
+                ? 'text-[#8E8E93] hover:text-white hover:bg-[#1F1F24]'
+                : 'text-[#6C6C70] hover:text-[#1C1C1E] hover:bg-[#F5F5F7]'
+            }`}
+            title="Shuffle to another helpful tip"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-[#0080FF]" />
+            <span className="hidden sm:inline">Next Tip</span>
+          </button>
         </div>
-        <p className={`text-xs leading-relaxed font-sans italic ${
-          theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
+
+        {/* Tip Title & Actionable Advice */}
+        <div className="space-y-1">
+          <h5 className={`text-xs font-sans font-bold leading-snug ${
+            theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
+          }`}>
+            {currentTip.title}
+          </h5>
+          <p className={`text-xs leading-relaxed font-sans ${
+            theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+          }`}>
+            {currentTip.tip}
+          </p>
+        </div>
+
+        {/* Demographic Context Note */}
+        {currentTip.demographicInsight && (
+          <div className={`px-2.5 py-1.5 rounded-[8px] text-[11px] font-sans flex items-center gap-1.5 ${
+            theme === 'dark' ? 'bg-[#18181B] text-[#8E8E93]' : 'bg-[#F5F5F7] text-[#6C6C70]'
+          }`}>
+            <span className="text-xs">💡</span>
+            <span className="leading-tight">{currentTip.demographicInsight}</span>
+          </div>
+        )}
+
+        {/* Verified Source Direct Link */}
+        <div className={`pt-2 border-t flex items-center justify-between text-[11px] font-sans ${
+          theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
         }`}>
-          "{motivationalQuote}"
-        </p>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#34C759] shrink-0" />
+            <span className={`text-[10px] font-bold uppercase tracking-wider ${
+              theme === 'dark' ? 'text-[#34C759]' : 'text-[#248A3D]'
+            }`}>
+              Verified Source:
+            </span>
+            <span className={`truncate font-medium ${
+              theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+            }`}>
+              {currentTip.source.name}
+            </span>
+          </div>
+
+          <a
+            href={currentTip.source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0 pl-2"
+          >
+            <span>Visit</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
       </div>
     </div>
   );

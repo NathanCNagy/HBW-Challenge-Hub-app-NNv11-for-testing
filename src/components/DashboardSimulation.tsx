@@ -455,6 +455,7 @@ export default function DashboardSimulation({
         {activeTab === 'home' && (
           <HomeTab
             activeGoal={activeGoal}
+            answers={answers}
             checklist={checklist}
             onCheckItem={handleCheckItem}
             hasLoggedToday={hasLoggedToday}

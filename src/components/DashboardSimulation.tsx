@@ -76,7 +76,7 @@ export default function DashboardSimulation({
   const [anchorHabit, setAnchorHabit] = useState<string>('pouring my morning coffee');
 
   // Shared Bubble State for Ecosystem Tree (percentages for responsiveness)
-  const [bubbles, setBubbles] = useState<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }[]>([]);
+  const [bubbles, setBubbles] = useState<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[]>([]);
 
   // Category bubble types - each cloud is worth 1 task
   const bubbleTypesByCategory: Record<string, Array<{ type: string; label: string; value: number }>> = {
@@ -153,6 +153,9 @@ export default function DashboardSimulation({
     "Repeated actions shape your mind. You are building positive new habits today!"
   ];
 
+  // Track which task clouds have been popped (watered) today to support undoing cloud clicks
+  const [poppedTaskClouds, setPoppedTaskClouds] = useState<Record<string, boolean>>({});
+
   const handleCheckItem = (item: 'habitDone' | 'anchorDone' | 'reflectDone') => {
     const isChecking = !checklist[item];
     const updated = { ...checklist, [item]: isChecking };
@@ -162,67 +165,83 @@ export default function DashboardSimulation({
     const randomQuote = quotesList[Math.floor(Math.random() * quotesList.length)];
     setMotivationalQuote(randomQuote);
 
-    // Only auto-trigger completion for daily routines if all 3 are completed; for weekly, user explicitly taps log button
-    const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
-    if (!isWeekly && isChecking && updated.habitDone && updated.anchorDone && updated.reflectDone && !hasLoggedToday) {
-      handleLogSuccess();
+    if (isChecking) {
+      // 1. Mark as logged for today if not already
+      if (!hasLoggedToday) {
+        setHasLoggedToday(true);
+        setStreak((prev) => prev + 1);
+      }
+      setDismissedBubbleAlert(false);
+
+      // 2. Spawn an energy cloud for this specific task
+      const category = activeGoal.category;
+      const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Energy Cloud', value: 1 }];
+      const typeIndex = item === 'habitDone' ? 0 : item === 'anchorDone' ? 1 : 2;
+      const randomType = bubbleTypes[typeIndex % bubbleTypes.length];
+
+      setBubbles((prev) => {
+        // If this cloud already exists in bubbles, don't duplicate
+        if (prev.some((b) => b.taskId === item)) return prev;
+        return [
+          ...prev,
+          {
+            id: Date.now() + Math.floor(Math.random() * 1000),
+            cx: 20 + Math.random() * 60,
+            cy: 20 + Math.random() * 45,
+            value: 1,
+            type: randomType.type,
+            label: `${randomType.label} (Task Cloud)`,
+            isNew: true,
+            taskId: item
+          }
+        ];
+      });
+    } else {
+      // User unchecked this task (undoing mistake):
+      // If the cloud was already clicked to water the plant, undo that cloud click!
+      if (poppedTaskClouds[item]) {
+        setIndividualEnergy((prev) => Math.max(0, prev - 1));
+        setPoppedTaskClouds((prev) => ({ ...prev, [item]: false }));
+      } else {
+        // If the cloud wasn't clicked yet, remove it from the sky
+        setBubbles((prev) => prev.filter((b) => b.taskId !== item));
+      }
+
+      // If no tasks remain checked, revert today's logged status and streak
+      const remainingChecked = Object.values(updated).some(Boolean);
+      if (!remainingChecked) {
+        setHasLoggedToday(false);
+        setStreak((prev) => Math.max(0, prev - 1));
+      }
+    }
+  };
+
+  const handlePopCloud = (taskId?: string) => {
+    if (taskId) {
+      setPoppedTaskClouds((prev) => ({ ...prev, [taskId]: true }));
     }
   };
 
   const handleLogSuccess = () => {
-    if (hasLoggedToday) return;
-
-    const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
-
-    setStreak((prev) => prev + 1);
-    setIndividualEnergy((prev) => prev + 1); // +1 completed task
-    setHasLoggedToday(true);
-    setDismissedBubbleAlert(false);
-    setShowConfetti(true);
-
-    // For weekly checklist, preserve whatever habits have been checked off instead of forcing all 3
-    setChecklist((prev) => {
-      if (isWeekly) {
-        // If nothing was checked off yet, mark the primary habit as done
-        if (!prev.habitDone && !prev.anchorDone && !prev.reflectDone) {
-          return { ...prev, habitDone: true };
-        }
-        return prev;
-      }
-      return { habitDone: true, anchorDone: true, reflectDone: true };
-    });
-
-    // Spawn a glowing bubble immediately in the shared state
-    const category = activeGoal.category;
-    const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Energy Cloud', value: 1 }];
-    const randomType = bubbleTypes[Math.floor(Math.random() * bubbleTypes.length)];
-    
-    setBubbles(prev => {
-      if (prev.length >= 5) return prev; // cap at 5 bubbles
-      return [
-        ...prev,
-        {
-          id: Math.floor(Math.random() * 10000000) + 1000,
-          cx: 20 + Math.random() * 60,
-          cy: 20 + Math.random() * 50,
-          value: 1,
-          type: randomType.type,
-          label: `${randomType.label} (Bonus Cloud)`,
-          isNew: true
-        }
-      ];
-    });
-
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 3500);
+    if (!checklist.habitDone) {
+      handleCheckItem('habitDone');
+    }
   };
 
   const handleResetLog = () => {
-    setHasLoggedToday(false);
+    // Count how many task clouds were already popped to water the plant
+    const poppedCount = Object.values(poppedTaskClouds).filter(Boolean).length;
+    if (poppedCount > 0) {
+      setIndividualEnergy((prev) => Math.max(0, prev - poppedCount));
+    }
+    // Remove all task clouds from bubbles
+    setBubbles((prev) => prev.filter((b) => !b.taskId));
+    setPoppedTaskClouds({});
     setChecklist({ habitDone: false, anchorDone: false, reflectDone: false });
-    setIndividualEnergy((prev) => Math.max(0, prev - 1));
-    setStreak((prev) => Math.max(0, prev - 1));
+    if (hasLoggedToday) {
+      setStreak((prev) => Math.max(0, prev - 1));
+      setHasLoggedToday(false);
+    }
     setShowConfetti(false);
   };
 
@@ -376,8 +395,13 @@ export default function DashboardSimulation({
           aria-label="Return to Home Tab"
         >
           <HBWLogo variant="favicon" size="sm" className="h-7 w-7" theme={theme} />
-          <span className="font-['Poppins',sans-serif] font-extrabold text-[15px] tracking-[0.04em] uppercase text-[#1C1C1E] dark:text-white select-none">
-            H<span className="text-[#0080FF]">B</span>W
+          <span 
+            className={`font-['Poppins',sans-serif] font-extrabold text-[15px] tracking-[0.04em] uppercase select-none transition-colors duration-200 ${
+              theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
+            }`}
+            style={{ color: theme === 'dark' ? '#FFFFFF' : '#1C1C1E' }}
+          >
+            H<span className="text-[#0080FF]" style={{ color: '#0080FF' }}>B</span>W
           </span>
         </button>
 
@@ -486,6 +510,7 @@ export default function DashboardSimulation({
             onResetLog={handleResetLog}
             bubbles={bubbles}
             setBubbles={setBubbles}
+            onPopCloud={handlePopCloud}
             checklist={checklist}
             onCheckItem={handleCheckItem}
             anchorHabit={anchorHabit}

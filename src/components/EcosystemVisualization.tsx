@@ -11,8 +11,9 @@ interface EcosystemVisualizationProps {
   hasLoggedToday: boolean;
   onLogToday: () => void;
   goalTitle: string;
-  bubbles: { id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }[];
-  setBubbles: React.Dispatch<React.SetStateAction<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }[]>>;
+  bubbles: { id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[];
+  setBubbles: React.Dispatch<React.SetStateAction<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[]>>;
+  onPopCloud?: (taskId?: string) => void;
   theme?: 'dark' | 'light';
   children?: React.ReactNode;
   isWeekly?: boolean;
@@ -44,6 +45,7 @@ export default function EcosystemVisualization({
   goalTitle,
   bubbles,
   setBubbles,
+  onPopCloud,
   theme = 'light',
   children,
   isWeekly = false
@@ -91,9 +93,13 @@ export default function EcosystemVisualization({
   const canopyH = Math.min(62, Math.round(22 + progressRatio * 40));
 
   const handlePopBubble = (id: number, value: number, cx: number, cy: number) => {
+    const poppedBubble = bubbles.find(b => b.id === id);
     const increment = value || 1;
     setIndividualEnergy(prev => prev + increment);
     setBubbles(prev => prev.filter(b => b.id !== id));
+    if (poppedBubble?.taskId && onPopCloud) {
+      onPopCloud(poppedBubble.taskId);
+    }
 
     // Generate cheerful hydration rainfall drops originating from cloud position down to the tree
     const newRaindrops = Array.from({ length: 16 }).map((_, i) => ({

@@ -16,8 +16,9 @@ interface ProgressTabProps {
   hasLoggedToday: boolean;
   onLogSuccess: () => void;
   onResetLog?: () => void;
-  bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>;
-  setBubbles: React.Dispatch<React.SetStateAction<Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>>>;
+  bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }>;
+  setBubbles: React.Dispatch<React.SetStateAction<Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }>>>;
+  onPopCloud?: (taskId?: string) => void;
   checklist?: {
     habitDone: boolean;
     anchorDone: boolean;
@@ -47,17 +48,19 @@ export default function ProgressTab({
   onResetLog,
   bubbles,
   setBubbles,
+  onPopCloud,
   checklist,
   onCheckItem,
   anchorHabit,
   theme
 }: ProgressTabProps) {
   const checklistState = checklist || {
-    habitDone: hasLoggedToday,
-    anchorDone: hasLoggedToday,
-    reflectDone: hasLoggedToday
+    habitDone: false,
+    anchorDone: false,
+    reflectDone: false
   };
 
+  const checkedCount = (checklistState.habitDone ? 1 : 0) + (checklistState.anchorDone ? 1 : 0) + (checklistState.reflectDone ? 1 : 0);
   const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
 
   return (
@@ -72,6 +75,7 @@ export default function ProgressTab({
         goalTitle={activeGoal.title}
         bubbles={bubbles}
         setBubbles={setBubbles}
+        onPopCloud={onPopCloud}
         theme={theme}
         isWeekly={isWeekly}
       >
@@ -179,41 +183,35 @@ export default function ProgressTab({
             </button>
           </div>
 
-          {/* Log Button */}
-          <button
-            onClick={onLogSuccess}
-            disabled={hasLoggedToday}
-            className={`h-[50px] w-full rounded-full font-sans font-semibold text-[14px] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs ${
-              hasLoggedToday
-                ? theme === 'dark' ? 'bg-[#1F1F24] text-[#8E8E93] cursor-not-allowed' : 'bg-[#E5E5EA] text-[#8E8E93] cursor-not-allowed'
-                : 'bg-[#0080FF] hover:bg-[#0066CC] text-white active:scale-[0.99]'
-            }`}
-          >
-            {hasLoggedToday ? (
-              <>
-                <CheckCircle className="w-4 h-4 text-[#8E8E93]" />
-                <span>{isWeekly ? 'Logged for This Week' : 'Logged for Today'}</span>
-              </>
-            ) : (
-              <>
-                <Calendar className="w-4 h-4" />
-                <span>{isWeekly ? 'Log Weekly Habit' : "Log Today's Habit"}</span>
-              </>
-            )}
-          </button>
-
-          {/* User Control & Freedom: Option to edit / reset check-in */}
-          {hasLoggedToday && onResetLog && (
-            <div className="flex justify-center -mt-1 pt-0.5">
-              <button
-                type="button"
-                onClick={onResetLog}
-                className={`text-[11px] font-sans font-medium hover:underline cursor-pointer transition-colors ${
-                  theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
-                }`}
-              >
-                Made a mistake? Edit check-in
-              </button>
+          {/* Real-time Cloud Status & Undo Control */}
+          {checkedCount > 0 ? (
+            <div className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-colors ${
+              theme === 'dark' ? 'bg-[#18181B] border-[#2C2C2E]' : 'bg-[#F5F5F7] border-[#E5E5EA]'
+            }`}>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-base shrink-0">🌧️</span>
+                <span className={`font-sans font-medium truncate ${theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'}`}>
+                  {checkedCount} {checkedCount === 1 ? 'task' : 'tasks'} checked! Click the cloud above to water plant 💧
+                </span>
+              </div>
+              {onResetLog && (
+                <button
+                  type="button"
+                  onClick={onResetLog}
+                  className={`text-[11px] font-sans font-semibold hover:underline cursor-pointer shrink-0 ml-2 ${
+                    theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
+                  }`}
+                  title="Made a mistake? Undo today's tasks and cloud progress"
+                >
+                  Made a mistake? Undo
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className={`py-2 px-3 rounded-xl text-center text-[11px] font-sans transition-colors ${
+              theme === 'dark' ? 'text-[#8E8E93] bg-[#161618]' : 'text-[#6C6C70] bg-[#F5F5F7]'
+            }`}>
+              Check off any task above to unlock a cloud, then click the cloud to water your tree!
             </div>
           )}
         </div>

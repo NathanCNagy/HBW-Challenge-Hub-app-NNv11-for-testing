@@ -32,7 +32,7 @@ interface HomeTabProps {
   hasLoggedToday: boolean;
   onLogSuccess?: () => void;
   onResetLog?: () => void;
-  bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean }>;
+  bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }>;
   dismissedBubbleAlert: boolean;
   setDismissedBubbleAlert: (dismissed: boolean) => void;
   motivationalQuote?: string;
@@ -47,6 +47,7 @@ interface HomeTabProps {
 export default function HomeTab({
   activeGoal,
   answers,
+  checklist,
   hasLoggedToday,
   onLogSuccess,
   onResetLog,
@@ -64,6 +65,7 @@ export default function HomeTab({
   const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
   const [tipOffset, setTipOffset] = useState<number>(0);
 
+  const checkedCount = (checklist?.habitDone ? 1 : 0) + (checklist?.anchorDone ? 1 : 0) + (checklist?.reflectDone ? 1 : 0);
   const currentTip = getDailyHabitTip(activeGoal.category, answers, tipOffset);
 
   return (
@@ -116,15 +118,26 @@ export default function HomeTab({
           </div>
         </div>
 
-        {/* Habit Quick Logging Action */}
-        {!hasLoggedToday ? (
-          <button
-            onClick={() => onLogSuccess && onLogSuccess()}
-            className="h-[44px] w-full px-4 rounded-full font-sans font-semibold text-xs sm:text-[13px] bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+        {/* Habit Real-time Task Status & Cloud Navigation */}
+        {checkedCount === 0 ? (
+          <div 
+            onClick={() => onNavigateToTab('progress')}
+            className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between border cursor-pointer group ${
+              theme === 'dark'
+                ? 'bg-[#18181B] border-[#2C2C2E] hover:border-[#0080FF]/50 text-[#98989D]'
+                : 'bg-[#F5F5F7] border-[#E5E5EA] hover:border-[#0080FF]/50 text-[#6C6C70]'
+            }`}
           >
-            <CheckCircle className="w-4 h-4 text-white shrink-0" />
-            <span>{isWeekly ? 'Log Habit for This Week (+1 Task)' : 'Log Habit for Today (+1 Task)'}</span>
-          </button>
+            <div className="flex items-center gap-2 truncate">
+              <span className="text-sm">🌿</span>
+              <span className="truncate">
+                Check off tasks in Progress to unlock clouds & water plant
+              </span>
+            </div>
+            <span className="text-[#0080FF] font-semibold text-xs flex items-center gap-1 group-hover:translate-x-0.5 transition-transform shrink-0">
+              Open &rarr;
+            </span>
+          </div>
         ) : (
           <div className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between border ${
             theme === 'dark'
@@ -133,7 +146,11 @@ export default function HomeTab({
           }`}>
             <div className="flex items-center gap-2 truncate pl-1">
               <CheckCircle className="w-4 h-4 text-[#34C759] shrink-0" />
-              <span className="truncate font-semibold">{isWeekly ? 'Logged for This Week!' : 'Logged for Today!'}</span>
+              <span className="truncate font-semibold">
+                {isWeekly
+                  ? `${checkedCount} of 3 Tasks Checked This Week!`
+                  : `${checkedCount} of 3 Tasks Checked Today!`}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               {onResetLog && (
@@ -143,16 +160,16 @@ export default function HomeTab({
                   className={`text-[11px] font-sans font-medium hover:underline cursor-pointer ${
                     theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
                   }`}
-                  title="Edit or undo today's check-in"
+                  title="Made a mistake? Undo today's tasks"
                 >
-                  Edit
+                  Made a mistake?
                 </button>
               )}
               <button
                 onClick={() => onNavigateToTab('progress')}
                 className="text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0 pr-1"
               >
-                View &rarr;
+                Water Plant &rarr;
               </button>
             </div>
           </div>

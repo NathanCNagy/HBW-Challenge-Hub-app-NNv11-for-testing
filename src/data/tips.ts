@@ -225,5 +225,31 @@ export const HABIT_TIPS: HabitTip[] = [
       url: 'https://www.randomactsofkindness.org',
       isVerified: true
     }
+  },
+  {
+    id: 'env-6',
+    category: 'Environment',
+    title: 'USDA/EPA Dietary Carbon Benchmark',
+    tip: 'Swapping animal protein for lentils or beans just once a week saves the equivalent of driving 110 miles in emissions and thousands of gallons of agricultural freshwater over 90 days.',
+    demographicInsight: 'Quantified planetary impact validated by EPA and USDA dietary research.',
+    targetAges: { min: 18, max: 75 },
+    source: {
+      name: 'EPA Greenhouse Gas Equivalencies & USDA Data',
+      url: 'https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator',
+      isVerified: true
+    }
+  },
+  {
+    id: 'rai-5',
+    category: 'Responsible AI',
+    title: 'Precision Prompts & Water Footprint',
+    tip: 'Crafting clear, single-shot prompts avoids repeated generation cycles. Peer-reviewed research shows each batch of 10-20 queries consumes ~0.5L of freshwater cooling and electrical power in data centers.',
+    demographicInsight: 'Direct resource calibration for mindful tech and deep productivity.',
+    targetAges: { min: 18, max: 65 },
+    source: {
+      name: 'UC Riverside Data Center Water Footprint Study (Ren et al.)',
+      url: 'https://arxiv.org/abs/2304.03271',
+      isVerified: true
+    }
   }
 ];

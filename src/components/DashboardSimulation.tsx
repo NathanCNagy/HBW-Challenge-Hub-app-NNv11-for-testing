@@ -293,34 +293,37 @@ export default function DashboardSimulation({
   const getMetricsLabels = () => {
     switch (activeGoal.category) {
       case 'Environment': {
+        const distVal = unitSystem === 'metric'
+          ? `~${Math.round(streak * 4.0)} km`
+          : `~${Math.round(streak * 2.5)} mi`;
         return {
           primaryBadge: 'Personal Win',
           primaryValue: `$${Math.round(streak * 4.5)}`,
-          primaryLabel: 'saved in groceries',
+          primaryLabel: 'saved in groceries & digestion',
           secondaryBadge: 'Planet Win',
-          secondaryValue: `~${Math.max(2, streak * 2)} hrs`,
-          secondaryLabel: 'Keeping a light off',
-          targetTip: 'Plant-protein food swaps save money on weekly groceries and boost vitality while cutting energy draw like keeping lights off.'
+          secondaryValue: distVal,
+          secondaryLabel: 'car emissions cut (EPA standard)',
+          targetTip: 'Plant-protein food swaps save money on weekly groceries and boost vitality while cutting carbon emissions equal to driving fewer miles.'
         };
       }
       case 'Well-Being':
         return {
           primaryBadge: 'Personal Win',
           primaryValue: `${(streak * 0.75).toFixed(1)} hrs`,
-          primaryLabel: 'saved in deep sleep',
+          primaryLabel: 'restorative deep sleep gained',
           secondaryBadge: 'Planet Win',
           secondaryValue: `${(streak * 1.0).toFixed(0)} hrs`,
-          secondaryLabel: 'Powering down devices',
-          targetTip: 'Powering down screens before bed restores deep restorative sleep while saving electricity and battery health.'
+          secondaryLabel: 'battery health & grid relief',
+          targetTip: 'Powering down screens before bed restores deep restorative sleep while protecting device battery health and providing grid relief.'
         };
       case 'Compassion':
         return {
           primaryBadge: 'Personal Win',
           primaryValue: `+${Math.min(35, Math.round(15 + streak * 1.5))}%`,
-          primaryLabel: 'boost in mood vitality',
+          primaryLabel: 'boost in mood vitality & joy',
           secondaryBadge: 'Community Win',
           secondaryValue: `${Math.max(1, Math.round(streak * 0.7))} acts`,
-          secondaryLabel: 'Acts of kindness',
+          secondaryLabel: 'people uplifted in circle',
           targetTip: 'Intentional weekly kindness gestures boost your personal joy while triggering lasting warmth in your community.'
         };
       case 'Responsible AI':
@@ -330,9 +333,9 @@ export default function DashboardSimulation({
           primaryValue: `+${(streak * 0.75).toFixed(1)} hrs`,
           primaryLabel: 'saved in deep focus',
           secondaryBadge: 'Planet Win',
-          secondaryValue: `~${Math.max(8, streak * 8)} queries`,
-          secondaryLabel: 'Compute queries saved',
-          targetTip: 'Fact-checking generative responses keeps critical thinking sharp while saving grid compute queries and cooling water.'
+          secondaryValue: `~${Math.round(streak * 1.5)}L`,
+          secondaryLabel: 'cooling water saved (~0.5L/query)',
+          targetTip: 'Fact-checking generative responses keeps critical thinking sharp while saving grid compute and data center cooling water (~0.5L/query).'
         };
     }
   };

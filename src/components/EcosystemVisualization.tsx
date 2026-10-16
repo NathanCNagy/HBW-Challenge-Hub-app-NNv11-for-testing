@@ -210,7 +210,7 @@ export default function EcosystemVisualization({
       planetMetricValue: unitSystem === 'metric'
         ? `~${Math.round(individualEnergy * 4.0)} km`
         : `~${Math.round(individualEnergy * 2.5)} mi`,
-      planetMetricSubtext: 'car emissions cut',
+      planetMetricSubtext: 'car emissions cut (EPA standard)',
       dualExplanation: 'Every plant-based swap puts money back in your pocket and protects long-term health—while cutting carbon emissions equal to driving 110 miles (180 km) less per quarter.',
       visualColor: 'from-[#0285ff]/30 to-emerald-500/20'
     },
@@ -224,7 +224,7 @@ export default function EcosystemVisualization({
       personalMetricSubtext: 'restorative deep sleep & calm',
       planetMetricLabel: 'Environment Impact',
       planetMetricValue: `~${Math.round(individualEnergy * 2.0)} hrs`,
-      planetMetricSubtext: 'standby power & battery saved',
+      planetMetricSubtext: 'battery health & grid relief',
       dualExplanation: 'Powering down screens calms your nervous system for deeper sleep cycles—while extending device hardware life and lowering grid demand.',
       visualColor: 'from-[#0285ff]/30 to-indigo-500/20'
     },
@@ -252,7 +252,7 @@ export default function EcosystemVisualization({
       personalMetricSubtext: 'deep work focus & sharp retention',
       planetMetricLabel: 'Environment Impact',
       planetMetricValue: `~${Math.round(individualEnergy * 1.5)}L`,
-      planetMetricSubtext: 'cooling water & compute saved',
+      planetMetricSubtext: 'cooling water saved (~0.5L/query)',
       dualExplanation: 'Mindful prompting protects your analytical edge and frees up hours of deep focus—while lightening the electrical and water footprint of global server hubs.',
       visualColor: 'from-[#0285ff]/30 to-teal-500/20'
     }

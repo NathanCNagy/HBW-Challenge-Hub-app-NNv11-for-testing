@@ -367,8 +367,26 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
           </AnimatePresence>
         </div>
 
+        {/* If-Then Action Cue trigger to prime habit loop */}
+        {activeGoal.actionCue && (
+          <div className={`p-2.5 rounded-xl border text-center z-10 transition-colors ${
+            isDark ? 'bg-[#0A0A0C]/80 border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
+          }`}>
+            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-0.5 ${
+              isDark ? 'text-[#0080FF]' : 'text-[#0066CC]'
+            }`}>
+              Action Cue (If-Then Trigger)
+            </span>
+            <p className={`text-xs font-sans italic leading-tight ${
+              isDark ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'
+            }`}>
+              &ldquo;{activeGoal.actionCue}&rdquo;
+            </p>
+          </div>
+        )}
+
         {/* Commitment Action */}
-        <div className="z-10 pt-2 shrink-0 flex justify-center w-full">
+        <div className="z-10 pt-1 shrink-0 flex justify-center w-full">
           <button
             id="commit-challenge-btn"
             onClick={handleFinalCommit}

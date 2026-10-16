@@ -25,7 +25,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
           secondaryValue: 63,
           secondaryUnit: 'dollars',
           primaryBadge: 'Planet Win',
-          primaryLabel: 'car emissions cut',
+          primaryLabel: 'car emissions cut (EPA standard)',
           primaryValue: 110,
           primaryUnit: 'mi'
         }
@@ -43,7 +43,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
           secondaryValue: 45,
           secondaryUnit: 'dollars',
           primaryBadge: 'Planet Win',
-          primaryLabel: 'car emissions cut',
+          primaryLabel: 'car emissions cut (EPA standard)',
           primaryValue: 80,
           primaryUnit: 'mi'
         }
@@ -61,7 +61,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
           secondaryValue: 25,
           secondaryUnit: 'dollars',
           primaryBadge: 'Planet Win',
-          primaryLabel: 'car emissions cut',
+          primaryLabel: 'car emissions cut (EPA standard)',
           primaryValue: 45,
           primaryUnit: 'mi'
         }

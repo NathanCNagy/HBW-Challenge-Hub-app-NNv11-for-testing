@@ -52,13 +52,13 @@ export default function RealScreenRenderer({ screenId, theme }: RealScreenRender
   };
 
   const sampleMetrics = {
-    primaryBadge: 'Planet Win',
-    primaryValue: isUS ? '71.4 mi' : '114.9 km',
-    primaryLabel: 'Emissions Avoided',
-    secondaryBadge: 'Personal Win',
-    secondaryValue: '$32.60',
-    secondaryLabel: 'Grocery Money Saved',
-    targetTip: 'Plant proteins have 10x-50x lower emissions than industrial livestock.'
+    primaryBadge: 'Personal Win',
+    primaryValue: '$32.60',
+    primaryLabel: 'Grocery Money Saved',
+    secondaryBadge: 'Planet Win',
+    secondaryValue: isUS ? '71.4 mi' : '114.9 km',
+    secondaryLabel: 'Emissions Avoided',
+    targetTip: 'Plant proteins save grocery money and improve digestion while lowering emissions 10x-50x compared to livestock.'
   };
 
   switch (screenId) {

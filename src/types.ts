@@ -53,6 +53,8 @@ export interface Goal {
   implementationOptions: ImplementationOption[];
   selectedOption?: ImplementationOption;
   demographicInsight?: string;
+  actionCue?: string;
+  dualWinNarrative?: string;
 }
 
 export interface HabitTrigger {

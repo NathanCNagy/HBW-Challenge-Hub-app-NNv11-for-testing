@@ -116,6 +116,13 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
                 {activeGoal.action}
               </p>
             )}
+            {activeGoal.actionCue && (
+              <p className={`text-[11px] sm:text-xs font-sans max-w-md mx-auto italic leading-normal pt-0.5 ${
+                isDark ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
+              }`}>
+                &ldquo;{activeGoal.actionCue}&rdquo;
+              </p>
+            )}
           </div>
         </div>
 
@@ -304,38 +311,21 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
               transition={{ duration: 0.15 }}
               className="grid grid-cols-2 gap-2.5 sm:gap-3"
             >
-              {/* Primary Metric: Planetary / Community */}
+              {/* Reordered: Personal Impact (Left side / First), Planet Impact (Right side / Second) */}
               {(() => {
-                const primaryMetric = formatImpactMetric(
-                  selectedOption.metrics.primaryUnit,
-                  selectedOption.metrics.primaryValue,
-                  unitSystem
-                );
-                const secondaryMetric = formatImpactMetric(
+                const personalMetric = formatImpactMetric(
                   selectedOption.metrics.secondaryUnit,
                   selectedOption.metrics.secondaryValue,
                   unitSystem
                 );
+                const planetMetric = formatImpactMetric(
+                  selectedOption.metrics.primaryUnit,
+                  selectedOption.metrics.primaryValue,
+                  unitSystem
+                );
                 return (
                   <>
-                    <div className={`py-4 px-3 sm:py-4.5 sm:px-4 rounded-[16px] text-center border flex flex-col justify-center items-center min-w-0 transition-all ${
-                      isDark ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
-                    }`}>
-                      <div className="w-full space-y-1">
-                        <span className={`text-lg sm:text-xl font-mono font-bold tracking-tight block w-full whitespace-nowrap overflow-hidden text-ellipsis ${
-                          isDark ? 'text-[#0080FF]' : 'text-[#0066CC]'
-                        }`}>
-                          {primaryMetric.display}
-                        </span>
-                        <span className={`text-[11px] sm:text-xs font-sans block leading-tight text-center ${
-                          isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                        }`}>
-                          {selectedOption.metrics.primaryLabel}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Secondary Metric: Personal */}
+                    {/* Left Column (First): Personal Advantage Metric */}
                     <div className={`py-4 px-3 sm:py-4.5 sm:px-4 rounded-[16px] text-center border flex flex-col justify-center items-center min-w-0 transition-all ${
                       isDark ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
                     }`}>
@@ -343,12 +333,30 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
                         <span className={`text-lg sm:text-xl font-mono font-bold tracking-tight block w-full whitespace-nowrap overflow-hidden text-ellipsis ${
                           isDark ? 'text-emerald-400' : 'text-emerald-700'
                         }`}>
-                          {secondaryMetric.display}
+                          {personalMetric.display}
                         </span>
                         <span className={`text-[11px] sm:text-xs font-sans block leading-tight text-center ${
                           isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
                         }`}>
                           {selectedOption.metrics.secondaryLabel}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right Column (Second): Planet / Community Impact Metric */}
+                    <div className={`py-4 px-3 sm:py-4.5 sm:px-4 rounded-[16px] text-center border flex flex-col justify-center items-center min-w-0 transition-all ${
+                      isDark ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                    }`}>
+                      <div className="w-full space-y-1">
+                        <span className={`text-lg sm:text-xl font-mono font-bold tracking-tight block w-full whitespace-nowrap overflow-hidden text-ellipsis ${
+                          isDark ? 'text-[#0080FF]' : 'text-[#0066CC]'
+                        }`}>
+                          {planetMetric.display}
+                        </span>
+                        <span className={`text-[11px] sm:text-xs font-sans block leading-tight text-center ${
+                          isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                        }`}>
+                          {selectedOption.metrics.primaryLabel}
                         </span>
                       </div>
                     </div>

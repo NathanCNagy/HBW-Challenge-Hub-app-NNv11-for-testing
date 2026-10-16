@@ -27,10 +27,10 @@ interface TaskMilestone {
 }
 
 const TASK_MILESTONES: TaskMilestone[] = [
-  { targetTasks: 10, prevTasks: 0, label: '10 Tasks Sprout', stageName: 'Sprout' },
-  { targetTasks: 25, prevTasks: 10, label: '25 Tasks Sapling', stageName: 'Sapling' },
+  { targetTasks: 25, prevTasks: 0, label: '25 Tasks Sapling', stageName: 'Sapling' },
   { targetTasks: 50, prevTasks: 25, label: '50 Tasks Canopy', stageName: 'Canopy' },
-  { targetTasks: 100, prevTasks: 50, label: '100 Tasks Bloom', stageName: 'Full Bloom' }
+  { targetTasks: 100, prevTasks: 50, label: '100 Tasks Full Bloom', stageName: 'Full Bloom' },
+  { targetTasks: 100, prevTasks: 100, label: '100+ Tasks Mastery', stageName: 'Full Bloom (Mastery)' }
 ];
 
 const DAILY_TASKS_TARGET = 4; // 3 daily clouds + 1 daily habit log = 4 tasks / day
@@ -130,56 +130,60 @@ export default function EcosystemVisualization({
     switch (cat) {
       case 'Environment': {
         const dollarsSaved = Math.round(tasks * 4.5);
-        const lightHours = Math.max(2, tasks * 2);
+        const distVal = unit === 'imperial'
+          ? Math.round(tasks * 2.5) // ~110 miles per 45 tasks
+          : Math.round(tasks * 4.0); // ~180 km per 45 tasks
+        const distUnit = unit === 'imperial' ? 'mi' : 'km';
         const co2Val = unit === 'imperial'
           ? `${Math.round(tasks * 5.2)} lbs CO2 avoided`
           : `${(tasks * 2.4).toFixed(1)} kg CO2 avoided`;
         return {
-          headline: `~${lightHours} hrs lights off & $${dollarsSaved} saved in groceries`,
-          tangibleShort: `${lightHours} hrs lights off`,
-          metric1Label: 'ENVIRONMENT IMPACT',
-          metric1Value: `~${lightHours} hrs lights off`,
-          metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `$${dollarsSaved}`,
-          context: `Each completed task cuts energy like keeping lights off for 2 hours while saving ~$4.50 on groceries and reducing heart risk (${co2Val}).`
+          headline: `$${dollarsSaved} saved on groceries & ~${distVal} ${distUnit} emissions avoided`,
+          tangibleShort: `$${dollarsSaved} saved`,
+          metric1Label: 'PERSONAL ADVANTAGE',
+          metric1Value: `$${dollarsSaved}`,
+          metric2Label: 'ENVIRONMENT IMPACT',
+          metric2Value: `~${distVal} ${distUnit}`,
+          context: `Every plant-based swap puts money back in your pocket and protects long-term cardiovascular health—while cutting carbon emissions equal to driving ${distVal} ${distUnit} less (${co2Val}).`
         };
       }
       case 'Well-Being': {
-        const sleepHours = Math.round(tasks * 2.5);
-        const gridHours = Math.max(2, Math.round(tasks * 1.5));
+        const sleepHours = Math.round(tasks * 1.5);
+        const standbyHours = Math.round(tasks * 2.0);
         return {
-          headline: `~${gridHours} hrs grid saved & +${sleepHours} hrs deep sleep`,
-          tangibleShort: `~${gridHours} hrs grid saved`,
-          metric1Label: 'ENVIRONMENT IMPACT',
-          metric1Value: `~${gridHours} hrs grid saved`,
-          metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `+${sleepHours} hrs`,
-          context: 'Powering down screens saves grid electricity while restoring deep restorative sleep cycles.'
+          headline: `+${sleepHours} hrs deep sleep & ${standbyHours} hrs standby power saved`,
+          tangibleShort: `+${sleepHours} hrs sleep`,
+          metric1Label: 'PERSONAL ADVANTAGE',
+          metric1Value: `+${sleepHours} hrs`,
+          metric2Label: 'ENVIRONMENT IMPACT',
+          metric2Value: `~${standbyHours} hrs`,
+          context: 'Powering down screens calms your nervous system for deeper sleep cycles—while extending device hardware life and lowering grid demand.'
         };
       }
       case 'Compassion': {
+        const moodLift = Math.min(35, Math.round(15 + tasks * 0.5));
         return {
-          headline: `${tasks} acts of kindness & +35% mood lift`,
-          tangibleShort: `${tasks} kindness acts`,
-          metric1Label: 'COMMUNITY IMPACT',
-          metric1Value: `${tasks} neighbor acts`,
-          metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `+35%`,
-          context: 'Intentional acts of connection strengthen community support and elevate daily emotional resilience.'
+          headline: `+${moodLift}% mood lift & ${tasks} neighbors touched`,
+          tangibleShort: `+${moodLift}% mood`,
+          metric1Label: 'PERSONAL ADVANTAGE',
+          metric1Value: `+${moodLift}%`,
+          metric2Label: 'COMMUNITY IMPACT',
+          metric2Value: `${tasks} acts`,
+          context: 'Expressing appreciation releases feel-good neurochemistry that builds personal resilience while weaving a more connected, resilient community.'
         };
       }
       case 'Responsible AI':
       default: {
-        const queriesSaved = Math.max(8, tasks * 8);
-        const focusHours = (tasks * 0.75).toFixed(1);
+        const focusHours = (tasks * 0.25).toFixed(1);
+        const waterLiters = Math.round(tasks * 1.5); // ~0.5L water & cooling compute per query/task
         return {
-          headline: `${queriesSaved} queries saved & +${focusHours} hrs deep focus`,
-          tangibleShort: `${queriesSaved} queries saved`,
-          metric1Label: 'ENVIRONMENT IMPACT',
-          metric1Value: `${queriesSaved} queries saved`,
-          metric2Label: 'PERSONAL ADVANTAGE',
-          metric2Value: `+${focusHours} hrs`,
-          context: 'Mindful computing eliminates wasted datacenter power and protects cognitive stamina.'
+          headline: `+${focusHours} hrs deep focus & ~${waterLiters}L cooling water saved`,
+          tangibleShort: `+${focusHours} hrs focus`,
+          metric1Label: 'PERSONAL ADVANTAGE',
+          metric1Value: `+${focusHours} hrs`,
+          metric2Label: 'ENVIRONMENT IMPACT',
+          metric2Value: `~${waterLiters}L`,
+          context: 'Mindful prompting protects your analytical edge and frees up hours of deep focus—while lightening the electrical and water footprint of global server hubs.'
         };
       }
     }
@@ -199,13 +203,15 @@ export default function EcosystemVisualization({
       subgroup: 'Environmental Challenge Group',
       activeMembers: '24,198',
       collectiveTasks: 76240 + individualEnergy,
-      planetMetricLabel: 'Environment Impact',
-      planetMetricValue: `~${Math.max(2, individualEnergy * 2)} hrs`,
-      planetMetricSubtext: 'Keeping a light off',
       personalMetricLabel: 'Personal Advantage',
       personalMetricValue: `$${Math.round(individualEnergy * 4.5)}`,
-      personalMetricSubtext: 'saved in groceries',
-      dualExplanation: 'Every habit you log cuts environmental draw—like keeping household lights off for 2 hours—while trimming ~$4.50 from your grocery expenses and lowering cardiovascular risk.',
+      personalMetricSubtext: 'saved on groceries & digestion',
+      planetMetricLabel: 'Environment Impact',
+      planetMetricValue: unitSystem === 'metric'
+        ? `~${Math.round(individualEnergy * 4.0)} km`
+        : `~${Math.round(individualEnergy * 2.5)} mi`,
+      planetMetricSubtext: 'car emissions cut',
+      dualExplanation: 'Every plant-based swap puts money back in your pocket and protects long-term health—while cutting carbon emissions equal to driving 110 miles (180 km) less per quarter.',
       visualColor: 'from-[#0285ff]/30 to-emerald-500/20'
     },
     'Well-Being': {
@@ -213,13 +219,13 @@ export default function EcosystemVisualization({
       subgroup: 'Well-Being Challenge Group',
       activeMembers: '18,402',
       collectiveTasks: 34120 + individualEnergy,
-      planetMetricLabel: 'Environment Impact',
-      planetMetricValue: `~${Math.max(2, Math.round(individualEnergy * 1.5))} hrs`,
-      planetMetricSubtext: 'Powering down devices',
       personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `+${Math.round(individualEnergy * 2.5)} hrs`,
-      personalMetricSubtext: 'saved in deep sleep',
-      dualExplanation: 'Powering down devices saves grid electricity while giving you deeper, restorative sleep cycles and lowering chronic stress.',
+      personalMetricValue: `+${Math.round(individualEnergy * 1.5)} hrs`,
+      personalMetricSubtext: 'restorative deep sleep & calm',
+      planetMetricLabel: 'Environment Impact',
+      planetMetricValue: `~${Math.round(individualEnergy * 2.0)} hrs`,
+      planetMetricSubtext: 'standby power & battery saved',
+      dualExplanation: 'Powering down screens calms your nervous system for deeper sleep cycles—while extending device hardware life and lowering grid demand.',
       visualColor: 'from-[#0285ff]/30 to-indigo-500/20'
     },
     'Compassion': {
@@ -227,13 +233,13 @@ export default function EcosystemVisualization({
       subgroup: 'Kindness Challenge Group',
       activeMembers: '15,221',
       collectiveTasks: 18230 + individualEnergy,
+      personalMetricLabel: 'Personal Advantage',
+      personalMetricValue: `+${Math.min(35, Math.round(15 + individualEnergy * 0.5))}%`,
+      personalMetricSubtext: 'boost in mood vitality & joy',
       planetMetricLabel: 'Community Impact',
       planetMetricValue: `${individualEnergy} acts`,
-      planetMetricSubtext: 'Acts of kindness',
-      personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `+35%`,
-      personalMetricSubtext: 'lift in mood vitality',
-      dualExplanation: 'Connecting with neighbors strengthens community solidarity while boosting your own mood and emotional resilience.',
+      planetMetricSubtext: 'people uplifted in circle',
+      dualExplanation: 'Expressing appreciation releases feel-good neurochemistry that builds personal resilience while weaving a more connected, resilient community.',
       visualColor: 'from-[#0285ff]/30 to-pink-500/20'
     },
     'Responsible AI': {
@@ -241,13 +247,13 @@ export default function EcosystemVisualization({
       subgroup: 'Mindful AI Challenge Group',
       activeMembers: '9,812',
       collectiveTasks: 9840 + individualEnergy,
-      planetMetricLabel: 'Environment Impact',
-      planetMetricValue: `~${Math.max(8, individualEnergy * 8)} queries`,
-      planetMetricSubtext: 'Compute energy saved',
       personalMetricLabel: 'Personal Advantage',
-      personalMetricValue: `+${(individualEnergy * 0.75).toFixed(1)} hrs`,
-      personalMetricSubtext: 'saved in deep focus',
-      dualExplanation: 'Mindful computing prevents datacenter power spikes while freeing up hours of deep focus for your own projects.',
+      personalMetricValue: `+${(individualEnergy * 0.25).toFixed(1)} hrs`,
+      personalMetricSubtext: 'deep work focus & sharp retention',
+      planetMetricLabel: 'Environment Impact',
+      planetMetricValue: `~${Math.round(individualEnergy * 1.5)}L`,
+      planetMetricSubtext: 'cooling water & compute saved',
+      dualExplanation: 'Mindful prompting protects your analytical edge and frees up hours of deep focus—while lightening the electrical and water footprint of global server hubs.',
       visualColor: 'from-[#0285ff]/30 to-teal-500/20'
     }
   }[category];
@@ -933,25 +939,7 @@ export default function EcosystemVisualization({
         </p>
 
         <div className="grid grid-cols-2 gap-3 pt-1">
-          {/* Square 1 (Left): Environment Impact Metric */}
-          <div className={`py-4 px-3 sm:py-5 sm:px-4 rounded-[18px] text-center border flex flex-col justify-center items-center min-w-0 transition-all shadow-2xs ${
-            theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
-          }`}>
-            <div className="w-full space-y-1.5 flex flex-col items-center justify-center">
-              <span className={`text-xl sm:text-2xl font-mono font-bold tracking-tight block w-full text-center ${
-                theme === 'dark' ? 'text-[#0080FF]' : 'text-[#0066CC]'
-              }`}>
-                {groupStats.planetMetricValue}
-              </span>
-              <span className={`text-xs sm:text-[13px] font-sans block leading-snug text-center max-w-[130px] ${
-                theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-              }`}>
-                {groupStats.planetMetricSubtext}
-              </span>
-            </div>
-          </div>
-
-          {/* Square 2 (Right): Personal Advantage Metric */}
+          {/* Square 1 (Left): Personal Advantage Metric */}
           <div className={`py-4 px-3 sm:py-5 sm:px-4 rounded-[18px] text-center border flex flex-col justify-center items-center min-w-0 transition-all shadow-2xs ${
             theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
           }`}>
@@ -965,6 +953,24 @@ export default function EcosystemVisualization({
                 theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
               }`}>
                 {groupStats.personalMetricSubtext}
+              </span>
+            </div>
+          </div>
+
+          {/* Square 2 (Right): Environment / Greater Impact Metric */}
+          <div className={`py-4 px-3 sm:py-5 sm:px-4 rounded-[18px] text-center border flex flex-col justify-center items-center min-w-0 transition-all shadow-2xs ${
+            theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+          }`}>
+            <div className="w-full space-y-1.5 flex flex-col items-center justify-center">
+              <span className={`text-xl sm:text-2xl font-mono font-bold tracking-tight block w-full text-center ${
+                theme === 'dark' ? 'text-[#0080FF]' : 'text-[#0066CC]'
+              }`}>
+                {groupStats.planetMetricValue}
+              </span>
+              <span className={`text-xs sm:text-[13px] font-sans block leading-snug text-center max-w-[130px] ${
+                theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+              }`}>
+                {groupStats.planetMetricSubtext}
               </span>
             </div>
           </div>

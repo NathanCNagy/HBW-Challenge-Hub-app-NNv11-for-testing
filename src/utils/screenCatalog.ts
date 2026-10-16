@@ -56,7 +56,7 @@ export const REAL_APP_SCREENS: AppScreenDefinition[] = [
     subtitle: 'Top Pillar Action & Win-Win Impact',
     category: 'Recommendations',
     fileName: '04_recommended_habit_plan.png',
-    description: 'Top-leverage 3-month pathway showing avoided driving miles, grocery savings, and flexible starter options.'
+    description: 'Top-leverage 3-month pathway showing grocery savings, avoided driving miles, and flexible starter options.'
   },
   {
     id: 'screen-dashboard-home',

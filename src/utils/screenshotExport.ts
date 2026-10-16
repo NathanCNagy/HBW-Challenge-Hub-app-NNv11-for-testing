@@ -27,9 +27,9 @@ export const APP_SCREENSHOTS_CATALOG: AppScreenshotItem[] = [
   {
     id: 'screen-02-recommendation',
     title: 'Recommended Habit Plan',
-    subtitle: 'Win-Win Planetary & Personal Impact',
+    subtitle: 'Win-Win Personal & Planetary Impact',
     category: 'Recommendation',
-    description: 'Pillar action recommendation displaying tangible 3-month win-win projections (avoided driving miles, saved grocery budget, restorative sleep).',
+    description: 'Pillar action recommendation displaying tangible 3-month win-win projections (saved grocery budget, avoided driving miles, restorative sleep).',
     fileName: '02_recommended_habit_plan.png'
   },
   {

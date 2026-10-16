@@ -5,27 +5,29 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
     id: 'env-top',
     title: 'Plant-Protein Meal Swap',
     category: 'Environment',
-    badgeLabel: '#1 Planet Impact Habit',
-    action: 'Swap animal protein for beans, lentils, or organic tofu.',
-    impact: 'Switching to plant proteins is the ultimate win-win: you cut energy draw equivalent to keeping lights off for hours while saving $60+ on groceries.',
+    badgeLabel: '#1 Health & Wallet Habit',
+    actionCue: "When planning my weekly meal or eating out, I'll swap meat for lentils, beans, or organic tofu once a week.",
+    action: 'Swap animal protein for lentils, beans, or organic tofu.',
+    impact: 'Save $60+ on groceries every 90 days and boost your cardiovascular energy—while cutting carbon emissions equal to driving 110 miles (180 km) less.',
+    dualWinNarrative: 'Every plant-based swap puts money back in your pocket and protects long-term health—while lightening agricultural water and land draw with every single plate.',
     defaultOptionId: 'opt-env-full',
     implementationOptions: [
       {
         id: 'opt-env-full',
-        title: 'Weekly Meal Swap',
+        title: 'Weekly Swap',
         description: 'Enjoy 1 plant-based meal every week.',
         impactMultiplier: 1.0,
         foggAbilityRating: 'High Impact · Easy Start',
         scheduleText: '1 meal per week',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Keeping a light off',
-          primaryValue: 28,
-          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in groceries',
+          secondaryLabel: 'saved on bills & improved digestion',
           secondaryValue: 63,
-          secondaryUnit: 'dollars'
+          secondaryUnit: 'dollars',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'car emissions cut',
+          primaryValue: 110,
+          primaryUnit: 'mi'
         }
       },
       {
@@ -36,14 +38,14 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         foggAbilityRating: 'Ultra Flexible · Great Balance',
         scheduleText: '2 meals cut by 50%',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Keeping a light off',
-          primaryValue: 21,
-          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in groceries',
+          secondaryLabel: 'saved on bills & lighter post-lunch energy',
           secondaryValue: 45,
-          secondaryUnit: 'dollars'
+          secondaryUnit: 'dollars',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'car emissions cut',
+          primaryValue: 80,
+          primaryUnit: 'mi'
         }
       },
       {
@@ -54,14 +56,14 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         foggAbilityRating: 'Gentle Start · Zero Stress',
         scheduleText: '1 meal every 2 weeks',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Keeping a light off',
-          primaryValue: 12,
-          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in groceries',
+          secondaryLabel: 'saved on bills & effortless variety',
           secondaryValue: 25,
-          secondaryUnit: 'dollars'
+          secondaryUnit: 'dollars',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'car emissions cut',
+          primaryValue: 45,
+          primaryUnit: 'mi'
         }
       }
     ]
@@ -70,9 +72,11 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
     id: 'well-top',
     title: 'Evening Screen Sunset',
     category: 'Well-Being',
-    badgeLabel: '#1 Sleep & Focus Habit',
+    badgeLabel: '#1 Deep Sleep Habit',
+    actionCue: "When my 9:00 PM alarm goes off, I will dock my phone charging cable away from my bed.",
     action: 'Power down screens before bed to restore deep sleep and mental clarity.',
-    impact: 'Powering down screens early reduces energy grid draw and device battery degradation while restoring 68+ hours of deep, restorative sleep.',
+    impact: 'Unlock up to 68 hours of deep, restorative sleep over 90 days and lower evening stress—while saving battery health and curbing home power draw.',
+    dualWinNarrative: 'Powering down screens calms your nervous system for deeper sleep cycles—while extending device hardware life and lowering grid demand.',
     defaultOptionId: 'opt-well-full',
     implementationOptions: [
       {
@@ -80,17 +84,17 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: '60-Minute Sunset',
         description: 'Screens off 60 minutes before bed; charge phone across the room.',
         impactMultiplier: 1.0,
-        foggAbilityRating: 'Best Sleep Gain · Deep Reset',
+        foggAbilityRating: 'Peak Reset · Deep Rest',
         scheduleText: '60 min before bed nightly',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Powering down devices',
-          primaryValue: 90,
-          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in deep sleep',
+          secondaryLabel: 'restorative deep sleep & focus gained',
           secondaryValue: 68,
-          secondaryUnit: 'hrs'
+          secondaryUnit: 'hrs',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'standby power draw & battery saved',
+          primaryValue: 90,
+          primaryUnit: 'hrs'
         }
       },
       {
@@ -98,17 +102,17 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: '30-Minute Sunset',
         description: 'Screens off 30 minutes before sleep.',
         impactMultiplier: 0.75,
-        foggAbilityRating: 'Balanced · Simple Routine',
+        foggAbilityRating: 'Simple Routine',
         scheduleText: '30 min before bed nightly',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Powering down devices',
-          primaryValue: 45,
-          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in deep sleep',
+          secondaryLabel: 'restorative deep rest & calm gained',
           secondaryValue: 45,
-          secondaryUnit: 'hrs'
+          secondaryUnit: 'hrs',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'standby power draw & battery saved',
+          primaryValue: 45,
+          primaryUnit: 'hrs'
         }
       },
       {
@@ -116,17 +120,17 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: '15-Minute Pause',
         description: 'A quick 15-minute screen pause right before closing your eyes.',
         impactMultiplier: 0.40,
-        foggAbilityRating: 'Micro Habit · Zero Friction',
+        foggAbilityRating: 'Micro Step · Zero Friction',
         scheduleText: '15 min before bed nightly',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Powering down devices',
-          primaryValue: 22,
-          primaryUnit: 'hrs',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in deep sleep',
+          secondaryLabel: 'restorative sleep gained & eye strain cut',
           secondaryValue: 23,
-          secondaryUnit: 'hrs'
+          secondaryUnit: 'hrs',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'late-night power drain reduced',
+          primaryValue: 22,
+          primaryUnit: 'hrs'
         }
       }
     ]
@@ -136,8 +140,10 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
     title: 'Weekly Kindness Circle',
     category: 'Compassion',
     badgeLabel: '#1 Social Connection Habit',
+    actionCue: "When I grab my Friday morning coffee, I will send one text of appreciation to a coworker, friend, or neighbor.",
     action: 'Group small acts of kindness into a dedicated day each week.',
-    impact: 'Grouping kindness acts creates a ripple effect in your community while triggering a lasting 35% boost in your own mood and resilience.',
+    impact: 'Boost your mood vitality and daily happiness by up to 35% while brightening over 60 people in your community through quick micro-gestures.',
+    dualWinNarrative: 'Expressing appreciation releases feel-good neurochemistry that builds personal resilience while weaving a more connected, resilient community.',
     defaultOptionId: 'opt-comp-full',
     implementationOptions: [
       {
@@ -145,17 +151,17 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: '5 Acts on Focus Day',
         description: 'Complete 5 small thoughtful acts (thank-yous, tips, check-ins) on 1 chosen day.',
         impactMultiplier: 1.0,
-        foggAbilityRating: 'Peak Happiness · Deep Impact',
+        foggAbilityRating: 'Peak Happiness · Big Impact',
         scheduleText: '5 acts, 1 day / week',
         metrics: {
-          primaryBadge: 'Community Win',
-          primaryLabel: 'Acts of kindness',
-          primaryValue: 60,
-          primaryUnit: 'people',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'boost in mood vitality',
+          secondaryLabel: 'boost in mood vitality, joy & resilience',
           secondaryValue: 35,
-          secondaryUnit: '%'
+          secondaryUnit: '%',
+          primaryBadge: 'Community Win',
+          primaryLabel: 'people uplifted in your circle',
+          primaryValue: 60,
+          primaryUnit: 'people'
         }
       },
       {
@@ -166,14 +172,14 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         foggAbilityRating: 'Sustainable · Fast & Fun',
         scheduleText: '3 acts, 1 day / week',
         metrics: {
-          primaryBadge: 'Community Win',
-          primaryLabel: 'Acts of kindness',
-          primaryValue: 36,
-          primaryUnit: 'people',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'boost in mood vitality',
+          secondaryLabel: 'boost in daily vitality & fulfillment',
           secondaryValue: 25,
-          secondaryUnit: '%'
+          secondaryUnit: '%',
+          primaryBadge: 'Community Win',
+          primaryLabel: 'people touched with warmth',
+          primaryValue: 36,
+          primaryUnit: 'people'
         }
       },
       {
@@ -181,28 +187,30 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: 'Micro Kind Words',
         description: 'Send 1 encouraging note or warm greeting twice a week.',
         impactMultiplier: 0.40,
-        foggAbilityRating: 'Micro Habit · Effortless',
+        foggAbilityRating: 'Micro Step · Effortless',
         scheduleText: '1 gesture, 2x / week',
         metrics: {
-          primaryBadge: 'Community Win',
-          primaryLabel: 'Acts of kindness',
-          primaryValue: 24,
-          primaryUnit: 'people',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'boost in mood vitality',
+          secondaryLabel: 'boost in calm vitality & stress buffer',
           secondaryValue: 15,
-          secondaryUnit: '%'
+          secondaryUnit: '%',
+          primaryBadge: 'Community Win',
+          primaryLabel: 'heartfelt touchpoints',
+          primaryValue: 24,
+          primaryUnit: 'people'
         }
       }
     ]
   },
   'Responsible AI': {
     id: 'rai-top',
-    title: 'Mindful AI & Fact-Check',
+    title: 'Mindful AI & Source Check',
     category: 'Responsible AI',
-    badgeLabel: '#1 Digital Integrity Habit',
+    badgeLabel: '#1 Digital Sharpness Habit',
+    actionCue: "Before copying an AI answer into my work, I will check one primary source or jot down my own thoughts first.",
     action: 'Verify key facts in AI responses and draft your own ideas first.',
-    impact: 'Fact-checking and mindful prompting saves data-center energy and water while preserving deep critical thinking.',
+    impact: 'Sharpen your critical thinking, protect your reputation, and save hours of distraction—while conserving data-center energy and cooling water.',
+    dualWinNarrative: 'Mindful prompting protects your analytical edge and frees up hours of deep focus—while lightening the electrical and water footprint of global server hubs.',
     defaultOptionId: 'opt-rai-full',
     implementationOptions: [
       {
@@ -210,53 +218,53 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: 'Complete Fact-Check',
         description: 'Verify sources on AI answers and write your initial thoughts first.',
         impactMultiplier: 1.0,
-        foggAbilityRating: 'Full Accuracy · Sharp Mind',
+        foggAbilityRating: 'Sharp Mind · Full Accuracy',
         scheduleText: 'Every AI session',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Compute queries saved',
-          primaryValue: 112,
-          primaryUnit: 'queries',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in deep focus',
+          secondaryLabel: 'deep focus saved & 85% sharper retention',
           secondaryValue: 10.5,
-          secondaryUnit: 'hrs'
+          secondaryUnit: 'hrs',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'server queries & ~150L cooling water saved',
+          primaryValue: 112,
+          primaryUnit: 'queries'
         }
       },
       {
         id: 'opt-rai-half',
-        title: 'Work & Public Checks',
+        title: 'Work Checks',
         description: 'Verify facts, stats, and quotes for work or shared content.',
         impactMultiplier: 0.75,
         foggAbilityRating: 'High-Value · Fast Workflow',
         scheduleText: 'Key work sessions',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Compute queries saved',
-          primaryValue: 72,
-          primaryUnit: 'queries',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in deep focus',
+          secondaryLabel: 'saved from rework & distractions',
           secondaryValue: 7,
-          secondaryUnit: 'hrs'
+          secondaryUnit: 'hrs',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'server queries & ~90L cooling water saved',
+          primaryValue: 72,
+          primaryUnit: 'queries'
         }
       },
       {
         id: 'opt-rai-starter',
-        title: '1 Daily Source Check',
+        title: '1 Daily Check',
         description: 'Check 1 claim or link each day before accepting it.',
         impactMultiplier: 0.40,
         foggAbilityRating: 'Micro Step · 30 Seconds',
         scheduleText: '1 claim per day',
         metrics: {
-          primaryBadge: 'Planet Win',
-          primaryLabel: 'Compute queries saved',
-          primaryValue: 36,
-          primaryUnit: 'queries',
           secondaryBadge: 'Personal Win',
-          secondaryLabel: 'saved in deep focus',
+          secondaryLabel: 'saved in workflow maintenance',
           secondaryValue: 3.5,
-          secondaryUnit: 'hrs'
+          secondaryUnit: 'hrs',
+          primaryBadge: 'Planet Win',
+          primaryLabel: 'cloud queries & ~45L cooling water saved',
+          primaryValue: 36,
+          primaryUnit: 'queries'
         }
       }
     ]
@@ -276,45 +284,42 @@ export function getDemographicResonance(category: Category, ageStr: string, gend
   const isMid = age >= 30 && age < 50;
   const isMature = age >= 50;
 
-  const gender = (genderStr || '').toLowerCase();
-  const genderTerm = gender.includes('female') ? 'women' : gender.includes('male') ? 'men' : 'everyone';
-
   switch (category) {
     case 'Environment':
       if (isYoung) {
-        return `At ${age}, swapping one meal a week is a direct win-win: prevents emissions equal to driving 460 fewer mi and saves you over $200 on groceries every 3 months.`;
+        return "Save over $200 a year on groceries and fuel up with clean, gut-friendly plant protein—while cutting emissions equal to driving 110 fewer miles.";
       } else if (isMid) {
-        return `For ${genderTerm} in their ${Math.floor(age / 10) * 10}s, swapping protein once a week equals parking your car for hundreds of mi while trimming weekly grocery bills.`;
+        return "Trim your family grocery bill and support long-term heart health while parking your carbon footprint for hundreds of miles every quarter.";
       } else {
-        return `At ${age}, plant-forward meals protect clean water reserves and native habitats while promoting vitality and heart health.`;
+        return "Promote joint comfort, vitality, and heart health with clean plant protein while helping preserve regional freshwater and native habitats.";
       }
 
     case 'Well-Being':
       if (isYoung) {
-        return `A win-win for tech and mind: cutting late-night screen time saves device power while giving you 68+ hours of restorative deep sleep.`;
+        return "Reclaim 68+ hours of deep sleep and wake up sharper every morning while saving device battery life and unnecessary home power.";
       } else if (isMid) {
-        return `Balancing busy days at age ${age}? An evening screen sunset reduces home power draw while delivering 32% evening stress relief and deep sleep.`;
+        return "Melt away evening stress by 32% and protect your sleep after high-demand days while cutting late-night electricity use.";
       } else {
-        return `At ${age}, a peaceful evening screen sunset saves energy, protects eye comfort, and restores high-quality restorative sleep.`;
+        return "Protect eye comfort, reduce evening brain fog, and enjoy deeper rest while keeping an energy-smart household.";
       }
 
     case 'Compassion':
       if (isYoung) {
-        return `Dedicated kindness days create a win-win: you brighten 60+ people in your community while unlocking a 35% boost in personal joy and resilience.`;
+        return "Unlock a 35% boost in personal joy and mental resilience while making 60+ people feel valued and seen in your community.";
       } else if (isMid) {
-        return `For ${genderTerm} at age ${age}, grouping small acts of kindness uplifts your entire social circle while lifting your own daily fulfillment.`;
+        return "Lifting others lifts you—grouping small acts of appreciation deepens workplace ties and protects against daily burnout.";
       } else {
-        return `At ${age}, purposeful acts of warmth strengthen neighborhood bonds and elevate your own happiness and sense of purpose.`;
+        return "Strengthen local neighborhood connections and elevate your own daily purpose through regular, joyful expressions of warmth.";
       }
 
     case 'Responsible AI':
     default:
       if (isYoung) {
-        return `A digital win-win: verifying AI claims cuts data-center compute energy while keeping your independent critical thinking 85% sharper.`;
+        return "Keep your critical thinking 85% sharper and stand out with original ideas while cutting data-center energy and water draw.";
       } else if (isMid) {
-        return `Fact-checking AI outputs saves central server energy, ensures 100% accuracy in your work, and keeps your mind agile.`;
+        return "Ensure total accuracy in your work deliverables and save hours of focus while cutting redundant enterprise server load.";
       } else {
-        return `A 30-second fact check reduces compute load, keeps you in full control of AI tools, and protects total integrity in what you share.`;
+        return "Stay in full control of your digital tools, protect your information integrity, and lower high-density cloud computing demand.";
       }
   }
 }

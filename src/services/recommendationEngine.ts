@@ -5,6 +5,7 @@
 
 import { Goal, QuizAnswers } from '../types';
 import { STATIC_GOALS } from '../data';
+import { resolveProfileTags } from '../utils/profileTags';
 
 /**
  * Parses user-selected daily time commitments to resolve maximum available minutes.
@@ -105,7 +106,8 @@ export function getGreenRecommendations(answers: QuizAnswers): { topGoal: Goal; 
 
   // 4. Inject localized personalization templates locally (Zero API cost)
   const formatWithLocalContext = (g: Goal, isAlternative = false): Goal => {
-    const formattedImpact = `[IMPACT]\n${g.impact}\n\n[CONTEXT]\nOptimized for your "${answers.livingArrangement}" profile with zero server latency.\n\n[OPTIMIZATION]\nUsing energy-efficient, pre-compiled local branching algorithms. Runs entirely offline.`;
+    const rawContextTemplate = `[IMPACT]\n${g.impact}\n\n[CONTEXT]\nOptimized for your [Living Arrangement] profile ([Age Range], age [Age]) with zero server latency.\n\n[OPTIMIZATION]\nUsing energy-efficient, pre-compiled local branching algorithms. Runs entirely offline.`;
+    const formattedImpact = resolveProfileTags(rawContextTemplate, answers);
     return {
       ...g,
       impact: formattedImpact

@@ -19,6 +19,7 @@ import {
 import { motion } from 'motion/react';
 import { Goal, QuizAnswers } from '../../types';
 import { getDailyHabitTip } from '../../utils/tipSelector';
+import { resolveProfileTags } from '../../utils/profileTags';
 
 interface HomeTabProps {
   activeGoal: Goal;
@@ -349,7 +350,7 @@ export default function HomeTab({
             theme === 'dark' ? 'bg-[#18181B] text-[#8E8E93]' : 'bg-[#F5F5F7] text-[#6C6C70]'
           }`}>
             <span className="text-xs">💡</span>
-            <span className="leading-tight">{currentTip.demographicInsight}</span>
+            <span className="leading-tight">{resolveProfileTags(currentTip.demographicInsight, answers)}</span>
           </div>
         )}
 

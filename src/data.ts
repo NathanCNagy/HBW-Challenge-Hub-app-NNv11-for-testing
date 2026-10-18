@@ -278,50 +278,60 @@ export const STATIC_GOALS: Record<Category, Goal[]> = {
   'Responsible AI': [TOP_IMPACT_GOALS['Responsible AI']]
 };
 
+import { resolveProfileTags } from './utils/profileTags';
+
 export function getDemographicResonance(category: Category, ageStr: string, genderStr: string): string {
   const age = parseInt(ageStr, 10) || 28;
   const isYoung = age < 30;
   const isMid = age >= 30 && age < 50;
   const isMature = age >= 50;
 
+  let rawTemplate = '';
+
   switch (category) {
     case 'Environment':
       if (isYoung) {
-        return "Save over $200 a year on groceries and fuel up with clean, gut-friendly plant protein—while cutting emissions equal to driving 110 fewer miles.";
+        rawTemplate = "At age [Age], save over $200 a year on groceries and fuel up with clean, gut-friendly plant protein—while cutting emissions equal to driving 110 fewer miles in your [Age Range] cohort.";
       } else if (isMid) {
-        return "Trim your family grocery bill and support long-term heart health while parking your carbon footprint for hundreds of miles every quarter.";
+        rawTemplate = "For your [Age Range] routine at [Age], trim your family grocery bill and support long-term heart health while parking your carbon footprint for hundreds of miles every quarter.";
       } else {
-        return "Promote joint comfort, vitality, and heart health with clean plant protein while helping preserve regional freshwater and native habitats.";
+        rawTemplate = "At [Age], promote joint comfort, vitality, and cardiovascular health with clean plant protein while helping preserve regional freshwater and native habitats.";
       }
+      break;
 
     case 'Well-Being':
       if (isYoung) {
-        return "Reclaim 68+ hours of deep sleep and wake up sharper every morning while saving device battery life and unnecessary home power.";
+        rawTemplate = "At age [Age], reclaim 68+ hours of deep sleep and wake up sharper every morning while saving device battery life and unnecessary home power.";
       } else if (isMid) {
-        return "Melt away evening stress by 32% and protect your sleep after high-demand days while cutting late-night electricity use.";
+        rawTemplate = "For your [Age Range] lifestyle at [Age], melt away evening stress by 32% and protect your sleep after high-demand days while cutting late-night electricity use.";
       } else {
-        return "Protect eye comfort, reduce evening brain fog, and enjoy deeper rest while keeping an energy-smart household.";
+        rawTemplate = "At [Age], protect eye comfort, reduce evening brain fog, and enjoy deeper rest while keeping an energy-smart household in your [Age Range] years.";
       }
+      break;
 
     case 'Compassion':
       if (isYoung) {
-        return "Unlock a 35% boost in personal joy and mental resilience while making 60+ people feel valued and seen in your community.";
+        rawTemplate = "At age [Age], unlock a 35% boost in personal joy and mental resilience while making 60+ people feel valued and seen in your community.";
       } else if (isMid) {
-        return "Lifting others lifts you—grouping small acts of appreciation deepens workplace ties and protects against daily burnout.";
+        rawTemplate = "For adults in their [Age Range] at age [Age], lifting others lifts you—grouping small acts of appreciation deepens workplace ties and protects against daily burnout.";
       } else {
-        return "Strengthen local neighborhood connections and elevate your own daily purpose through regular, joyful expressions of warmth.";
+        rawTemplate = "At [Age], strengthen local neighborhood connections and elevate your own daily purpose through regular, joyful expressions of warmth.";
       }
+      break;
 
     case 'Responsible AI':
     default:
       if (isYoung) {
-        return "Keep your critical thinking 85% sharper and stand out with original ideas while cutting data-center energy and water draw.";
+        rawTemplate = "At age [Age], keep your critical thinking 85% sharper and stand out with original ideas while cutting data-center energy and water draw in your [Age Range] field.";
       } else if (isMid) {
-        return "Ensure total accuracy in your work deliverables and save hours of focus while cutting redundant enterprise server load.";
+        rawTemplate = "For professionals in their [Age Range] at age [Age], ensure total accuracy in your work deliverables and save hours of focus while cutting redundant enterprise server load.";
       } else {
-        return "Stay in full control of your digital tools, protect your information integrity, and lower high-density cloud computing demand.";
+        rawTemplate = "At [Age], stay in full control of your digital tools, protect your information integrity, and lower high-density cloud computing demand in your [Age Range] routine.";
       }
+      break;
   }
+
+  return resolveProfileTags(rawTemplate, { age: ageStr, gender: genderStr });
 }
 
 export function getRecommendedGoals(answers: QuizAnswers): RecommendationResponse {

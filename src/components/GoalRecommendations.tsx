@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import HBWLogo from './HBWLogo';
 import { useHabit } from '../context/HabitContext';
 import { formatImpactMetric } from '../utils/units';
+import { resolveProfileTags, getAgeRange } from '../utils/profileTags';
 
 interface GoalRecommendationsProps {
   answers: QuizAnswers;
@@ -136,20 +137,23 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
             <ShieldCheck className="w-5 h-5 text-[#0080FF] shrink-0 mt-0.5" />
             <div className="space-y-0.5 flex-1">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0080FF] block">
-                Tailored for {answers.gender || 'You'} ({answers.age || '28'} yrs)
+                Tailored for {answers.gender && answers.gender !== 'Prefer not to say' ? answers.gender : 'You'} ({answers.age || '28'} yrs · {getAgeRange(answers.age)})
               </span>
               <p className={`text-xs font-sans leading-relaxed ${
                 isDark ? 'text-[#E5E5EA]' : 'text-[#2C2C2E]'
               }`}>
-                {unitSystem === 'metric'
-                  ? activeGoal.demographicInsight
-                      .replace(/460\s*fewer\s*miles/gi, '740 fewer km')
-                      .replace(/hundreds\s*of\s*driving\s*miles/gi, 'hundreds of driving km')
-                      .replace(/hundreds\s*of\s*miles/gi, 'hundreds of km')
-                      .replace(/\bmiles\b/gi, 'km')
-                  : activeGoal.demographicInsight
-                      .replace(/460\s*fewer\s*miles/gi, '460 fewer mi')
-                      .replace(/\bmiles\b/gi, 'mi')}
+                {(() => {
+                  const resolvedText = resolveProfileTags(activeGoal.demographicInsight, answers);
+                  return unitSystem === 'metric'
+                    ? resolvedText
+                        .replace(/460\s*fewer\s*miles/gi, '740 fewer km')
+                        .replace(/hundreds\s*of\s*driving\s*miles/gi, 'hundreds of driving km')
+                        .replace(/hundreds\s*of\s*miles/gi, 'hundreds of km')
+                        .replace(/\bmiles\b/gi, 'km')
+                    : resolvedText
+                        .replace(/460\s*fewer\s*miles/gi, '460 fewer mi')
+                        .replace(/\bmiles\b/gi, 'mi');
+                })()}
               </p>
             </div>
           </div>

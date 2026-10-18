@@ -95,6 +95,25 @@ export default function HomeTab({
             {activeGoal.action}
           </p>
 
+          {/* Action Cue (If-Then Trigger) */}
+          {activeGoal.actionCue && (
+            <div className={`p-2.5 rounded-xl border flex items-start gap-2 z-10 transition-colors ${
+              theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
+            }`}>
+              <span className="text-xs shrink-0 mt-0.5">⚡</span>
+              <div className="space-y-0.5 min-w-0 flex-1">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0080FF] block">
+                  {isWeekly ? 'Weekly Action Cue (If-Then Trigger)' : 'Daily Action Cue (If-Then Trigger)'}
+                </span>
+                <p className={`text-xs font-sans italic leading-tight ${
+                  theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'
+                }`}>
+                  &ldquo;{activeGoal.actionCue}&rdquo;
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Lightweight Option Indicator & Shortcut to Profile Tab */}
           <div className={`flex items-center justify-between pt-2 mt-0.5 border-t border-dashed z-10 ${
             theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'

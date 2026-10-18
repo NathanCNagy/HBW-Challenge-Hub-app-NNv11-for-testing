@@ -103,7 +103,7 @@ export default function HomeTab({
               <span className="text-xs shrink-0 mt-0.5">⚡</span>
               <div className="space-y-0.5 min-w-0 flex-1">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0080FF] block">
-                  {isWeekly ? 'Weekly Action Cue (If-Then Trigger)' : 'Daily Action Cue (If-Then Trigger)'}
+                  {isWeekly ? 'Weekly Routine' : 'Daily Routine'}
                 </span>
                 <p className={`text-xs font-sans italic leading-tight ${
                   theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'

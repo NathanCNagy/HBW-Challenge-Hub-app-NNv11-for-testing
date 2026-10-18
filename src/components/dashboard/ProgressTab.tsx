@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { CheckCircle, Check, Calendar, Sparkles } from 'lucide-react';
+import { CheckCircle, Check, Calendar } from 'lucide-react';
 import EcosystemVisualization from '../EcosystemVisualization';
 import { Goal } from '../../types';
 
@@ -97,30 +97,11 @@ export default function ProgressTab({
             </span>
           </div>
 
-          {/* Action Cue (If-Then Trigger) Callout Banner */}
-          {activeGoal.actionCue && (
-            <div className={`p-2.5 rounded-xl border flex items-start gap-2.5 transition-colors ${
-              theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
-            }`}>
-              <Sparkles className="w-3.5 h-3.5 text-[#0080FF] shrink-0 mt-0.5" />
-              <div className="space-y-0.5 min-w-0 flex-1">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0080FF] block">
-                  {isWeekly ? 'Weekly Action Cue (If-Then Trigger)' : 'Daily Action Cue (If-Then Trigger)'}
-                </span>
-                <p className={`text-xs font-sans italic leading-snug ${
-                  theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'
-                }`}>
-                  &ldquo;{activeGoal.actionCue}&rdquo;
-                </p>
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-3">
-            {/* Checklist Item 1: Core Habit with If-Then Trigger */}
+          <div className="flex flex-col gap-2.5">
+            {/* Checklist Item 1: Core Habit Statement */}
             <button
               onClick={() => onCheckItem && onCheckItem('habitDone')}
-              className={`flex items-start gap-3 text-left transition-colors p-2 rounded-xl cursor-pointer ${
+              className={`flex items-start gap-3 text-left transition-colors p-2.5 rounded-xl cursor-pointer ${
                 theme === 'dark' ? 'hover:bg-[#1A1A1E]' : 'hover:bg-[#F5F5F7]'
               }`}
             >
@@ -131,40 +112,28 @@ export default function ProgressTab({
               }`}>
                 <Check className="w-3.5 h-3.5" strokeWidth={3} />
               </div>
-              <div className="space-y-1 flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1 flex-wrap">
-                  <span className={`font-semibold text-xs leading-tight block ${
-                    checklistState.habitDone 
-                      ? 'line-through text-[#8E8E93]' 
-                      : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
-                  }`}>
-                    {isWeekly 
-                      ? `Task 1: Execute weekly habit (${activeGoal.selectedOption?.scheduleText || '1 meal/week'})` 
-                      : 'Task 1: Complete daily habit'}
-                  </span>
-                  <span></span>
-                </div>
-
-                <p className={`text-[11px] font-sans italic leading-tight ${
-                  checklistState.habitDone
-                    ? 'line-through text-[#8E8E93]'
-                    : theme === 'dark' ? 'text-[#3892FF]' : 'text-[#0066CC]'
+              <div className="space-y-0.5 flex-1 min-w-0">
+                <span className={`font-semibold text-xs leading-snug block ${
+                  checklistState.habitDone 
+                    ? 'line-through text-[#8E8E93]' 
+                    : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  Trigger: &ldquo;{activeGoal.actionCue || activeGoal.action}&rdquo;
-                </p>
-
-                <span className={`text-[11px] block leading-normal ${
+                  {activeGoal.actionCue || activeGoal.action}
+                </span>
+                <p className={`text-[11px] font-sans leading-tight ${
                   checklistState.habitDone
                     ? 'line-through text-[#8E8E93]'
                     : theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
-                }`}>{activeGoal.action}</span>
+                }`}>
+                  {isWeekly ? (activeGoal.selectedOption?.scheduleText || '1 meal per week') : 'Daily habit action'}
+                </p>
               </div>
             </button>
 
-            {/* Checklist Item 2: Habit Anchor Routine */}
+            {/* Checklist Item 2: Schedule & Routine Anchor */}
             <button
               onClick={() => onCheckItem && onCheckItem('anchorDone')}
-              className={`flex items-start gap-3 text-left transition-colors p-2 rounded-xl cursor-pointer ${
+              className={`flex items-start gap-3 text-left transition-colors p-2.5 rounded-xl cursor-pointer ${
                 theme === 'dark' ? 'hover:bg-[#1A1A1E]' : 'hover:bg-[#F5F5F7]'
               }`}
             >
@@ -175,39 +144,32 @@ export default function ProgressTab({
               }`}>
                 <Check className="w-3.5 h-3.5" strokeWidth={3} />
               </div>
-              <div className="space-y-1 flex-1 min-w-0">
-                <span className={`font-semibold text-xs leading-tight block ${
+              <div className="space-y-0.5 flex-1 min-w-0">
+                <span className={`font-semibold text-xs leading-snug block ${
                   checklistState.anchorDone 
                     ? 'line-through text-[#8E8E93]' 
                     : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  {isWeekly ? 'Task 2: Anchor to weekly routine' : 'Task 2: Pair with daily anchor cue'}
-                </span>
-                <p className={`text-[11px] font-sans italic leading-tight ${
-                  checklistState.anchorDone
-                    ? 'line-through text-[#8E8E93]'
-                    : theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#2C2C2E]'
-                }`}>
                   {isWeekly
-                    ? `“WHEN planning my weekly groceries or dining out, THEN I will prepare my plant-based meal.”`
-                    : `“WHEN I begin ${anchorHabit || 'pouring my morning coffee'}, THEN I start my habit cue.”`}
-                </p>
-                <span className={`text-[11px] block leading-normal ${
+                    ? 'When preparing my weekly schedule, I set my habit routine'
+                    : 'When starting my morning routine, I set my habit reminder'}
+                </span>
+                <p className={`text-[11px] font-sans leading-tight ${
                   checklistState.anchorDone
                     ? 'line-through text-[#8E8E93]'
                     : theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                 }`}>
                   {isWeekly
-                    ? `Anchored to: ${anchorHabit || 'Sunday grocery run or meal prep'}`
-                    : `Anchored to: ${anchorHabit || 'Morning coffee / evening dock'}`}
-                </span>
+                    ? 'Pair with Sunday planning or your weekly grocery run.'
+                    : 'Connect to an existing routine like pouring morning coffee.'}
+                </p>
               </div>
             </button>
 
-            {/* Checklist Item 3: Reflection & Impact Check */}
+            {/* Checklist Item 3: Reflection & Progress Check */}
             <button
               onClick={() => onCheckItem && onCheckItem('reflectDone')}
-              className={`flex items-start gap-3 text-left transition-colors p-2 rounded-xl cursor-pointer ${
+              className={`flex items-start gap-3 text-left transition-colors p-2.5 rounded-xl cursor-pointer ${
                 theme === 'dark' ? 'hover:bg-[#1A1A1E]' : 'hover:bg-[#F5F5F7]'
               }`}
             >
@@ -218,32 +180,25 @@ export default function ProgressTab({
               }`}>
                 <Check className="w-3.5 h-3.5" strokeWidth={3} />
               </div>
-              <div className="space-y-1 flex-1 min-w-0">
-                <span className={`font-semibold text-xs leading-tight block ${
+              <div className="space-y-0.5 flex-1 min-w-0">
+                <span className={`font-semibold text-xs leading-snug block ${
                   checklistState.reflectDone 
                     ? 'line-through text-[#8E8E93]' 
                     : theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
                 }`}>
-                  {isWeekly ? 'Task 3: Weekly reflection & win check' : 'Task 3: Quick 10-second reflection'}
-                </span>
-                <p className={`text-[11px] font-sans italic leading-tight ${
-                  checklistState.reflectDone
-                    ? 'line-through text-[#8E8E93]'
-                    : theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#2C2C2E]'
-                }`}>
                   {isWeekly
-                    ? `“WHEN I finish this meal swap, THEN I log my grocery savings and carbon reduction.”`
-                    : `“WHEN I complete my habit, THEN I celebrate my streak and release a cloud.”`}
-                </p>
-                <span className={`text-[11px] block leading-normal ${
+                    ? 'When I finish this week’s habit, I record my savings & impact'
+                    : 'When I complete my habit, I celebrate my win & streak'}
+                </span>
+                <p className={`text-[11px] font-sans leading-tight ${
                   checklistState.reflectDone
                     ? 'line-through text-[#8E8E93]'
                     : theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                 }`}>
                   {isWeekly
-                    ? 'Acknowledge your personal grocery savings and environmental carbon reduction for the week.'
-                    : 'Take 10 seconds to acknowledge your win and streak momentum.'}
-                </span>
+                    ? 'Notice personal budget savings and carbon reduction.'
+                    : 'Take a quick moment to acknowledge your streak momentum.'}
+                </p>
               </div>
             </button>
           </div>

@@ -17,7 +17,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: 'Weekly Swap',
         description: 'Enjoy 1 plant-based meal every week.',
         impactMultiplier: 1.0,
-        foggAbilityRating: 'High Impact · Easy Start',
+        foggAbilityRating: 'Easy Start',
         scheduleText: '1 meal per week',
         metrics: {
           secondaryBadge: 'Personal Win',
@@ -151,7 +151,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
         title: '5 Acts on Focus Day',
         description: 'Complete 5 small thoughtful acts (thank-yous, tips, check-ins) on 1 chosen day.',
         impactMultiplier: 1.0,
-        foggAbilityRating: 'Peak Happiness · Big Impact',
+        foggAbilityRating: 'Peak Happiness',
         scheduleText: '5 acts, 1 day / week',
         metrics: {
           secondaryBadge: 'Personal Win',

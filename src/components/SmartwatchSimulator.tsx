@@ -364,7 +364,7 @@ export default function SmartwatchSimulator() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-[9px] text-slate-200">
-                    <span className="truncate max-w-[110px] font-semibold">2. Trigger Anchor</span>
+                    <span className="truncate max-w-[110px] font-semibold">2. Habit Routine</span>
                     <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${phoneState.checklist?.anchorDone ? 'bg-emerald-500 border-emerald-400' : 'border-neutral-700'}`}>
                       {phoneState.checklist?.anchorDone && <Check className="w-2.5 h-2.5 text-white" />}
                     </div>

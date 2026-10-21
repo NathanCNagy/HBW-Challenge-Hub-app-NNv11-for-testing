@@ -64,11 +64,34 @@ export default function DashboardSimulation({
   const [showOverflowMenu, setShowOverflowMenu] = useState<boolean>(false);
   const [showScreenshotModal, setShowScreenshotModal] = useState<boolean>(false);
 
-  // Interactive habit progress states
-  const [streak, setStreak] = useState<number>(3);
+  // Interactive habit progress states (calibrated for fresh starts & usability tests)
+  const [streak, setStreak] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('hbw_streak');
+      if (saved !== null) return parseInt(saved, 10);
+    } catch {
+      // ignore
+    }
+    return 0;
+  });
   const [hasLoggedToday, setHasLoggedToday] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
-  const [individualEnergy, setIndividualEnergy] = useState<number>(14); // Completed tasks & popped clouds
+  const [individualEnergy, setIndividualEnergy] = useState<number>(() => {
+    try {
+      const isCalibrated = localStorage.getItem('hbw_milestone_3clouds_calibrated');
+      if (!isCalibrated) {
+        localStorage.setItem('hbw_milestone_3clouds_calibrated', 'true');
+        localStorage.setItem('hbw_individual_energy', '0');
+        localStorage.setItem('hbw_streak', '0');
+        return 0;
+      }
+      const saved = localStorage.getItem('hbw_individual_energy');
+      if (saved !== null) return parseInt(saved, 10);
+    } catch {
+      // ignore
+    }
+    return 0; // Starts at 0 so first milestone (3 clouds) occurs in week 1 / usability test
+  });
   const [dismissedBubbleAlert, setDismissedBubbleAlert] = useState<boolean>(false);
 
   // Notification configuration state
@@ -296,6 +319,12 @@ export default function DashboardSimulation({
         checklist,
       }
     }));
+    try {
+      localStorage.setItem('hbw_individual_energy', individualEnergy.toString());
+      localStorage.setItem('hbw_streak', streak.toString());
+    } catch {
+      // ignore
+    }
   }, [streak, hasLoggedToday, individualEnergy, activeGoal, checklist]);
 
   // Projected 3-Month metrics calculator based on active habit category

@@ -76,10 +76,13 @@ const TEST_CASES: TestCase[] = [
 ];
 
 export function calculateMilestoneStage(completedTasks: number) {
-  if (completedTasks >= 100) return 'Full Bloom';
-  if (completedTasks >= 50) return 'Canopy';
-  if (completedTasks >= 25) return 'Sapling';
-  return 'Sprout';
+  if (completedTasks >= 100) return 'Flourishing Grove';
+  if (completedTasks >= 60) return 'Full Bloom';
+  if (completedTasks >= 30) return 'Branching Canopy';
+  if (completedTasks >= 15) return 'Sapling';
+  if (completedTasks >= 7) return 'Seedling';
+  if (completedTasks >= 3) return 'First Sprout';
+  return 'Seed';
 }
 
 export function runRecommendationUnitTests() {
@@ -103,15 +106,20 @@ export function runRecommendationUnitTests() {
 
   // 2. Unit Task & Milestone Progression Tests
   const milestoneTests = [
-    { tasks: 0, expected: 'Sprout' },
-    { tasks: 10, expected: 'Sprout' },
-    { tasks: 24, expected: 'Sprout' },
-    { tasks: 25, expected: 'Sapling' },
-    { tasks: 49, expected: 'Sapling' },
-    { tasks: 50, expected: 'Canopy' },
-    { tasks: 99, expected: 'Canopy' },
-    { tasks: 100, expected: 'Full Bloom' },
-    { tasks: 150, expected: 'Full Bloom' }
+    { tasks: 0, expected: 'Seed' },
+    { tasks: 2, expected: 'Seed' },
+    { tasks: 3, expected: 'First Sprout' },
+    { tasks: 6, expected: 'First Sprout' },
+    { tasks: 7, expected: 'Seedling' },
+    { tasks: 14, expected: 'Seedling' },
+    { tasks: 15, expected: 'Sapling' },
+    { tasks: 29, expected: 'Sapling' },
+    { tasks: 30, expected: 'Branching Canopy' },
+    { tasks: 59, expected: 'Branching Canopy' },
+    { tasks: 60, expected: 'Full Bloom' },
+    { tasks: 99, expected: 'Full Bloom' },
+    { tasks: 100, expected: 'Flourishing Grove' },
+    { tasks: 150, expected: 'Flourishing Grove' }
   ];
 
   milestoneTests.forEach((mt, idx) => {

@@ -27,10 +27,13 @@ interface TaskMilestone {
 }
 
 const TASK_MILESTONES: TaskMilestone[] = [
-  { targetTasks: 25, prevTasks: 0, label: '25 Tasks Sapling', stageName: 'Sapling' },
-  { targetTasks: 50, prevTasks: 25, label: '50 Tasks Canopy', stageName: 'Canopy' },
-  { targetTasks: 100, prevTasks: 50, label: '100 Tasks Full Bloom', stageName: 'Full Bloom' },
-  { targetTasks: 100, prevTasks: 100, label: '100+ Tasks Mastery', stageName: 'Full Bloom (Mastery)' }
+  { targetTasks: 3, prevTasks: 0, label: '3 Clouds First Sprout', stageName: 'First Sprout' },
+  { targetTasks: 7, prevTasks: 3, label: '7 Clouds Seedling', stageName: 'Seedling' },
+  { targetTasks: 15, prevTasks: 7, label: '15 Clouds Sapling', stageName: 'Sapling' },
+  { targetTasks: 30, prevTasks: 15, label: '30 Clouds Canopy', stageName: 'Branching Canopy' },
+  { targetTasks: 60, prevTasks: 30, label: '60 Clouds Full Bloom', stageName: 'Full Bloom' },
+  { targetTasks: 100, prevTasks: 60, label: '100 Clouds Mastery', stageName: 'Flourishing Grove' },
+  { targetTasks: 100, prevTasks: 100, label: '100+ Clouds Mastery', stageName: 'Flourishing Grove (Mastery)' }
 ];
 
 const DAILY_TASKS_TARGET = 4; // 3 daily clouds + 1 daily habit log = 4 tasks / day
@@ -72,21 +75,26 @@ export default function EcosystemVisualization({
   const milestoneIndex = TASK_MILESTONES.indexOf(currentMilestone);
   const stageBaseTipY = 
     milestoneIndex === 0 ? 305 :
-    milestoneIndex === 1 ? 235 :
-    milestoneIndex === 2 ? 170 :
-    125;
+    milestoneIndex === 1 ? 270 :
+    milestoneIndex === 2 ? 230 :
+    milestoneIndex === 3 ? 185 :
+    milestoneIndex === 4 ? 140 :
+    milestoneIndex === 5 ? 106 :
+    106;
 
   const stageTargetTipY = 
-    milestoneIndex === 0 ? 210 :
-    milestoneIndex === 1 ? 150 :
-    milestoneIndex === 2 ? 106 :
+    milestoneIndex === 0 ? 270 :
+    milestoneIndex === 1 ? 230 :
+    milestoneIndex === 2 ? 185 :
+    milestoneIndex === 3 ? 140 :
+    milestoneIndex === 4 ? 106 :
     targetMilestoneY;
 
   const plantTipY = isMastered 
     ? targetMilestoneY 
     : Math.round(stageBaseTipY - stageProgress * (stageBaseTipY - stageTargetTipY));
 
-  const trunkTopY = Math.min(322, Math.round(plantTipY + (individualEnergy < 10 ? 20 : individualEnergy < 25 ? 36 : individualEnergy < 50 ? 52 : 66)));
+  const trunkTopY = Math.min(322, Math.round(plantTipY + (individualEnergy < 3 ? 16 : individualEnergy < 7 ? 26 : individualEnergy < 15 ? 38 : individualEnergy < 30 ? 50 : individualEnergy < 60 ? 60 : 66)));
   const foliageCenterY = Math.round((plantTipY + trunkTopY) / 2);
   const progressRatio = Math.min(1, individualEnergy / 100);
   const canopyW = Math.min(70, Math.round(26 + progressRatio * 44));
@@ -576,7 +584,7 @@ export default function EcosystemVisualization({
                   textAnchor="middle"
                   className="select-none tracking-wide"
                 >
-                  {tasksRemaining} {tasksRemaining === 1 ? 'CLOUD' : 'CLOUDS'} LEFT TO NEXT MILESTONE: {currentMilestone.stageName?.toUpperCase()}
+                  {tasksRemaining} {tasksRemaining === 1 ? 'CLOUD' : 'CLOUDS'} LEFT TO MILESTONE: {currentMilestone.targetTasks} CLOUDS ({currentMilestone.stageName?.toUpperCase()})
                 </text>
               </g>
             ) : (
@@ -603,7 +611,7 @@ export default function EcosystemVisualization({
                   textAnchor="middle"
                   className="select-none tracking-wide"
                 >
-                  MILESTONE REACHED: 100 TASKS FULL BLOOM 🌟
+                  MILESTONE REACHED: 100+ CLOUDS FLOURISHING GROVE 🌟
                 </text>
               </g>
             )}
@@ -982,14 +990,14 @@ export default function EcosystemVisualization({
         }`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-sans font-bold text-[#0080FF] flex items-center gap-1.5">
-              <span>🎯</span> Next Milestone: {currentMilestone.stageName}
+              <span>🎯</span> Next Milestone: {currentMilestone.targetTasks} Clouds ({currentMilestone.stageName})
             </span>
             <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/15 text-[#0080FF]">
               {individualEnergy} / {currentMilestone.targetTasks} clouds
             </span>
           </div>
           <p className={`text-xs leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'}`}>
-            Click <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'cloud' : 'clouds'}</strong> to reach <strong>{currentMilestone.stageName}</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7)} === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
+            Click <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'cloud' : 'clouds'}</strong> to reach <strong>{currentMilestone.targetTasks} Clouds ({currentMilestone.stageName})</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7) === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
           </p>
           <p className={`text-[11px] font-sans leading-normal pt-1 border-t border-dashed ${
             theme === 'dark' ? 'border-[#1F1F24] text-[#8E8E93]' : 'border-[#BDE0FE] text-[#6C6C70]'

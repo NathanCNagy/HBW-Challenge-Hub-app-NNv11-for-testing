@@ -93,8 +93,8 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
   const [answers, setAnswersState] = useState<QuizAnswers>(() => getQuizAnswers(DEFAULT_QUIZ_ANSWERS));
 
   // Streak & Gamified Energy
-  const [streak, setStreak] = useState<number>(3);
-  const [individualEnergy, setIndividualEnergy] = useState<number>(45);
+  const [streak, setStreak] = useState<number>(0);
+  const [individualEnergy, setIndividualEnergy] = useState<number>(0);
 
   // Global Theme
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {

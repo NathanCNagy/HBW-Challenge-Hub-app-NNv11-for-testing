@@ -163,8 +163,8 @@ export default function ProgressTab({
   const formattedAnchor = selectedAnchor.charAt(0).toUpperCase() + selectedAnchor.slice(1);
   const resolvedTask2Title = activeGoal.category === 'Responsible AI'
     ? (isWeekly
-        ? `When opening my AI work tool, I structure my AI prompt using my own brain first ("Draft First, Refine Second")`
-        : `When opening my AI work tool, I structure my AI prompt using my own brain first ("Draft First, Refine Second")`)
+        ? `When opening my AI work tool, I will structure my AI prompt using my own brain first ("Draft First, Refine Second")`
+        : `When opening my AI work tool, I will structure my AI prompt using my own brain first ("Draft First, Refine Second")`)
     : (isWeekly
         ? `When on my ${selectedAnchor.toLowerCase()}, I lock in my habit routine`
         : `When enjoying my ${selectedAnchor.toLowerCase()}, I initiate my daily habit`);

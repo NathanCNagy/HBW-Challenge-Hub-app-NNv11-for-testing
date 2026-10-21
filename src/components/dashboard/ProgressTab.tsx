@@ -161,9 +161,13 @@ export default function ProgressTab({
 
   // Capitalize first letter helper
   const formattedAnchor = selectedAnchor.charAt(0).toUpperCase() + selectedAnchor.slice(1);
-  const resolvedTask2Title = isWeekly
-    ? `When on my ${selectedAnchor.toLowerCase()}, I lock in my habit routine`
-    : `When enjoying my ${selectedAnchor.toLowerCase()}, I initiate my daily habit`;
+  const resolvedTask2Title = activeGoal.category === 'Responsible AI'
+    ? (isWeekly
+        ? `When opening my AI work tool, I structure my AI prompt using my own brain first ("Draft First, Refine Second")`
+        : `When opening my AI work tool, I structure my AI prompt using my own brain first ("Draft First, Refine Second")`)
+    : (isWeekly
+        ? `When on my ${selectedAnchor.toLowerCase()}, I lock in my habit routine`
+        : `When enjoying my ${selectedAnchor.toLowerCase()}, I initiate my daily habit`);
 
   return (
     <div className="flex flex-col gap-4 w-full">

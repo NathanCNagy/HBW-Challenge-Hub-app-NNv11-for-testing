@@ -159,11 +159,14 @@ export default function HomeTab({
             </span>
           </div>
         ) : (
-          <div className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between border ${
-            theme === 'dark'
-              ? 'bg-[#18181B] text-[#34C759] border-[#34C759]/30'
-              : 'bg-[#34C759]/10 text-[#248A3D] border-[#34C759]/30'
-          }`}>
+          <div 
+            onClick={() => onNavigateToTab('progress')}
+            className={`h-[44px] w-full px-4 rounded-full font-sans font-medium text-xs sm:text-[13px] transition-all flex items-center justify-between border cursor-pointer group ${
+              theme === 'dark'
+                ? 'bg-[#18181B] text-[#34C759] border-[#34C759]/30 hover:border-[#34C759]/60'
+                : 'bg-[#34C759]/10 text-[#248A3D] border-[#34C759]/30 hover:border-[#34C759]/60'
+            }`}
+          >
             <div className="flex items-center gap-2 truncate pl-1">
               <CheckCircle className="w-4 h-4 text-[#34C759] shrink-0" />
               <span className="truncate font-semibold">
@@ -172,26 +175,10 @@ export default function HomeTab({
                   : `${checkedCount} of 3 Tasks Checked Today!`}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              {onResetLog && (
-                <button
-                  type="button"
-                  onClick={onResetLog}
-                  className={`text-[11px] font-sans font-medium hover:underline cursor-pointer ${
-                    theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
-                  }`}
-                  title="Made a mistake? Undo today's tasks"
-                >
-                  Made a mistake?
-                </button>
-              )}
-              <button
-                onClick={() => onNavigateToTab('progress')}
-                className="text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0 pr-1"
-              >
-                Water Plant &rarr;
-              </button>
-            </div>
+            <span className="text-[11px] font-sans font-semibold text-[#0080FF] group-hover:underline flex items-center gap-1 group-hover:translate-x-0.5 transition-transform shrink-0 pr-1">
+              <span>{bubbles.length > 0 ? 'Water Plant' : 'Update in Progress'}</span>
+              <span>&rarr;</span>
+            </span>
           </div>
         )}
       </div>

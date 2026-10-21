@@ -336,7 +336,7 @@ export default function ProgressTab({
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-base shrink-0">🌧️</span>
                 <span className={`font-sans font-medium truncate ${theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'}`}>
-                  {checkedCount} {isWeekly ? (checkedCount === 1 ? 'weekly task' : 'weekly tasks') : (checkedCount === 1 ? 'task' : 'tasks')} checked! Click the cloud above to water plant 💧
+                  {checkedCount} {isWeekly ? (checkedCount === 1 ? 'weekly task' : 'weekly tasks') : (checkedCount === 1 ? 'task' : 'tasks')} checked! Click {checkedCount === 1 ? 'the cloud' : 'the clouds'} above to water plant 💧
                 </span>
               </div>
               {onResetLog && (
@@ -356,7 +356,7 @@ export default function ProgressTab({
             <div className={`py-2 px-3 rounded-xl text-center text-[11px] font-sans transition-colors ${
               theme === 'dark' ? 'text-[#8E8E93] bg-[#161618]' : 'text-[#6C6C70] bg-[#F5F5F7]'
             }`}>
-              {isWeekly ? 'Check off any weekly task above to unlock a cloud, then click the cloud to water your tree!' : 'Check off any task above to unlock a cloud, then click the cloud to water your tree!'}
+              {isWeekly ? 'Check off any weekly task above to unlock a cloud, then click the cloud to water your plant!' : 'Check off any task above to unlock a cloud, then click the cloud to water your plant!'}
             </div>
           )}
         </div>

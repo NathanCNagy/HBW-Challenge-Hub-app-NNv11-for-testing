@@ -67,6 +67,13 @@ export default function DashboardSimulation({
   // Interactive habit progress states (calibrated for fresh starts & usability tests)
   const [streak, setStreak] = useState<number>(() => {
     try {
+      const isCalibrated = localStorage.getItem('hbw_demo_zero_clouds_v2');
+      if (!isCalibrated) {
+        localStorage.setItem('hbw_demo_zero_clouds_v2', 'true');
+        localStorage.setItem('hbw_individual_energy', '0');
+        localStorage.setItem('hbw_streak', '0');
+        return 0;
+      }
       const saved = localStorage.getItem('hbw_streak');
       if (saved !== null) return parseInt(saved, 10);
     } catch {
@@ -78,9 +85,9 @@ export default function DashboardSimulation({
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [individualEnergy, setIndividualEnergy] = useState<number>(() => {
     try {
-      const isCalibrated = localStorage.getItem('hbw_milestone_3clouds_calibrated');
+      const isCalibrated = localStorage.getItem('hbw_demo_zero_clouds_v2');
       if (!isCalibrated) {
-        localStorage.setItem('hbw_milestone_3clouds_calibrated', 'true');
+        localStorage.setItem('hbw_demo_zero_clouds_v2', 'true');
         localStorage.setItem('hbw_individual_energy', '0');
         localStorage.setItem('hbw_streak', '0');
         return 0;
@@ -90,7 +97,7 @@ export default function DashboardSimulation({
     } catch {
       // ignore
     }
-    return 0; // Starts at 0 so first milestone (3 clouds) occurs in week 1 / usability test
+    return 0; // Starts at 0 so first milestone (3 clouds) occurs after 3 clouds clicked
   });
   const [dismissedBubbleAlert, setDismissedBubbleAlert] = useState<boolean>(false);
 
@@ -107,7 +114,7 @@ export default function DashboardSimulation({
     return isWeeklyGoal ? 'Sunday grocery run' : 'morning coffee';
   });
 
-  // Shared Bubble State for Ecosystem Tree (percentages for responsiveness)
+  // Shared Bubble State for Ecosystem Tree: starts EMPTY for demo consistency
   const [bubbles, setBubbles] = useState<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[]>([]);
 
   // Category bubble types - each cloud is worth 1 task
@@ -134,23 +141,31 @@ export default function DashboardSimulation({
     ]
   };
 
-  // Initialize bubbles on category change
+  // Sync activeGoal when props.goal updates
   useEffect(() => {
-    const category = activeGoal.category;
-    const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Habit Point', value: 10 }];
-    const initialBubbles = Array.from({ length: 3 }).map((_, i) => {
-      const typeObj = bubbleTypes[i % bubbleTypes.length];
-      return {
-        id: Math.floor(Math.random() * 10000000) + i,
-        cx: 15 + Math.random() * 70, // percentage 15% to 85%
-        cy: 15 + Math.random() * 60, // percentage 15% to 75%
-        value: typeObj.value,
-        type: typeObj.type,
-        label: typeObj.label
-      };
-    });
-    setBubbles(initialBubbles);
-  }, [activeGoal.category]);
+    setActiveGoal(goal);
+  }, [goal]);
+
+  // When activeGoal changes (starting a new habit or switching in HabitsManager),
+  // reset all task tracking, clouds, and progress score to the initial state for demo consistency
+  const prevGoalIdRef = useRef<string>(activeGoal.id);
+  useEffect(() => {
+    if (prevGoalIdRef.current !== activeGoal.id) {
+      prevGoalIdRef.current = activeGoal.id;
+      setChecklist({ habitDone: false, anchorDone: false, reflectDone: false });
+      setBubbles([]);
+      setPoppedTaskClouds({});
+      setHasLoggedToday(false);
+      setStreak(0);
+      setIndividualEnergy(0);
+      try {
+        localStorage.setItem('hbw_individual_energy', '0');
+        localStorage.setItem('hbw_streak', '0');
+      } catch {
+        // ignore
+      }
+    }
+  }, [activeGoal.id]);
 
   // Interactive checklist sub-items
   const [checklist, setChecklist] = useState({
@@ -211,6 +226,13 @@ export default function DashboardSimulation({
       const typeIndex = item === 'habitDone' ? 0 : item === 'anchorDone' ? 1 : 2;
       const randomType = bubbleTypes[typeIndex % bubbleTypes.length];
 
+      const fixedPositions: Record<string, { cx: number; cy: number }> = {
+        habitDone: { cx: 26, cy: 30 },
+        anchorDone: { cx: 74, cy: 30 },
+        reflectDone: { cx: 50, cy: 18 }
+      };
+      const pos = fixedPositions[item] || { cx: 20 + Math.random() * 60, cy: 20 + Math.random() * 45 };
+
       setBubbles((prev) => {
         // If this cloud already exists in bubbles, don't duplicate
         if (prev.some((b) => b.taskId === item)) return prev;
@@ -218,8 +240,8 @@ export default function DashboardSimulation({
           ...prev,
           {
             id: Date.now() + Math.floor(Math.random() * 1000),
-            cx: 20 + Math.random() * 60,
-            cy: 20 + Math.random() * 45,
+            cx: pos.cx,
+            cy: pos.cy,
             value: 1,
             type: randomType.type,
             label: `${randomType.label} (Task Cloud)`,

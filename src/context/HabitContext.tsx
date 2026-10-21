@@ -181,11 +181,27 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
     setCommittedGoalState(goal);
     saveCommittedGoal(goal);
     storage.set('hbw_has_logged_in', 'true');
+    setStreak(0);
+    setIndividualEnergy(0);
+    try {
+      localStorage.setItem('hbw_individual_energy', '0');
+      localStorage.setItem('hbw_streak', '0');
+    } catch {
+      // ignore
+    }
   };
 
   const resetGoal = () => {
     setCommittedGoalState(null);
     saveCommittedGoal(null);
+    setStreak(0);
+    setIndividualEnergy(0);
+    try {
+      localStorage.setItem('hbw_individual_energy', '0');
+      localStorage.setItem('hbw_streak', '0');
+    } catch {
+      // ignore
+    }
   };
 
   const updateAnswers: React.Dispatch<React.SetStateAction<QuizAnswers>> = (newAnswers) => {

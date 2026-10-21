@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight, CheckCircle2, Droplets, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useHabit } from '../context/HabitContext';
@@ -57,6 +57,68 @@ export default function EcosystemVisualization({
   const [isHydrating, setIsHydrating] = useState<boolean>(false);
   const [hydrationMessage, setHydrationMessage] = useState<string>('');
   const { unitSystem } = useHabit();
+
+  // Milestone Celebration Animation State
+  const [celebrationMilestone, setCelebrationMilestone] = useState<{
+    stageName: string;
+    targetTasks: number;
+    unlockedMessage: string;
+  } | null>(null);
+
+  const [confettiPieces, setConfettiPieces] = useState<{
+    id: number;
+    x: number;
+    y: number;
+    color: string;
+    size: number;
+    rotation: number;
+    delay: number;
+  }[]>([]);
+
+  const triggerMilestoneCelebration = (milestone: TaskMilestone) => {
+    setCelebrationMilestone({
+      stageName: milestone.stageName,
+      targetTasks: milestone.targetTasks,
+      unlockedMessage: milestone.targetTasks === 3
+        ? 'Your plant has evolved! New secondary leaves have unfurled 🌱'
+        : milestone.targetTasks === 7
+        ? 'Dense foliage & upper leaves have sprouted! 🌿'
+        : milestone.targetTasks === 15
+        ? 'Woody branches & sapling boughs have grown! 🌳'
+        : milestone.targetTasks <= 30
+        ? 'A lush green canopy is expanding! 🍃'
+        : 'Vibrant blossoms have opened across the canopy! 🌸'
+    });
+
+    const colors = ['#0080FF', '#3892FF', '#34C759', '#FFD700', '#FF9500', '#F472B6', '#38BDF8', '#86EFAC'];
+    const particles = Array.from({ length: 32 }).map((_, i) => ({
+      id: Date.now() + i,
+      x: 10 + Math.random() * 80,
+      y: 10 + Math.random() * 65,
+      color: colors[i % colors.length],
+      size: 7 + Math.random() * 8,
+      rotation: Math.random() * 360,
+      delay: (i % 8) * 0.08
+    }));
+    setConfettiPieces(particles);
+
+    setTimeout(() => {
+      setCelebrationMilestone(null);
+      setConfettiPieces([]);
+    }, 4500);
+  };
+
+  const prevEnergyRef = useRef(individualEnergy);
+  useEffect(() => {
+    const prev = prevEnergyRef.current;
+    if (individualEnergy > prev) {
+      const crossed = TASK_MILESTONES.find(m => prev < m.targetTasks && individualEnergy >= m.targetTasks);
+      if (crossed) {
+        triggerMilestoneCelebration(crossed);
+      }
+    }
+    prevEnergyRef.current = individualEnergy;
+  }, [individualEnergy]);
 
   // Target milestone is anchored cleanly below the top stat pills (y = 88)
   const currentMilestone = TASK_MILESTONES.find(m => individualEnergy < m.targetTasks) || TASK_MILESTONES[TASK_MILESTONES.length - 1];
@@ -495,6 +557,84 @@ export default function EcosystemVisualization({
           )}
         </AnimatePresence>
 
+        {/* Milestone Celebration Confetti & Petals */}
+        <AnimatePresence>
+          {confettiPieces.map((p) => (
+            <motion.div
+              key={p.id}
+              initial={{ 
+                left: `${p.x}%`, 
+                top: '-4%', 
+                opacity: 1, 
+                scale: 0.3, 
+                rotate: 0 
+              }}
+              animate={{ 
+                left: `${p.x + (Math.sin(p.id) * 12)}%`, 
+                top: `${p.y + 35}%`, 
+                opacity: [0, 1, 1, 0.8, 0], 
+                scale: [0.6, 1.25, 1, 0.75], 
+                rotate: p.rotation + 360 
+              }}
+              transition={{ 
+                duration: 3.2, 
+                delay: p.delay, 
+                ease: "easeOut" 
+              }}
+              style={{
+                backgroundColor: p.color,
+                width: `${p.size}px`,
+                height: `${p.size * (p.id % 2 === 0 ? 1 : 1.5)}px`,
+                borderRadius: p.id % 3 === 0 ? '999px' : '2px',
+              }}
+              className="absolute z-40 pointer-events-none shadow-xs"
+            />
+          ))}
+        </AnimatePresence>
+
+        {/* Milestone Celebration Pop-up Banner */}
+        <AnimatePresence>
+          {celebrationMilestone && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.82, y: -15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.88, y: -10 }}
+              transition={{ type: "spring", stiffness: 380, damping: 26 }}
+              className="absolute top-14 left-3 right-3 z-40 bg-gradient-to-r from-[#0080FF] via-[#3892FF] to-[#0080FF] text-white p-3 rounded-2xl shadow-xl border border-white/40 flex items-center justify-between gap-2.5 pointer-events-auto"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xs flex items-center justify-center text-xl shrink-0 shadow-inner animate-bounce">
+                  🌱
+                </div>
+                <div className="min-w-0 space-y-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full text-white">
+                      Milestone Reached! 🌟
+                    </span>
+                    <span className="text-[11px] font-mono font-semibold text-emerald-200">
+                      {celebrationMilestone.targetTasks} Clouds
+                    </span>
+                  </div>
+                  <h4 className="font-sans font-bold text-xs sm:text-sm leading-tight text-white truncate">
+                    {celebrationMilestone.stageName}
+                  </h4>
+                  <p className="text-[11px] text-white/90 leading-tight">
+                    {celebrationMilestone.unlockedMessage}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCelebrationMilestone(null)}
+                className="w-7 h-7 rounded-full bg-white/15 hover:bg-white/30 flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors"
+                aria-label="Dismiss celebration"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* The Growth Visual Tree / Plant with Left Height Ruler extending all the way to top of tile */}
         <div 
           className="absolute inset-x-0 top-0 bottom-12 flex justify-center pointer-events-none z-10"
@@ -540,6 +680,14 @@ export default function EcosystemVisualization({
                 <stop offset="45%" stopColor="#0A1C2E" />
                 <stop offset="100%" stopColor="#050E18" />
               </linearGradient>
+
+              {/* Milestone Celebration Radial Aura */}
+              <radialGradient id="milestoneAura" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#0080FF" stopOpacity="0.5" />
+                <stop offset="35%" stopColor="#34C759" stopOpacity="0.32" />
+                <stop offset="70%" stopColor="#38BDF8" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#0080FF" stopOpacity="0" />
+              </radialGradient>
             </defs>
 
             {/* === ONE SIMPLE MILESTONE LINE (Positioned slightly lower than Habit Energy label) === */}
@@ -641,15 +789,73 @@ export default function EcosystemVisualization({
               opacity="0.85" 
             />
 
-            {/* STAGE 0: Organically Sprouting Seedling */}
-            {streak === 0 && (
+            {/* Milestone Celebration Radial Aura & Sparkle Halo */}
+            {celebrationMilestone && (
+              <g className="pointer-events-none">
+                {/* Pulsing Radial Aura */}
+                <circle 
+                  cx="195" 
+                  cy={foliageCenterY} 
+                  r="95" 
+                  fill="url(#milestoneAura)" 
+                  className="animate-pulse" 
+                />
+                <circle 
+                  cx="195" 
+                  cy={foliageCenterY} 
+                  r="68" 
+                  fill={theme === 'dark' ? "#38BDF8" : "#34C759"} 
+                  opacity="0.22" 
+                />
+                <circle 
+                  cx="195" 
+                  cy={plantTipY - 8} 
+                  r="36" 
+                  fill={theme === 'dark' ? "#0080FF" : "#3892FF"} 
+                  opacity="0.28" 
+                  className="animate-ping" 
+                />
+
+                {/* Celebratory 4-Point Star Sparkles */}
+                <g className="animate-bounce">
+                  {/* Star 1 (Left Top) */}
+                  <path 
+                    d={`M 148 ${foliageCenterY - 32} Q 148 ${foliageCenterY - 26} 154 ${foliageCenterY - 26} Q 148 ${foliageCenterY - 26} 148 ${foliageCenterY - 20} Q 148 ${foliageCenterY - 26} 142 ${foliageCenterY - 26} Q 148 ${foliageCenterY - 26} 148 ${foliageCenterY - 32} Z`} 
+                    fill="#FFD700" 
+                  />
+                  {/* Star 2 (Right Top) */}
+                  <path 
+                    d={`M 242 ${foliageCenterY - 28} Q 242 ${foliageCenterY - 22} 248 ${foliageCenterY - 22} Q 242 ${foliageCenterY - 22} 242 ${foliageCenterY - 16} Q 242 ${foliageCenterY - 22} 236 ${foliageCenterY - 22} Q 242 ${foliageCenterY - 22} 242 ${foliageCenterY - 28} Z`} 
+                    fill="#FFD700" 
+                  />
+                  {/* Star 3 (Apex Sparkle) */}
+                  <path 
+                    d={`M 195 ${plantTipY - 36} Q 195 ${plantTipY - 28} 203 ${plantTipY - 28} Q 195 ${plantTipY - 28} 195 ${plantTipY - 20} Q 195 ${plantTipY - 28} 187 ${plantTipY - 28} Q 195 ${plantTipY - 28} 195 ${plantTipY - 36} Z`} 
+                    fill="#FFF" 
+                  />
+                  {/* Star 4 (Lower Left) */}
+                  <path 
+                    d={`M 136 ${trunkTopY + 12} Q 136 ${trunkTopY + 16} 140 ${trunkTopY + 16} Q 136 ${trunkTopY + 16} 136 ${trunkTopY + 20} Q 136 ${trunkTopY + 16} 132 ${trunkTopY + 16} Q 136 ${trunkTopY + 16} 136 ${trunkTopY + 12} Z`} 
+                    fill="#38BDF8" 
+                  />
+                  {/* Star 5 (Lower Right) */}
+                  <path 
+                    d={`M 254 ${trunkTopY + 14} Q 254 ${trunkTopY + 18} 258 ${trunkTopY + 18} Q 254 ${trunkTopY + 18} 254 ${trunkTopY + 22} Q 254 ${trunkTopY + 18} 250 ${trunkTopY + 18} Q 254 ${trunkTopY + 18} 254 ${trunkTopY + 14} Z`} 
+                    fill="#34C759" 
+                  />
+                </g>
+              </g>
+            )}
+
+            {/* STAGE 0: Organically Sprouting Seedling (0 to 2 Clouds - Pre-Milestone 1) */}
+            {individualEnergy < 3 && (
               <g>
                 {/* Tender curved green stem */}
                 <path 
                   d="M 193 330 C 193 315 194 305 195 295 C 196 305 197 315 197 330 Z" 
                   fill={theme === 'dark' ? "#38BDF8" : "#34C759"} 
                 />
-                {/* Left cotyledon leaf */}
+                {/* Left cotyledon baby leaf */}
                 <path 
                   d="M 195 300 C 176 296 166 280 176 272 C 188 270 194 286 195 300 Z" 
                   fill={theme === 'dark' ? "#0080FF" : "#34C759"} 
@@ -660,7 +866,7 @@ export default function EcosystemVisualization({
                   strokeWidth="1" 
                   fill="none" 
                 />
-                {/* Right cotyledon leaf */}
+                {/* Right cotyledon baby leaf */}
                 <path 
                   d="M 195 300 C 214 296 224 280 214 272 C 202 270 196 286 195 300 Z" 
                   fill={theme === 'dark' ? "#38BDF8" : "#22C55E"} 
@@ -682,49 +888,123 @@ export default function EcosystemVisualization({
               </g>
             )}
 
-            {/* STAGE 1: Young Growing Sprout (Streak 1–3) */}
-            {streak >= 1 && streak < 4 && (
+            {/* STAGE 1: Milestone 1 & 2 "First Sprout" to "Active Seedling" (3 to 14 Clouds) */}
+            {individualEnergy >= 3 && individualEnergy < 15 && (
               <g>
+                {/* Visible Organic Root Anchors (Sprouts into the soil when Milestone 1 is reached) */}
+                <g opacity="0.9">
+                  {/* Left Anchor Root */}
+                  <path 
+                    d="M 192 332 Q 180 340 166 345" 
+                    stroke={theme === 'dark' ? "#0284C7" : "#558B2F"} 
+                    strokeWidth="2.4" 
+                    strokeLinecap="round" 
+                    fill="none" 
+                  />
+                  <path 
+                    d="M 182 338 Q 174 345 160 348" 
+                    stroke={theme === 'dark' ? "#38BDF8" : "#7CB342"} 
+                    strokeWidth="1.4" 
+                    strokeLinecap="round" 
+                    fill="none" 
+                  />
+                  {/* Right Anchor Root */}
+                  <path 
+                    d="M 198 332 Q 210 340 224 345" 
+                    stroke={theme === 'dark' ? "#0284C7" : "#558B2F"} 
+                    strokeWidth="2.4" 
+                    strokeLinecap="round" 
+                    fill="none" 
+                  />
+                  <path 
+                    d="M 208 338 Q 216 345 230 348" 
+                    stroke={theme === 'dark' ? "#38BDF8" : "#7CB342"} 
+                    strokeWidth="1.4" 
+                    strokeLinecap="round" 
+                    fill="none" 
+                  />
+                </g>
+
                 {/* Graceful curved botanical stalk with natural taper */}
                 <path 
                   d={`M 191 332 
-                      C 192 310, ${193 + Math.sin(streak) * 3} ${(332 + trunkTopY) / 2}, 194 ${trunkTopY} 
+                      C 192 310, ${193 + Math.sin(individualEnergy * 0.4) * 2} ${(332 + trunkTopY) / 2}, 194 ${trunkTopY} 
                       L 196 ${trunkTopY} 
-                      C ${197 + Math.sin(streak) * 3} ${(332 + trunkTopY) / 2}, 198 310, 199 332 Z`} 
+                      C ${197 + Math.sin(individualEnergy * 0.4) * 2} ${(332 + trunkTopY) / 2}, 198 310, 199 332 Z`} 
                   fill={theme === 'dark' ? "#38BDF8" : "#2E7D32"} 
                 />
-                {/* Lower Left Leaf */}
+
+                {/* Lower Left Broad Primary Leaf (Metamorphosed shape) */}
                 <path 
                   d={`M 193 ${(332 + trunkTopY * 2) / 3 + 8} 
-                      C 172 ${(332 + trunkTopY * 2) / 3}, 158 ${(332 + trunkTopY * 2) / 3 - 10}, 162 ${(332 + trunkTopY * 2) / 3 - 22} 
-                      C 174 ${(332 + trunkTopY * 2) / 3 - 14}, 186 ${(332 + trunkTopY * 2) / 3 - 4}, 193 ${(332 + trunkTopY * 2) / 3 + 4} Z`} 
+                      C 168 ${(332 + trunkTopY * 2) / 3}, 152 ${(332 + trunkTopY * 2) / 3 - 12}, 156 ${(332 + trunkTopY * 2) / 3 - 26} 
+                      C 170 ${(332 + trunkTopY * 2) / 3 - 18}, 184 ${(332 + trunkTopY * 2) / 3 - 6}, 193 ${(332 + trunkTopY * 2) / 3 + 4} Z`} 
                   fill={theme === 'dark' ? "#0080FF" : "#388E3C"} 
                 />
                 <path 
-                  d={`M 193 ${(332 + trunkTopY * 2) / 3 + 6} Q 174 ${(332 + trunkTopY * 2) / 3 - 6} 164 ${(332 + trunkTopY * 2) / 3 - 18}`} 
-                  stroke="rgba(255,255,255,0.5)" 
-                  strokeWidth="1" 
+                  d={`M 193 ${(332 + trunkTopY * 2) / 3 + 6} Q 170 ${(332 + trunkTopY * 2) / 3 - 8} 158 ${(332 + trunkTopY * 2) / 3 - 22}`} 
+                  stroke="rgba(255,255,255,0.6)" 
+                  strokeWidth="1.2" 
                   fill="none" 
                 />
-                {/* Lower Right Leaf */}
+                {/* Dewdrop on Lower Left Leaf Tip */}
+                <circle cx="157" cy={(332 + trunkTopY * 2) / 3 - 24} r="2.2" fill="#fff" opacity="0.95" className="animate-pulse" />
+
+                {/* Lower Right Broad Primary Leaf (Metamorphosed shape) */}
                 <path 
                   d={`M 197 ${(332 + trunkTopY) / 2 + 10} 
-                      C 218 ${(332 + trunkTopY) / 2 + 2}, 232 ${(332 + trunkTopY) / 2 - 8}, 228 ${(332 + trunkTopY) / 2 - 20} 
-                      C 216 ${(332 + trunkTopY) / 2 - 12}, 204 ${(332 + trunkTopY) / 2 - 2}, 197 ${(332 + trunkTopY) / 2 + 6} Z`} 
+                      C 222 ${(332 + trunkTopY) / 2 + 2}, 238 ${(332 + trunkTopY) / 2 - 10}, 234 ${(332 + trunkTopY) / 2 - 24} 
+                      C 220 ${(332 + trunkTopY) / 2 - 16}, 206 ${(332 + trunkTopY) / 2 - 4}, 197 ${(332 + trunkTopY) / 2 + 6} Z`} 
                   fill={theme === 'dark' ? "#0284C7" : "#43A047"} 
                 />
                 <path 
-                  d={`M 197 ${(332 + trunkTopY) / 2 + 8} Q 216 ${(332 + trunkTopY) / 2 - 4} 226 ${(332 + trunkTopY) / 2 - 16}`} 
-                  stroke="rgba(255,255,255,0.5)" 
-                  strokeWidth="1" 
+                  d={`M 197 ${(332 + trunkTopY) / 2 + 8} Q 220 ${(332 + trunkTopY) / 2 - 6} 232 ${(332 + trunkTopY) / 2 - 20}`} 
+                  stroke="rgba(255,255,255,0.6)" 
+                  strokeWidth="1.2" 
                   fill="none" 
                 />
+                {/* Dewdrop on Lower Right Leaf Tip */}
+                <circle cx="233" cy={(332 + trunkTopY) / 2 - 22} r="2.2" fill="#fff" opacity="0.95" />
+
+                {/* Secondary Mid-Tier Leaves (Emerge when Milestone 2 reached: 7+ Clouds) */}
+                {individualEnergy >= 7 && (
+                  <g>
+                    {/* Mid Left Leaf */}
+                    <path 
+                      d={`M 193 ${(332 + trunkTopY * 3) / 4 + 2} 
+                          C 176 ${(332 + trunkTopY * 3) / 4 - 4}, 166 ${(332 + trunkTopY * 3) / 4 - 14}, 170 ${(332 + trunkTopY * 3) / 4 - 24} 
+                          C 180 ${(332 + trunkTopY * 3) / 4 - 16}, 188 ${(332 + trunkTopY * 3) / 4 - 6}, 193 ${(332 + trunkTopY * 3) / 4} Z`} 
+                      fill={theme === 'dark' ? "#38BDF8" : "#4CAF50"} 
+                    />
+                    <path 
+                      d={`M 193 ${(332 + trunkTopY * 3) / 4 + 1} Q 178 ${(332 + trunkTopY * 3) / 4 - 10} 171 ${(332 + trunkTopY * 3) / 4 - 21}`} 
+                      stroke="rgba(255,255,255,0.6)" 
+                      strokeWidth="1" 
+                      fill="none" 
+                    />
+
+                    {/* Mid Right Leaf */}
+                    <path 
+                      d={`M 197 ${(332 + trunkTopY * 3) / 4 + 4} 
+                          C 214 ${(332 + trunkTopY * 3) / 4 - 2}, 224 ${(332 + trunkTopY * 3) / 4 - 12}, 220 ${(332 + trunkTopY * 3) / 4 - 22} 
+                          C 210 ${(332 + trunkTopY * 3) / 4 - 14}, 202 ${(332 + trunkTopY * 3) / 4 - 4}, 197 ${(332 + trunkTopY * 3) / 4 + 2} Z`} 
+                      fill={theme === 'dark' ? "#60A5FA" : "#66BB6A"} 
+                    />
+                    <path 
+                      d={`M 197 ${(332 + trunkTopY * 3) / 4 + 3} Q 212 ${(332 + trunkTopY * 3) / 4 - 8} 219 ${(332 + trunkTopY * 3) / 4 - 19}`} 
+                      stroke="rgba(255,255,255,0.6)" 
+                      strokeWidth="1" 
+                      fill="none" 
+                    />
+                  </g>
+                )}
+
                 {/* Upper Sprout Foliage Crown */}
                 <path 
                   d={`M 195 ${trunkTopY + 4} 
-                      C 180 ${trunkTopY - 8}, 176 ${plantTipY + 8}, 188 ${plantTipY} 
-                      C 193 ${plantTipY - 8}, 197 ${plantTipY - 8}, 202 ${plantTipY} 
-                      C 214 ${plantTipY + 8}, 210 ${trunkTopY - 8}, 195 ${trunkTopY + 4} Z`} 
+                      C 178 ${trunkTopY - 10}, 172 ${plantTipY + 8}, 186 ${plantTipY} 
+                      C 192 ${plantTipY - 8}, 198 ${plantTipY - 8}, 204 ${plantTipY} 
+                      C 218 ${plantTipY + 8}, 212 ${trunkTopY - 10}, 195 ${trunkTopY + 4} Z`} 
                   fill={theme === 'dark' ? "#38BDF8" : "#4CAF50"} 
                 />
                 {/* Apex Leaf Shoot reaching up towards top milestone */}
@@ -732,25 +1012,25 @@ export default function EcosystemVisualization({
                   d={`M 195 ${plantTipY + 6} C 192 ${plantTipY - 4}, 193 ${plantTipY - 14}, 195 ${plantTipY - 20} C 197 ${plantTipY - 14}, 198 ${plantTipY - 4}, 195 ${plantTipY + 6} Z`} 
                   fill={theme === 'dark' ? "#BAE6FD" : "#81C784"} 
                 />
-                <circle cx="195" cy={plantTipY - 18} r="2" fill="#fff" opacity="0.9" className="animate-ping" />
+                <circle cx="195" cy={plantTipY - 18} r="2.2" fill="#fff" opacity="0.9" className="animate-ping" />
               </g>
             )}
 
-            {/* STAGES 2, 3 & 4: Established Botanical Tree (Streak >= 4) */}
-            {streak >= 4 && (
+            {/* STAGES 2, 3, 4 & 5: Established Botanical Tree (15+ Clouds or Streak >= 4) */}
+            {(individualEnergy >= 15 || streak >= 4) && (
               <g>
                 {/* Organic Trunk with Root Flares & Contours */}
                 <path 
                   d={`M 183 333 
-                      C 186 320, ${189 + Math.sin(streak * 0.5) * 3} ${(333 + trunkTopY) / 2}, 192 ${trunkTopY} 
+                      C 186 320, ${189 + Math.sin(individualEnergy * 0.3) * 3} ${(333 + trunkTopY) / 2}, 192 ${trunkTopY} 
                       L 198 ${trunkTopY} 
-                      C ${201 + Math.sin(streak * 0.5) * 3} ${(333 + trunkTopY) / 2}, 204 320, 207 333 
+                      C ${201 + Math.sin(individualEnergy * 0.3) * 3} ${(333 + trunkTopY) / 2}, 204 320, 207 333 
                       C 200 334, 190 334, 183 333 Z`} 
                   fill={theme === 'dark' ? "url(#botanicalTrunkDark)" : "url(#botanicalTrunkLight)"} 
                 />
                 {/* Bark Wood Contour Shadow Line */}
                 <path 
-                  d={`M 186 331 C 188 320, ${191 + Math.sin(streak * 0.5) * 3} ${(331 + trunkTopY) / 2}, 193 ${trunkTopY}`} 
+                  d={`M 186 331 C 188 320, ${191 + Math.sin(individualEnergy * 0.3) * 3} ${(331 + trunkTopY) / 2}, 193 ${trunkTopY}`} 
                   stroke={theme === 'dark' ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.22)"} 
                   strokeWidth="1.6" 
                   fill="none" 
@@ -847,8 +1127,8 @@ export default function EcosystemVisualization({
                 />
                 <circle cx="195" cy={plantTipY - 18} r="2.2" fill="#fff" className="animate-ping" />
 
-                {/* STAGE 4: Full Bloom Blossoming Flowers (Streak >= 14) */}
-                {streak >= 14 && (
+                {/* STAGE 4 & 5: Full Bloom Blossoming Flowers (Milestone 5: 60+ Clouds or Streak >= 14) */}
+                {(individualEnergy >= 60 || streak >= 14) && (
                   <g>
                     {/* Flower 1 - Left Crown */}
                     <g transform={`translate(${195 - canopyW * 0.35}, ${foliageCenterY - 10})`}>
@@ -864,8 +1144,8 @@ export default function EcosystemVisualization({
                       ))}
                       <circle cx="0" cy="0" r="2.4" fill="#FFD700" />
                     </g>
-                    {/* Flower 3 - Apex Blossom */}
-                    {streak >= 20 && (
+                    {/* Flower 3 - Apex Blossom (Milestone 5.5: 85+ Clouds or Streak >= 20) */}
+                    {(individualEnergy >= 85 || streak >= 20) && (
                       <g transform={`translate(195, ${plantTipY + 12})`}>
                         {[0, 72, 144, 216, 288].map((angle) => (
                           <path key={angle} d="M 0 0 C -3.2 -5, -4 -9, 0 -11 C 4 -9, 3.2 -5, 0 0 Z" transform={`rotate(${angle})`} fill={theme === 'dark' ? "#FBCFE8" : "#FFF0F5"} opacity="0.98" />
@@ -873,8 +1153,8 @@ export default function EcosystemVisualization({
                         <circle cx="0" cy="0" r="2.8" fill="#FFD700" />
                       </g>
                     )}
-                    {/* Golden Pollen / Spores */}
-                    {streak >= 30 && (
+                    {/* Golden Pollen / Spores (Milestone 6: 100+ Clouds or Streak >= 30) */}
+                    {(individualEnergy >= 100 || streak >= 30) && (
                       <g>
                         <circle cx={195 - canopyW * 0.5} cy={foliageCenterY - 24} r="2" fill="#FFD700" className="animate-ping" />
                         <circle cx={195 + canopyW * 0.5} cy={foliageCenterY - 28} r="2" fill="#FFD700" className="animate-pulse" />

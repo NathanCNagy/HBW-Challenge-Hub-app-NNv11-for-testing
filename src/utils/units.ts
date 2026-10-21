@@ -151,20 +151,29 @@ export function formatImpactMetric(
     };
   }
 
-  // People / Community
+  // People / Community (stated in label below; omit unit word to prevent overflow and redundancy)
   if (unit === 'people') {
     return {
       value,
       unit: 'people',
-      display: `+${value.toLocaleString()} people`
+      display: `+${value.toLocaleString()}`
     };
   }
 
-  // Default fallback
+  // Queries / AI sessions (stated in label below; omit unit word to prevent overflow and redundancy)
+  if (unit === 'queries' || unit.toLowerCase().includes('query')) {
+    return {
+      value,
+      unit: 'queries',
+      display: `+${value.toLocaleString()}`
+    };
+  }
+
+  // Default fallback (omit if unit is empty)
   return {
     value,
     unit,
-    display: `+${value.toLocaleString()} ${unit}`
+    display: unit ? `+${value.toLocaleString()} ${unit}` : `+${value.toLocaleString()}`
   };
 }
 

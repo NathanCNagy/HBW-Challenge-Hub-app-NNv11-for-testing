@@ -73,7 +73,16 @@ export default function DashboardSimulation({
 
   // Notification configuration state
   const [hasConfiguredNotifications, setHasConfiguredNotifications] = useState<boolean>(false);
-  const [anchorHabit, setAnchorHabit] = useState<string>('pouring my morning coffee');
+  const [anchorHabit, setAnchorHabit] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('hbw_anchor_habit');
+      if (saved) return saved;
+    } catch {
+      // ignore
+    }
+    const isWeeklyGoal = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
+    return isWeeklyGoal ? 'Sunday grocery run' : 'morning coffee';
+  });
 
   // Shared Bubble State for Ecosystem Tree (percentages for responsiveness)
   const [bubbles, setBubbles] = useState<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[]>([]);
@@ -346,6 +355,31 @@ export default function DashboardSimulation({
     downloadHabitPlanPDF(activeGoal, streak, metrics.targetTip);
   };
 
+  const handleSelectAnchor = (anchor: string, defaultTime?: string, defaultDays?: string[]) => {
+    setAnchorHabit(anchor);
+    setHasConfiguredNotifications(true);
+    try {
+      localStorage.setItem('hbw_anchor_habit', anchor);
+      const isWeeklyGoal = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
+      const time = defaultTime || (isWeeklyGoal ? '10:00' : '08:00');
+      const days = defaultDays && defaultDays.length > 0 ? defaultDays : (isWeeklyGoal ? ['Sun'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+      const existing = JSON.parse(localStorage.getItem('hbw_habit_triggers') || '[]');
+      const updated = [
+        {
+          id: 'primary-anchor-trigger',
+          name: anchor,
+          time,
+          days,
+          enabled: true
+        },
+        ...(Array.isArray(existing) ? existing.filter((t: any) => t.id !== 'primary-anchor-trigger' && t.name !== anchor) : [])
+      ];
+      localStorage.setItem('hbw_habit_triggers', JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
+  };
+
   const handleQuickEnableReminders = () => {
     setHasConfiguredNotifications(true);
     try {
@@ -404,7 +438,7 @@ export default function DashboardSimulation({
             }`}
             style={{ color: theme === 'dark' ? '#FFFFFF' : '#1C1C1E' }}
           >
-            H<span className="text-[#0080FF]" style={{ color: '#0080FF' }}>B</span>W
+            H<span className={theme === 'dark' ? 'text-white' : 'text-black'} style={{ color: theme === 'dark' ? '#FFFFFF' : '#000000' }}>B</span>W
           </span>
         </button>
 
@@ -517,6 +551,7 @@ export default function DashboardSimulation({
             checklist={checklist}
             onCheckItem={handleCheckItem}
             anchorHabit={anchorHabit}
+            onSelectAnchor={handleSelectAnchor}
             metrics={metrics}
             theme={theme}
           />

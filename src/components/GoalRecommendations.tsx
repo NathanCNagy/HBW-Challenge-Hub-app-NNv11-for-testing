@@ -117,13 +117,6 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
                 {activeGoal.action}
               </p>
             )}
-            {activeGoal.actionCue && (
-              <p className={`text-[11px] sm:text-xs font-sans max-w-md mx-auto italic leading-normal pt-0.5 ${
-                isDark ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
-              }`}>
-                &ldquo;{activeGoal.actionCue}&rdquo;
-              </p>
-            )}
           </div>
         </div>
 

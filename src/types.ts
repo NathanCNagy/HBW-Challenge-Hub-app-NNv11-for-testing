@@ -70,3 +70,13 @@ export interface RecommendationResponse {
   alternatives: Goal[];
 }
 
+export interface AnchorSuggestion {
+  id: string;
+  name: string;
+  shortLabel: string;
+  defaultTime: string;
+  defaultDays: string[];
+  category: Category;
+  isWeekly?: boolean;
+}
+

@@ -195,7 +195,7 @@ export const TOP_IMPACT_GOALS: Record<Category, Goal> = {
           secondaryValue: 15,
           secondaryUnit: '%',
           primaryBadge: 'Community Win',
-          primaryLabel: 'heartfelt touchpoints',
+          primaryLabel: 'people reached with kindness',
           primaryValue: 24,
           primaryUnit: 'people'
         }

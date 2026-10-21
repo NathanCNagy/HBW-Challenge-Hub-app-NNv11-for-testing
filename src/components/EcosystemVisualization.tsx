@@ -892,10 +892,10 @@ export default function EcosystemVisualization({
 
         {/* One-Sentence Explanation on the empty blue space under the plant */}
         <div className="z-20 mt-auto w-full flex items-center justify-between gap-2.5 px-1 pt-1 pb-0.5">
-          <p className={`text-[11px] sm:text-[11.5px] font-sans font-medium leading-tight flex-1 ${
+          <p className={`text-center text-[12.5px] font-sans font-medium leading-tight flex-1 ${
             theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#2C4F70]'
           }`}>
-            Unlock clouds by completing tasks - Click them to water plant and help it grow
+            {isWeekly ? 'Unlock clouds by completing weekly tasks - Click them to water plant and help it grow' : 'Unlock clouds by completing tasks - Click them to water plant and help it grow'}
           </p>
           <button
             type="button"

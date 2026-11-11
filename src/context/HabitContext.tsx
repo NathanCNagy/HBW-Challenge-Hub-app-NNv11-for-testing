@@ -55,8 +55,8 @@ export interface HabitContextValue {
 }
 
 const DEFAULT_QUIZ_ANSWERS: QuizAnswers = {
-  age: '28',
-  gender: 'Male',
+  age: '',
+  gender: '',
   categories: ['Environment'],
   currentHabitMilestone: 'Rarely / Never',
   timeCommitment: ['5 Minutes (Microchange)'],

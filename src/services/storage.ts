@@ -75,10 +75,23 @@ export const setCommittedGoal = (goal: Goal | null) => {
 };
 
 export const getQuizAnswers = (defaultAnswers: QuizAnswers): QuizAnswers => {
+  const isMigrated = storage.getString('hbw_demographics_v3_calibrated');
+  if (!isMigrated) {
+    storage.set('hbw_demographics_v3_calibrated', 'true');
+    const hasCommittedGoal = storage.getString('hbw_committed_goal');
+    if (!hasCommittedGoal) {
+      storage.delete('hbw_quiz_answers');
+      return defaultAnswers;
+    }
+  }
   const saved = storage.getString('hbw_quiz_answers');
   if (!saved) return defaultAnswers;
   try {
-    return JSON.parse(saved);
+    const parsed = JSON.parse(saved);
+    if (parsed.age === 'Under 18') {
+      parsed.age = '';
+    }
+    return parsed;
   } catch {
     return defaultAnswers;
   }

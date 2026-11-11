@@ -50,7 +50,7 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
     }
   };
 
-  const ageRanges = ['Under 18', '18–24', '25–34', '35–44', '45+'];
+  const ageRanges = ['18–24', '25–34', '35–44', '45–54', '55–64', '65–69', '70+'];
   const genderOptions = ['Female', 'Male', 'Non-binary', 'Prefer not to say'];
 
   const categories: { name: Category; title: string; description: string; icon: React.ReactNode }[] = [
@@ -127,7 +127,7 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
               </p>
             </div>
 
-            {/* Age range selection matching screenshot */}
+            {/* Age range selection */}
             <div className="space-y-2.5">
               <label className={`text-xs font-semibold tracking-wide ${
                 isDark ? 'text-white' : 'text-[#1C1C1E]'
@@ -136,7 +136,19 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
               </label>
               <div className="flex flex-wrap gap-2">
                 {ageRanges.map((range) => {
-                  const isSelected = answers.age === range || (answers.age && range.includes(answers.age));
+                  const isSelected = answers.age === range || (() => {
+                    const num = parseInt(answers.age, 10);
+                    if (isNaN(num)) return false;
+                    if (range.endsWith('+')) {
+                      const min = parseInt(range, 10);
+                      return num >= min;
+                    }
+                    const parts = range.split('–').map(p => parseInt(p.trim(), 10));
+                    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                      return num >= parts[0] && num <= parts[1];
+                    }
+                    return false;
+                  })();
                   return (
                     <button
                       key={range}
@@ -157,7 +169,7 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
               </div>
             </div>
 
-            {/* Gender options matching screenshot */}
+            {/* Gender options without preselection */}
             <div className="space-y-2.5">
               <label className={`text-xs font-semibold tracking-wide ${
                 isDark ? 'text-white' : 'text-[#1C1C1E]'
@@ -166,7 +178,7 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
               </label>
               <div className="flex flex-wrap gap-2">
                 {genderOptions.map((g) => {
-                  const isSelected = answers.gender === g;
+                  const isSelected = Boolean(answers.gender && answers.gender === g);
                   return (
                     <button
                       key={g}

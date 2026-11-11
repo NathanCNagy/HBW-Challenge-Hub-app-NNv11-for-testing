@@ -373,9 +373,26 @@ export default function AuthScreen({ onLoginSuccess, onContinueAsGuest, onBack, 
                   )}
                   <span className="whitespace-nowrap">Continue with Apple</span>
                 </button>
+
+                {/* Continue as Guest Button (placed right under other sign-in options) */}
+                <button
+                  type="button"
+                  onClick={onContinueAsGuest}
+                  className={`w-full h-[46px] px-4 active:scale-[0.99] border font-sans text-xs font-semibold rounded-[14px] transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
+                    isDark
+                      ? 'bg-[#121214] hover:bg-[#1A1A1E] border-[#2C2C30] hover:border-[#0080FF]/60 text-white'
+                      : 'bg-white hover:bg-[#F2F2F7] border-[#E5E5EA] hover:border-[#0080FF]/60 text-[#1C1C1E]'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4 text-[#0080FF]" />
+                  <span className="whitespace-nowrap">Continue as Guest</span>
+                </button>
+                <p className={`text-[10px] font-sans text-center pt-0.5 ${isDark ? 'text-[#636366]' : 'text-[#8E8E93]'}`}>
+                  Try the app first. All data stays securely on your device.
+                </p>
               </div>
 
-              {/* Mode Switcher: Log In vs Sign Up Free (Positioned below all login options, above guest mode) */}
+              {/* Mode Switcher: Log In vs Sign Up Free */}
               <div className="text-center pt-2">
                 <p className={`text-xs font-sans ${isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
                   {isSignUp ? 'Already have an account?' : "Don't have an account?"}
@@ -644,27 +661,6 @@ export default function AuthScreen({ onLoginSuccess, onContinueAsGuest, onBack, 
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* Guest Login Option / Safety Net */}
-      <div className={`border-t pt-3 pb-1 z-10 flex flex-col gap-1.5 shrink-0 ${
-        isDark ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
-      }`}>
-        <button
-          type="button"
-          onClick={onContinueAsGuest}
-          className={`w-full h-[44px] active:scale-[0.99] font-sans text-xs font-medium rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer border ${
-            isDark
-              ? 'bg-[#121214] hover:bg-[#1A1A1E] border-[#1F1F24] text-white'
-              : 'bg-white hover:bg-[#E5E5EA] border-[#E5E5EA] text-[#1C1C1E]'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4 text-[#0080FF]" />
-          <span className="whitespace-nowrap">Continue as Guest</span>
-        </button>
-        <span className={`text-[10px] font-sans text-center block ${isDark ? 'text-[#636366]' : 'text-[#8E8E93]'}`}>
-          Try the app first. All data stays securely on your device.
-        </span>
       </div>
     </div>
   );

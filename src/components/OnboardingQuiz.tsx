@@ -87,12 +87,13 @@ export default function OnboardingQuiz({ answers, setAnswers, onSubmit, isLoadin
         {(step > 1 && !skipDemographics) || onBack ? (
           <button
             onClick={handleBack}
-            className={`p-1 -ml-1 transition-colors cursor-pointer ${
+            className={`p-1 -ml-1 transition-colors cursor-pointer flex items-center gap-1 text-xs font-sans font-semibold ${
               isDark ? 'text-[#8E8E93] hover:text-white' : 'text-[#6C6C70] hover:text-[#1C1C1E]'
             }`}
             aria-label="Go back"
           >
             <ChevronLeft className="w-5 h-5" />
+            <span>Back</span>
           </button>
         ) : (
           <div className="w-5 h-5" />

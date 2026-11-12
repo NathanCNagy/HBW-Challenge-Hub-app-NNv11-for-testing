@@ -373,3 +373,99 @@ export function getRecommendedGoals(answers: QuizAnswers): RecommendationRespons
     alternatives
   };
 }
+
+export type EffortTier = 'more' | 'less';
+
+export interface EffortTierConfig {
+  moreTitle: string;
+  moreBadge: string;
+  moreDescription: string;
+  lessTitle: string;
+  lessBadge: string;
+  lessDescription: string;
+}
+
+export const CATEGORY_EFFORT_CONFIGS: Record<Category, EffortTierConfig> = {
+  'Environment': {
+    moreTitle: 'Full Plant-Protein Swap',
+    moreBadge: 'More Effort · Peak Impact',
+    moreDescription: 'Swap 100% of meat in a meal for lentils, beans, or organic tofu.',
+    lessTitle: 'Half-Portion Blend',
+    lessBadge: 'Less Effort · Gentle Start',
+    lessDescription: 'Replace 50% of the meat in a meal with lentils, beans, or mushrooms.'
+  },
+  'Well-Being': {
+    moreTitle: '60-Minute Sunset',
+    moreBadge: 'More Effort · Deep Reset',
+    moreDescription: 'Power down screens 60 minutes before bed and dock your phone across the room.',
+    lessTitle: '30-Minute Sunset',
+    lessBadge: 'Less Effort · Gentle Start',
+    lessDescription: 'Power down screens 30 minutes before sleep for gentle mental wind-down.'
+  },
+  'Compassion': {
+    moreTitle: 'Intentional Circle (5 Acts)',
+    moreBadge: 'More Effort · Peak Connection',
+    moreDescription: 'Complete 5 intentional acts of appreciation, notes, or tips on your committed days.',
+    lessTitle: 'Micro-Gratitude (2 Acts)',
+    lessBadge: 'Less Effort · Quick & Easy',
+    lessDescription: 'Send 2 quick warm appreciation notes or check in on a colleague/neighbor.'
+  },
+  'Responsible AI': {
+    moreTitle: 'Draft First & Source Check',
+    moreBadge: 'More Effort · Maximum Sharpness',
+    moreDescription: 'Structure prompts with your own brain first and verify primary sources on key claims.',
+    lessTitle: 'Quick Accuracy Scan',
+    lessBadge: 'Less Effort · Quick & Easy',
+    lessDescription: 'Spot-check 1 key statistic, quote, or claim before accepting AI responses.'
+  }
+};
+
+export function buildRoutineOption(category: Category, effort: EffortTier, daysPerWeek: number): ImplementationOption {
+  const goal = TOP_IMPACT_GOALS[category];
+  const fullOpt = goal.implementationOptions[0];
+  const config = CATEGORY_EFFORT_CONFIGS[category];
+  const days = Math.min(5, Math.max(1, Math.round(daysPerWeek || 3)));
+  const isMore = effort === 'more';
+  const effortFactor = isMore ? 1.0 : 0.65;
+
+  let factor = 1.0;
+  if (category === 'Environment') {
+    factor = days * effortFactor;
+  } else if (category === 'Well-Being') {
+    factor = (days / 5) * effortFactor;
+  } else if (category === 'Compassion') {
+    factor = (days / 3.5) * effortFactor;
+  } else {
+    // Responsible AI
+    factor = (days / 4) * effortFactor;
+  }
+
+  const rawSec = fullOpt.metrics.secondaryValue * factor;
+  const secVal = fullOpt.metrics.secondaryUnit === '%'
+    ? Math.min(50, Math.round(isMore ? (18 + days * 6) : (12 + days * 4)))
+    : Number.isInteger(fullOpt.metrics.secondaryValue)
+    ? Math.max(1, Math.round(rawSec))
+    : Math.max(0.5, Math.round(rawSec * 10) / 10);
+
+  const primVal = Math.max(1, Math.round(fullOpt.metrics.primaryValue * factor));
+
+  return {
+    id: `opt-${category.toLowerCase().replace(/\s+/g, '-')}-${effort}-${days}d`,
+    title: isMore ? config.moreTitle : config.lessTitle,
+    description: isMore ? config.moreDescription : config.lessDescription,
+    scheduleText: `${days} ${days === 1 ? 'day' : 'days'} / week`,
+    foggAbilityRating: isMore ? 'More Effort' : 'Less Effort',
+    impactMultiplier: Math.round(factor * 100) / 100,
+    metrics: {
+      secondaryBadge: 'Personal Win',
+      secondaryLabel: fullOpt.metrics.secondaryLabel,
+      secondaryValue: secVal,
+      secondaryUnit: fullOpt.metrics.secondaryUnit,
+      primaryBadge: fullOpt.metrics.primaryBadge,
+      primaryLabel: fullOpt.metrics.primaryLabel,
+      primaryValue: primVal,
+      primaryUnit: fullOpt.metrics.primaryUnit
+    }
+  };
+}
+

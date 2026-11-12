@@ -140,6 +140,7 @@ function AppContent() {
                     onBack={!user ? goToAuth : handleSignOut}
                     initialStep={quizStep}
                     onStepChange={setQuizStep}
+                    onCommitGoal={handleCommitGoal}
                   />
                 )}
 

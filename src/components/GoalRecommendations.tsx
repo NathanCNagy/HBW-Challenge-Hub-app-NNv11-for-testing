@@ -6,6 +6,7 @@ import HBWLogo from './HBWLogo';
 import { useHabit } from '../context/HabitContext';
 import { formatImpactMetric } from '../utils/units';
 import { resolveProfileTags, getAgeRange } from '../utils/profileTags';
+import { buildRoutineOption, EffortTier, CATEGORY_EFFORT_CONFIGS } from '../data';
 
 interface GoalRecommendationsProps {
   answers: QuizAnswers;
@@ -24,14 +25,10 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
   const [isScheduleExpanded, setIsScheduleExpanded] = useState<boolean>(false);
   const isDark = theme === 'dark';
 
-  // Selected implementation option within the active goal
-  const [selectedOption, setSelectedOption] = useState<ImplementationOption>(
-    activeGoal.selectedOption || activeGoal.implementationOptions[0]
-  );
-
-  const handleOptionChange = (option: ImplementationOption) => {
-    setSelectedOption(option);
-  };
+  const [effortTier, setEffortTier] = useState<EffortTier>('more');
+  const [daysPerWeek, setDaysPerWeek] = useState<number>(3);
+  const effortConfig = CATEGORY_EFFORT_CONFIGS[activeGoal.category];
+  const selectedOption = buildRoutineOption(activeGoal.category, effortTier, daysPerWeek);
 
   const handleFinalCommit = () => {
     const committedGoal: Goal = {
@@ -222,59 +219,159 @@ export default function GoalRecommendations({ answers, topGoal, onCommit, onRese
                 className="overflow-hidden space-y-3 pt-2"
               >
                 {/* Implementation Options Radio List */}
-                <div className="space-y-2">
-                  {activeGoal.implementationOptions.map((option) => {
-                    const isSelected = selectedOption.id === option.id;
-                    return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        onClick={() => handleOptionChange(option)}
-                        className={`w-full p-3.5 rounded-[14px] border text-left transition-all flex items-start gap-3 cursor-pointer ${
-                          isSelected
-                            ? isDark
-                              ? 'bg-[#0A0A0C] border-2 border-[#0080FF] shadow-sm'
-                              : 'bg-[#F2F8FF] border-2 border-[#0080FF] shadow-xs'
-                            : isDark
-                            ? 'bg-[#0A0A0C]/50 border-[#1F1F24] hover:border-[#0080FF]/40'
-                            : 'bg-white border-[#E5E5EA] hover:border-[#0080FF]/40 shadow-2xs'
-                        }`}
-                      >
-                        <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                          isSelected
-                            ? 'border-[#0080FF] bg-[#0080FF]'
-                            : isDark ? 'border-[#636366]' : 'border-[#C7C7CC]'
-                        }`}>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
-                        </div>
+                {/* Implementation Options Tuner: 2 Effort Tiers + 1-5 Days Selector */}
+                <div className="space-y-3">
+                  {/* 2 Effort Options */}
+                  <div className="grid grid-cols-1 gap-2">
+                    {/* Option 1: More Effort */}
+                    <button
+                      type="button"
+                      onClick={() => setEffortTier('more')}
+                      className={`w-full p-3.5 rounded-[14px] border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                        effortTier === 'more'
+                          ? isDark
+                            ? 'bg-[#0A0A0C] border-2 border-[#0080FF] shadow-sm'
+                            : 'bg-[#F2F8FF] border-2 border-[#0080FF] shadow-xs'
+                          : isDark
+                          ? 'bg-[#0A0A0C]/50 border-[#1F1F24] hover:border-[#0080FF]/40'
+                          : 'bg-white border-[#E5E5EA] hover:border-[#0080FF]/40 shadow-2xs'
+                      }`}
+                    >
+                      <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                        effortTier === 'more'
+                          ? 'border-[#0080FF] bg-[#0080FF]'
+                          : isDark ? 'border-[#636366]' : 'border-[#C7C7CC]'
+                      }`}>
+                        {effortTier === 'more' && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                      </div>
 
-                        <div className="space-y-1 flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center justify-between gap-1.5">
-                            <span className={`text-xs font-sans font-bold ${
-                              isSelected
-                                ? isDark ? 'text-white' : 'text-[#1C1C1E]'
-                                : isDark ? 'text-[#E5E5EA]' : 'text-[#2C2C2E]'
-                            }`}>
-                              {option.title}
-                            </span>
-                            <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full ${
-                              isSelected
-                                ? isDark ? 'bg-[#0080FF]/20 text-[#0080FF] border border-[#0080FF]/30' : 'bg-[#E5F1FF] text-[#0066CC] border border-[#0080FF]/30'
-                                : isDark ? 'bg-[#121214] text-[#8E8E93]' : 'bg-[#F2F2F7] text-[#6C6C70]'
-                            }`}>
-                              {option.foggAbilityRating}
-                            </span>
-                          </div>
-
-                          <p className={`text-xs font-sans leading-normal ${
-                            isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                      <div className="space-y-0.5 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center justify-between gap-1.5">
+                          <span className={`text-xs font-sans font-bold ${
+                            effortTier === 'more'
+                              ? isDark ? 'text-white' : 'text-[#1C1C1E]'
+                              : isDark ? 'text-[#E5E5EA]' : 'text-[#2C2C2E]'
                           }`}>
-                            {option.description}
-                          </p>
+                            {effortConfig.moreTitle}
+                          </span>
+                          <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full ${
+                            effortTier === 'more'
+                              ? isDark ? 'bg-[#0080FF]/20 text-[#0080FF] border border-[#0080FF]/30' : 'bg-[#E5F1FF] text-[#0066CC] border border-[#0080FF]/30'
+                              : isDark ? 'bg-[#121214] text-[#8E8E93]' : 'bg-[#F2F2F7] text-[#6C6C70]'
+                          }`}>
+                            More Effort
+                          </span>
                         </div>
-                      </button>
-                    );
-                  })}
+
+                        <p className={`text-xs font-sans leading-normal ${
+                          isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                        }`}>
+                          {effortConfig.moreDescription}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Option 2: Less Effort */}
+                    <button
+                      type="button"
+                      onClick={() => setEffortTier('less')}
+                      className={`w-full p-3.5 rounded-[14px] border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                        effortTier === 'less'
+                          ? isDark
+                            ? 'bg-[#0A0A0C] border-2 border-[#0080FF] shadow-sm'
+                            : 'bg-[#F2F8FF] border-2 border-[#0080FF] shadow-xs'
+                          : isDark
+                          ? 'bg-[#0A0A0C]/50 border-[#1F1F24] hover:border-[#0080FF]/40'
+                          : 'bg-white border-[#E5E5EA] hover:border-[#0080FF]/40 shadow-2xs'
+                      }`}
+                    >
+                      <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                        effortTier === 'less'
+                          ? 'border-[#0080FF] bg-[#0080FF]'
+                          : isDark ? 'border-[#636366]' : 'border-[#C7C7CC]'
+                      }`}>
+                        {effortTier === 'less' && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                      </div>
+
+                      <div className="space-y-0.5 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center justify-between gap-1.5">
+                          <span className={`text-xs font-sans font-bold ${
+                            effortTier === 'less'
+                              ? isDark ? 'text-white' : 'text-[#1C1C1E]'
+                              : isDark ? 'text-[#E5E5EA]' : 'text-[#2C2C2E]'
+                          }`}>
+                            {effortConfig.lessTitle}
+                          </span>
+                          <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full ${
+                            effortTier === 'less'
+                              ? isDark ? 'bg-[#0080FF]/20 text-[#0080FF] border border-[#0080FF]/30' : 'bg-[#E5F1FF] text-[#0066CC] border border-[#0080FF]/30'
+                              : isDark ? 'bg-[#121214] text-[#8E8E93]' : 'bg-[#F2F2F7] text-[#6C6C70]'
+                          }`}>
+                            Less Effort
+                          </span>
+                        </div>
+
+                        <p className={`text-xs font-sans leading-normal ${
+                          isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                        }`}>
+                          {effortConfig.lessDescription}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Weekly Commitment: 1 to 5 days */}
+                  <div className={`p-3.5 rounded-[14px] border space-y-2.5 transition-colors ${
+                    isDark ? 'bg-[#0A0A0C]/80 border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className={`text-xs font-sans font-bold block ${
+                          isDark ? 'text-white' : 'text-[#1C1C1E]'
+                        }`}>
+                          Weekly Commitment
+                        </span>
+                        <span className={`text-[11px] font-sans ${
+                          isDark ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                        }`}>
+                          Target: <strong className={isDark ? 'text-[#0080FF]' : 'text-[#0066CC]'}>
+                            {daysPerWeek} {daysPerWeek === 1 ? 'day' : 'days'} / week
+                          </strong>
+                        </span>
+                      </div>
+                      <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full ${
+                        isDark ? 'bg-[#0080FF]/15 text-[#0080FF]' : 'bg-[#E5F1FF] text-[#0066CC]'
+                      }`}>
+                        1 to 5 days
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                      {[1, 2, 3, 4, 5].map((d) => {
+                        const isCurrentDay = daysPerWeek === d;
+                        return (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setDaysPerWeek(d)}
+                            className={`h-11 rounded-xl font-sans text-xs font-bold transition-all flex flex-col items-center justify-center cursor-pointer ${
+                              isCurrentDay
+                                ? 'bg-[#0080FF] text-white shadow-sm ring-2 ring-[#0080FF]/30 scale-[1.02]'
+                                : isDark
+                                ? 'bg-[#121214] text-[#8E8E93] hover:text-white hover:bg-[#1C1C1E] border border-[#1F1F24]'
+                                : 'bg-white text-[#6C6C70] hover:text-[#1C1C1E] hover:bg-[#F2F2F7] border border-[#E5E5EA] shadow-2xs'
+                            }`}
+                            aria-label={`${d} ${d === 1 ? 'day' : 'days'} per week`}
+                          >
+                            <span className="font-mono text-sm leading-none">{d}</span>
+                            <span className="text-[9px] font-medium leading-none mt-1 opacity-85">
+                              {d === 1 ? 'day/wk' : 'days/wk'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}

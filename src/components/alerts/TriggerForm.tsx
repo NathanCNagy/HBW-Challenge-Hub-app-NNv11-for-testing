@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { X, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Check, Bell } from 'lucide-react';
 import { formatTimeDisplay } from './TriggerItem';
 
 interface TriggerFormProps {
@@ -19,6 +19,7 @@ interface TriggerFormProps {
   allDays: string[];
   onSave: () => void;
   onCancel: () => void;
+  onTestNotification?: () => void;
   isDark: boolean;
   submitLabel: string;
 }
@@ -34,9 +35,19 @@ export default function TriggerForm({
   allDays,
   onSave,
   onCancel,
+  onTestNotification,
   isDark,
   submitLabel
 }: TriggerFormProps) {
+  const [justTested, setJustTested] = useState(false);
+
+  const handleTestClick = () => {
+    if (!onTestNotification) return;
+    onTestNotification();
+    setJustTested(true);
+    setTimeout(() => setJustTested(false), 2000);
+  };
+
   const toggleDaySelection = (day: string) => {
     if (days.includes(day)) {
       if (days.length === 1) return; // keep at least 1 day
@@ -257,27 +268,46 @@ export default function TriggerForm({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-2 pt-1">
-        <button
-          type="button"
-          onClick={onCancel}
-          className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg border cursor-pointer ${
-            isDark
-              ? 'border-[#1F1F24] text-[#98989D] hover:text-white'
-              : 'border-[#E5E5EA] text-[#6C6C70] hover:text-[#1C1C1E]'
-          }`}
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={!name.trim()}
-          className="px-3.5 py-1.5 bg-[#0080FF] hover:bg-[#0066CC] disabled:opacity-50 text-white text-xs font-sans font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-        >
-          <Check className="w-3.5 h-3.5" />
-          <span>{submitLabel}</span>
-        </button>
+      <div className="flex flex-col gap-2 pt-1">
+        {onTestNotification && (
+          <button
+            type="button"
+            onClick={handleTestClick}
+            disabled={!name.trim()}
+            className={`w-full py-2 px-3 text-xs font-sans font-semibold rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap disabled:opacity-50 ${
+              justTested
+                ? 'bg-[#34C759]/10 border-[#34C759]/40 text-[#34C759]'
+                : isDark
+                  ? 'bg-[#121214] border-[#0080FF]/40 text-[#0080FF] hover:bg-[#0080FF]/10'
+                  : 'bg-white border-[#0080FF]/40 text-[#0080FF] hover:bg-[#0080FF]/5'
+            }`}
+          >
+            <Bell className="w-3.5 h-3.5 shrink-0" />
+            <span>{justTested ? 'Test Notification Sent' : 'Test Notification'}</span>
+          </button>
+        )}
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg border cursor-pointer whitespace-nowrap ${
+              isDark
+                ? 'border-[#1F1F24] text-[#98989D] hover:text-white'
+                : 'border-[#E5E5EA] text-[#6C6C70] hover:text-[#1C1C1E]'
+            }`}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={!name.trim()}
+            className="px-3.5 py-1.5 bg-[#0080FF] hover:bg-[#0066CC] disabled:opacity-50 text-white text-xs font-sans font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+          >
+            <Check className="w-3.5 h-3.5 shrink-0" />
+            <span>{submitLabel}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

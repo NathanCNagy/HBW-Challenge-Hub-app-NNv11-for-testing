@@ -8,7 +8,6 @@ import { Plus } from 'lucide-react';
 import { HabitTrigger } from '../types';
 import TriggerItem from './alerts/TriggerItem';
 import TriggerForm from './alerts/TriggerForm';
-import NotificationPreviewCard from './alerts/NotificationPreviewCard';
 
 interface SmartAlertsProps {
   goalTitle: string;
@@ -209,6 +208,20 @@ export default function SmartAlerts({
     showSavedFeedback('Reminder cue removed.');
   };
 
+  const handleTestCueNotification = (cueName: string) => {
+    const resolvedName = cueName.trim() || resolvedDefaultAnchor;
+    window.dispatchEvent(
+      new CustomEvent('hbw:add-notification', {
+        detail: {
+          id: Date.now(),
+          title: isWeekly ? 'Weekly Habit Reminder 🔔' : 'Daily Habit Reminder 🔔',
+          body: `After "${resolvedName}", take a moment for your ${isWeekly ? 'weekly' : 'daily'} "${goalTitle}".`,
+          type: 'alert'
+        }
+      })
+    );
+  };
+
   return (
     <div className="space-y-4">
       {/* Triggers Manager Card */}
@@ -287,6 +300,7 @@ export default function SmartAlerts({
                           allDays={ALL_DAYS}
                           onSave={() => handleSaveEdit(trigger.id)}
                           onCancel={() => setEditingId(null)}
+                          onTestNotification={() => handleTestCueNotification(editName)}
                           isDark={isDark}
                           submitLabel="Save Changes"
                         />
@@ -404,14 +418,6 @@ export default function SmartAlerts({
           </p>
         )}
       </div>
-
-      {/* Interactive Notification Live Preview Simulator */}
-      <NotificationPreviewCard
-        primaryTrigger={primaryTrigger}
-        goalTitle={goalTitle}
-        isDark={isDark}
-        isWeekly={isWeekly}
-      />
     </div>
   );
 }

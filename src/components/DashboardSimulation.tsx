@@ -603,6 +603,7 @@ export default function DashboardSimulation({
             onCheckItem={handleCheckItem}
             anchorHabit={anchorHabit}
             onSelectAnchor={handleSelectAnchor}
+            onNavigateToProfile={() => setActiveTab('profile')}
             metrics={metrics}
             theme={theme}
           />

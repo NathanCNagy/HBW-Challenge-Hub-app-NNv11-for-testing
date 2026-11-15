@@ -4,7 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Check, Calendar, Bell } from 'lucide-react';
+import { CheckCircle, Check, Bell, X, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import EcosystemVisualization from '../EcosystemVisualization';
 import { Goal } from '../../types';
 import { getAnchorSuggestions, AnchorSuggestion } from '../../data/anchors';
@@ -29,6 +30,7 @@ interface ProgressTabProps {
   onCheckItem?: (item: 'habitDone' | 'anchorDone' | 'reflectDone') => void;
   anchorHabit?: string;
   onSelectAnchor?: (anchor: string, defaultTime?: string, defaultDays?: string[]) => void;
+  onNavigateToProfile?: () => void;
   metrics?: {
     primaryBadge?: string;
     primaryValue: string;
@@ -56,6 +58,7 @@ export default function ProgressTab({
   onCheckItem,
   anchorHabit,
   onSelectAnchor,
+  onNavigateToProfile,
   theme
 }: ProgressTabProps) {
   const checklistState = checklist || {
@@ -104,6 +107,24 @@ export default function ProgressTab({
   });
 
   const [showAdjust, setShowAdjust] = useState<boolean>(false);
+  const [cueNoticeAnchor, setCueNoticeAnchor] = useState<AnchorSuggestion | null>(null);
+
+  useEffect(() => {
+    if (!cueNoticeAnchor) return;
+    const timer = window.setTimeout(() => {
+      setCueNoticeAnchor(null);
+    }, 4500);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCueNoticeAnchor(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [cueNoticeAnchor]);
 
   // Synchronize when anchorHabit changes from parent
   useEffect(() => {
@@ -140,6 +161,7 @@ export default function ProgressTab({
     if (onSelectAnchor) {
       onSelectAnchor(suggestion.name, suggestion.defaultTime, suggestion.defaultDays);
     }
+    setCueNoticeAnchor(suggestion);
   };
 
   const handleToggleDay = (day: string) => {
@@ -365,6 +387,72 @@ export default function ProgressTab({
           )}
         </div>
       </EcosystemVisualization>
+
+      {/* Temporary Bottom Notification Toast when selecting a cue recommendation */}
+      <AnimatePresence>
+        {cueNoticeAnchor && (
+          <div className="fixed bottom-[90px] left-3 right-3 z-50 flex justify-center pointer-events-none">
+            <motion.div
+              key={cueNoticeAnchor.id}
+              initial={{ opacity: 0, y: 20, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.96 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`pointer-events-auto w-full max-w-[350px] rounded-[16px] border px-3.5 py-3 shadow-xl flex items-start gap-2.5 ${
+                theme === 'dark'
+                  ? 'bg-[#121214]/95 border-[#0080FF]/40 text-white shadow-black/80 backdrop-blur-md'
+                  : 'bg-white/95 border-[#0080FF]/40 text-[#1C1C1E] shadow-lg backdrop-blur-md'
+              }`}
+              role="status"
+              aria-live="polite"
+            >
+              <div className="w-8 h-8 rounded-full bg-[#0080FF]/15 flex items-center justify-center text-[#0080FF] shrink-0 mt-0.5">
+                <Bell className="w-4 h-4" />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-sans font-bold leading-tight truncate">
+                    Cue set: &ldquo;{cueNoticeAnchor.shortLabel}&rdquo;
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setCueNoticeAnchor(null)}
+                    className={`p-1 -mr-1 -mt-0.5 rounded-full transition-colors cursor-pointer shrink-0 ${
+                      theme === 'dark'
+                        ? 'text-[#8E8E93] hover:text-white hover:bg-white/10'
+                        : 'text-[#6C6C70] hover:text-[#1C1C1E] hover:bg-black/5'
+                    }`}
+                    aria-label="Dismiss notification"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <p className={`text-[11px] font-sans leading-snug mt-0.5 ${
+                  theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                }`}>
+                  You can edit this cue anytime in the Profile tab.
+                </p>
+
+                {onNavigateToProfile && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCueNoticeAnchor(null);
+                      onNavigateToProfile();
+                    }}
+                    className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-[#0080FF] hover:underline cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Edit in Profile</span>
+                    <ArrowRight className="w-3 h-3 shrink-0" />
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

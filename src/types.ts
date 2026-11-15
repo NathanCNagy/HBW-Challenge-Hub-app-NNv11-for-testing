@@ -80,3 +80,15 @@ export interface AnchorSuggestion {
   isWeekly?: boolean;
 }
 
+export interface CloudBubble {
+  id: number;
+  cx: number;
+  cy: number;
+  value: number;
+  type: string;
+  label: string;
+  isNew?: boolean;
+  taskId?: string;
+  isStreakBonus?: boolean;
+  streakCount?: number;
+}

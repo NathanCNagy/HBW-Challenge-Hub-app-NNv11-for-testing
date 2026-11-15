@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Goal, QuizAnswers } from '../types';
+import { Goal, QuizAnswers, CloudBubble } from '../types';
 import { 
   Home, 
   TrendingUp, 
@@ -115,7 +115,7 @@ export default function DashboardSimulation({
   });
 
   // Shared Bubble State for Ecosystem Tree: starts EMPTY for demo consistency
-  const [bubbles, setBubbles] = useState<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[]>([]);
+  const [bubbles, setBubbles] = useState<CloudBubble[]>([]);
 
   // Category bubble types - each cloud is worth 1 task
   const bubbleTypesByCategory: Record<string, Array<{ type: string; label: string; value: number }>> = {
@@ -155,6 +155,7 @@ export default function DashboardSimulation({
       setChecklist({ habitDone: false, anchorDone: false, reflectDone: false });
       setBubbles([]);
       setPoppedTaskClouds({});
+      setPoppedStreakValue(0);
       setHasLoggedToday(false);
       setStreak(0);
       setIndividualEnergy(0);
@@ -200,8 +201,9 @@ export default function DashboardSimulation({
     "Repeated actions shape your mind. You are building positive new habits today!"
   ];
 
-  // Track which task clouds have been popped (watered) today to support undoing cloud clicks
+  // Track which task clouds and streak bonus cloud have been popped (watered) today to support undoing cloud clicks
   const [poppedTaskClouds, setPoppedTaskClouds] = useState<Record<string, boolean>>({});
+  const [poppedStreakValue, setPoppedStreakValue] = useState<number>(0);
 
   const handleCheckItem = (item: 'habitDone' | 'anchorDone' | 'reflectDone') => {
     const isChecking = !checklist[item];
@@ -214,31 +216,32 @@ export default function DashboardSimulation({
 
     if (isChecking) {
       // 1. Mark as logged for today if not already
+      const effectiveStreak = !hasLoggedToday ? streak + 1 : streak;
       if (!hasLoggedToday) {
         setHasLoggedToday(true);
         setStreak((prev) => prev + 1);
       }
       setDismissedBubbleAlert(false);
 
-      // 2. Spawn an energy cloud for this specific task
+      // 2. Spawn an energy cloud for this specific task (+ bonus streak cloud if on a streak)
       const category = activeGoal.category;
       const bubbleTypes = bubbleTypesByCategory[category] || [{ type: 'generic', label: 'Energy Cloud', value: 1 }];
       const typeIndex = item === 'habitDone' ? 0 : item === 'anchorDone' ? 1 : 2;
       const randomType = bubbleTypes[typeIndex % bubbleTypes.length];
 
       const fixedPositions: Record<string, { cx: number; cy: number }> = {
-        habitDone: { cx: 26, cy: 30 },
-        anchorDone: { cx: 74, cy: 30 },
-        reflectDone: { cx: 50, cy: 18 }
+        habitDone: { cx: 24, cy: 31 },
+        anchorDone: { cx: 76, cy: 31 },
+        reflectDone: { cx: 50, cy: 19 }
       };
       const pos = fixedPositions[item] || { cx: 20 + Math.random() * 60, cy: 20 + Math.random() * 45 };
+      const bonusValue = effectiveStreak >= 7 ? 3 : 2;
 
       setBubbles((prev) => {
-        // If this cloud already exists in bubbles, don't duplicate
-        if (prev.some((b) => b.taskId === item)) return prev;
-        return [
-          ...prev,
-          {
+        const next = [...prev];
+        // Add task cloud if it doesn't already exist
+        if (!next.some((b) => b.taskId === item)) {
+          next.push({
             id: Date.now() + Math.floor(Math.random() * 1000),
             cx: pos.cx,
             cy: pos.cy,
@@ -247,22 +250,53 @@ export default function DashboardSimulation({
             label: `${randomType.label} (Task Cloud)`,
             isNew: true,
             taskId: item
-          }
-        ];
+          });
+        }
+        // Spawn 1 Bonus Streak Cloud when on an active streak and not yet earned/popped this session
+        if (effectiveStreak >= 1 && poppedStreakValue === 0 && !next.some((b) => b.isStreakBonus)) {
+          next.push({
+            id: Date.now() + Math.floor(Math.random() * 1000) + 1001,
+            cx: 50,
+            cy: 45,
+            value: bonusValue,
+            type: 'streak',
+            label: `Streak Bonus (+${bonusValue} Growth)`,
+            isNew: true,
+            taskId: 'streak-bonus',
+            isStreakBonus: true,
+            streakCount: effectiveStreak
+          });
+        }
+        return next;
       });
     } else {
       // User unchecked this task (undoing mistake):
-      // If the cloud was already clicked to water the plant, undo that cloud click!
+      const remainingChecked = Object.values(updated).some(Boolean);
+      let refund = 0;
+
       if (poppedTaskClouds[item]) {
-        setIndividualEnergy((prev) => Math.max(0, prev - 1));
+        refund += 1;
         setPoppedTaskClouds((prev) => ({ ...prev, [item]: false }));
-      } else {
-        // If the cloud wasn't clicked yet, remove it from the sky
-        setBubbles((prev) => prev.filter((b) => b.taskId !== item));
+      }
+      if (!remainingChecked && poppedStreakValue > 0) {
+        refund += poppedStreakValue;
+        setPoppedStreakValue(0);
       }
 
+      if (refund > 0) {
+        setIndividualEnergy((prev) => Math.max(0, prev - refund));
+      }
+
+      // Remove unpopped task cloud (and unpopped streak bonus cloud if no tasks remain)
+      setBubbles((prev) =>
+        prev.filter((b) => {
+          if (b.taskId === item && !poppedTaskClouds[item]) return false;
+          if (!remainingChecked && b.isStreakBonus) return false;
+          return true;
+        })
+      );
+
       // If no tasks remain checked, revert today's logged status and streak
-      const remainingChecked = Object.values(updated).some(Boolean);
       if (!remainingChecked) {
         setHasLoggedToday(false);
         setStreak((prev) => Math.max(0, prev - 1));
@@ -270,8 +304,10 @@ export default function DashboardSimulation({
     }
   };
 
-  const handlePopCloud = (taskId?: string) => {
-    if (taskId) {
+  const handlePopCloud = (taskId?: string, poppedValue?: number) => {
+    if (taskId === 'streak-bonus') {
+      setPoppedStreakValue(poppedValue || 2);
+    } else if (taskId) {
       setPoppedTaskClouds((prev) => ({ ...prev, [taskId]: true }));
     }
   };
@@ -283,14 +319,16 @@ export default function DashboardSimulation({
   };
 
   const handleResetLog = () => {
-    // Count how many task clouds were already popped to water the plant
+    // Count how many task clouds and streak bonus points were already popped to water the plant
     const poppedCount = Object.values(poppedTaskClouds).filter(Boolean).length;
-    if (poppedCount > 0) {
-      setIndividualEnergy((prev) => Math.max(0, prev - poppedCount));
+    const totalRefund = poppedCount + poppedStreakValue;
+    if (totalRefund > 0) {
+      setIndividualEnergy((prev) => Math.max(0, prev - totalRefund));
     }
-    // Remove all task clouds from bubbles
+    // Remove all task and streak bonus clouds from bubbles
     setBubbles((prev) => prev.filter((b) => !b.taskId));
     setPoppedTaskClouds({});
+    setPoppedStreakValue(0);
     setChecklist({ habitDone: false, anchorDone: false, reflectDone: false });
     if (hasLoggedToday) {
       setStreak((prev) => Math.max(0, prev - 1));

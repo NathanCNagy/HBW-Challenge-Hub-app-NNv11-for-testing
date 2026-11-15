@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Check, Bell, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import EcosystemVisualization from '../EcosystemVisualization';
-import { Goal } from '../../types';
+import { Goal, CloudBubble } from '../../types';
 import { getAnchorSuggestions, AnchorSuggestion } from '../../data/anchors';
 import { formatTimeDisplay, formatDaysSummary } from '../alerts/TriggerItem';
 
@@ -19,9 +19,9 @@ interface ProgressTabProps {
   hasLoggedToday: boolean;
   onLogSuccess: () => void;
   onResetLog?: () => void;
-  bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }>;
-  setBubbles: React.Dispatch<React.SetStateAction<Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }>>>;
-  onPopCloud?: (taskId?: string) => void;
+  bubbles: CloudBubble[];
+  setBubbles: React.Dispatch<React.SetStateAction<CloudBubble[]>>;
+  onPopCloud?: (taskId?: string, poppedValue?: number) => void;
   checklist?: {
     habitDone: boolean;
     anchorDone: boolean;
@@ -362,7 +362,9 @@ export default function ProgressTab({
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-base shrink-0">🌧️</span>
                 <span className={`font-sans font-medium truncate ${theme === 'dark' ? 'text-[#E5E5EA]' : 'text-[#1C1C1E]'}`}>
-                  {checkedCount} {isWeekly ? (checkedCount === 1 ? 'weekly task' : 'weekly tasks') : (checkedCount === 1 ? 'task' : 'tasks')} checked! Click {checkedCount === 1 ? 'the cloud' : 'the clouds'} above to water plant 💧
+                  {bubbles.some((b) => b.isStreakBonus)
+                    ? `${checkedCount} checked + Streak Bonus cloud ready above! 💧`
+                    : `${checkedCount} ${isWeekly ? (checkedCount === 1 ? 'weekly task' : 'weekly tasks') : (checkedCount === 1 ? 'task' : 'tasks')} checked! Click ${checkedCount === 1 ? 'the cloud' : 'the clouds'} above to water plant 💧`}
                 </span>
               </div>
               {onResetLog && (

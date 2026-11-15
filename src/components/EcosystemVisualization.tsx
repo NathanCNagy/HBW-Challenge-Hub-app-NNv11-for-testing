@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight, CheckCircle2, Droplets, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useHabit } from '../context/HabitContext';
+import { CloudBubble } from '../types';
 
 interface EcosystemVisualizationProps {
   category: 'Environment' | 'Well-Being' | 'Compassion' | 'Responsible AI';
@@ -11,9 +12,9 @@ interface EcosystemVisualizationProps {
   hasLoggedToday: boolean;
   onLogToday: () => void;
   goalTitle: string;
-  bubbles: { id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[];
-  setBubbles: React.Dispatch<React.SetStateAction<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }[]>>;
-  onPopCloud?: (taskId?: string) => void;
+  bubbles: CloudBubble[];
+  setBubbles: React.Dispatch<React.SetStateAction<CloudBubble[]>>;
+  onPopCloud?: (taskId?: string, poppedValue?: number) => void;
   theme?: 'dark' | 'light';
   children?: React.ReactNode;
   isWeekly?: boolean;
@@ -27,16 +28,16 @@ interface TaskMilestone {
 }
 
 const TASK_MILESTONES: TaskMilestone[] = [
-  { targetTasks: 3, prevTasks: 0, label: '3 Clouds First Sprout', stageName: 'First Sprout' },
-  { targetTasks: 7, prevTasks: 3, label: '7 Clouds Seedling', stageName: 'Seedling' },
-  { targetTasks: 15, prevTasks: 7, label: '15 Clouds Sapling', stageName: 'Sapling' },
-  { targetTasks: 30, prevTasks: 15, label: '30 Clouds Canopy', stageName: 'Branching Canopy' },
-  { targetTasks: 60, prevTasks: 30, label: '60 Clouds Full Bloom', stageName: 'Full Bloom' },
-  { targetTasks: 100, prevTasks: 60, label: '100 Clouds Mastery', stageName: 'Flourishing Grove' },
-  { targetTasks: 100, prevTasks: 100, label: '100+ Clouds Mastery', stageName: 'Flourishing Grove (Mastery)' }
+  { targetTasks: 3, prevTasks: 0, label: '3 Growth First Sprout', stageName: 'First Sprout' },
+  { targetTasks: 7, prevTasks: 3, label: '7 Growth Seedling', stageName: 'Seedling' },
+  { targetTasks: 15, prevTasks: 7, label: '15 Growth Sapling', stageName: 'Sapling' },
+  { targetTasks: 30, prevTasks: 15, label: '30 Growth Canopy', stageName: 'Branching Canopy' },
+  { targetTasks: 60, prevTasks: 30, label: '60 Growth Full Bloom', stageName: 'Full Bloom' },
+  { targetTasks: 100, prevTasks: 60, label: '100 Growth Mastery', stageName: 'Flourishing Grove' },
+  { targetTasks: 100, prevTasks: 100, label: '100+ Growth Mastery', stageName: 'Flourishing Grove (Mastery)' }
 ];
 
-const DAILY_TASKS_TARGET = 4; // 3 daily clouds + 1 daily habit log = 4 tasks / day
+const DAILY_TASKS_TARGET = 4; // Base 3 task clouds + 1 daily habit log = 4 Growth / day
 
 export default function EcosystemVisualization({
   category,
@@ -125,7 +126,8 @@ export default function EcosystemVisualization({
   const targetMilestoneY = 88;
   const isMastered = individualEnergy >= 100;
   const tasksRemaining = isMastered ? 0 : Math.max(0, currentMilestone.targetTasks - individualEnergy);
-  const daysToNext = isMastered ? 0 : Math.max(1, Math.ceil(tasksRemaining / DAILY_TASKS_TARGET));
+  const effectiveDailyGrowth = streak >= 7 ? 6 : streak >= 1 ? 5 : DAILY_TASKS_TARGET;
+  const daysToNext = isMastered ? 0 : Math.max(1, Math.ceil(tasksRemaining / effectiveDailyGrowth));
 
   // Progress within the current milestone stage (0.0 to 1.0)
   const stageSpan = currentMilestone.targetTasks - currentMilestone.prevTasks;
@@ -168,7 +170,7 @@ export default function EcosystemVisualization({
     setIndividualEnergy(prev => prev + increment);
     setBubbles(prev => prev.filter(b => b.id !== id));
     if (poppedBubble?.taskId && onPopCloud) {
-      onPopCloud(poppedBubble.taskId);
+      onPopCloud(poppedBubble.taskId, increment);
     }
 
     // Generate cheerful hydration rainfall drops originating from cloud position down to the tree
@@ -183,7 +185,7 @@ export default function EcosystemVisualization({
 
     setRaindrops(prev => [...prev, ...newRaindrops]);
     setIsHydrating(true);
-    setHydrationMessage('Plant Watered! (+1 Growth) 💧');
+    setHydrationMessage(`Plant Watered! (+${increment} Growth) 💧`);
 
     // Clear drops after animation
     setTimeout(() => {
@@ -381,14 +383,14 @@ export default function EcosystemVisualization({
           }`}>
             <span className={`text-[9px] font-sans uppercase tracking-wider font-bold block ${
               theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'
-            }`}>CLOUDS CLICKED</span>
+            }`}>GROWTH</span>
             <div className="flex items-center gap-1.5">
               <Cloud className="w-3.5 h-3.5 text-[#0080FF]" />
-              <span className={`text-sm font-serif font-semibold ${
+              <span className={`text-sm font-serif font-semibold tabular-nums ${
                 theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'
               }`}>{individualEnergy}</span>
               <span className={`text-[10px] font-sans ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
-                {individualEnergy === 1 ? 'cloud' : 'clouds'}
+                pts
               </span>
             </div>
           </div>
@@ -449,11 +451,24 @@ export default function EcosystemVisualization({
                   whileHover={{ scale: 1.12 }}
                   whileTap={{ scale: 0.92 }}
                   onClick={() => handlePopBubble(bubble.id, bubble.value, bubble.cx, bubble.cy)}
-                  className="relative flex flex-col items-center justify-center cursor-pointer select-none group pointer-events-auto focus:outline-hidden"
+                  aria-label={
+                    bubble.isStreakBonus
+                      ? `Water plant with +${bubble.value} streak bonus growth`
+                      : `Water plant with +${bubble.value} growth`
+                  }
+                  className="relative flex flex-col items-center justify-center cursor-pointer select-none group pointer-events-auto focus:outline-hidden min-w-[44px] min-h-[44px]"
                 >
-                  {/* Monochromatic Vector Cloud Outline */}
+                  {/* Monochromatic Vector Cloud Outline (larger with streak badge for consistency bonus) */}
                   <div className="relative flex items-center justify-center">
-                    <svg width="68" height="44" viewBox="0 0 68 44" className="overflow-visible filter drop-shadow-xs">
+                    {bubble.isStreakBonus && (
+                      <div className="absolute -inset-1.5 rounded-full bg-[#0080FF]/15 blur-xs pointer-events-none" />
+                    )}
+                    <svg
+                      width={bubble.isStreakBonus ? 88 : 68}
+                      height={bubble.isStreakBonus ? 56 : 44}
+                      viewBox="0 0 68 44"
+                      className="overflow-visible filter drop-shadow-xs relative z-0"
+                    >
                       <path
                         d="M 14 36 
                            C 7 36, 2 30, 3 23 
@@ -464,28 +479,50 @@ export default function EcosystemVisualization({
                            C 62 35, 56 36, 50 36 
                            Z"
                         fill={
-                          bubble.isNew
-                            ? theme === 'dark' ? 'rgba(0, 128, 255, 0.25)' : 'rgba(0, 128, 255, 0.12)'
-                            : theme === 'dark' ? 'rgba(18, 18, 20, 0.85)' : 'rgba(255, 255, 255, 0.92)'
+                          bubble.isStreakBonus
+                            ? theme === 'dark' ? 'rgba(0, 128, 255, 0.34)' : 'rgba(219, 238, 255, 0.96)'
+                            : bubble.isNew
+                              ? theme === 'dark' ? 'rgba(0, 128, 255, 0.25)' : 'rgba(0, 128, 255, 0.12)'
+                              : theme === 'dark' ? 'rgba(18, 18, 20, 0.85)' : 'rgba(255, 255, 255, 0.92)'
                         }
                         stroke={
-                          bubble.isNew
-                            ? '#0080FF'
-                            : theme === 'dark' ? '#38BDF8' : '#0080FF'
+                          bubble.isStreakBonus
+                            ? theme === 'dark' ? '#38BDF8' : '#0080FF'
+                            : bubble.isNew
+                              ? '#0080FF'
+                              : theme === 'dark' ? '#38BDF8' : '#0080FF'
                         }
-                        strokeWidth="2"
+                        strokeWidth={bubble.isStreakBonus ? '2.4' : '2'}
                         strokeLinejoin="round"
                       />
                     </svg>
 
-                    {/* Centered +1 only with no other text */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <span className={`text-[12px] font-mono font-bold tracking-tight leading-none ${
-                        bubble.isNew
-                          ? 'text-[#0080FF] font-extrabold'
-                          : theme === 'dark' ? 'text-white' : 'text-[#0080FF]'
+                    {/* Compact Flame Streak Badge on larger streak cloud */}
+                    {bubble.isStreakBonus && (
+                      <div
+                        className={`absolute -top-2 -right-1.5 px-1.5 py-0.5 rounded-full border flex items-center gap-0.5 shadow-xs pointer-events-none z-10 ${
+                          theme === 'dark'
+                            ? 'bg-[#121214] border-[#FF9500]/70 text-[#FF9500]'
+                            : 'bg-white border-[#FF9500]/60 text-[#D97706]'
+                        }`}
+                      >
+                        <Flame className="w-2.5 h-2.5 fill-current shrink-0" />
+                        <span className="text-[9px] font-mono font-bold leading-none tabular-nums">
+                          {bubble.streakCount || streak}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Centered +Growth value */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 pt-0.5">
+                      <span className={`font-mono font-extrabold tracking-tight leading-none tabular-nums ${
+                        bubble.isStreakBonus
+                          ? theme === 'dark' ? 'text-sm text-white' : 'text-sm text-[#0080FF]'
+                          : bubble.isNew
+                            ? 'text-[12px] text-[#0080FF]'
+                            : theme === 'dark' ? 'text-[12px] text-white' : 'text-[12px] text-[#0080FF]'
                       }`}>
-                        +1
+                        +{bubble.value}
                       </span>
                     </div>
                   </div>
@@ -612,7 +649,7 @@ export default function EcosystemVisualization({
                       Milestone Reached! 🌟
                     </span>
                     <span className="text-[11px] font-mono font-semibold text-emerald-200">
-                      {celebrationMilestone.targetTasks} Clouds
+                      {celebrationMilestone.targetTasks} Growth
                     </span>
                   </div>
                   <h4 className="font-sans font-bold text-xs sm:text-sm leading-tight text-white truncate">
@@ -721,7 +758,7 @@ export default function EcosystemVisualization({
                   fill="#0080FF" 
                 />
 
-                {/* Milestone label with clear cloud count target */}
+                {/* Milestone label with clear Growth target */}
                 <text 
                   x="180" 
                   y={targetMilestoneY - 6} 
@@ -732,7 +769,7 @@ export default function EcosystemVisualization({
                   textAnchor="middle"
                   className="select-none tracking-wide"
                 >
-                  {tasksRemaining} {tasksRemaining === 1 ? 'CLOUD' : 'CLOUDS'} LEFT TO MILESTONE: {currentMilestone.targetTasks} CLOUDS ({currentMilestone.stageName?.toUpperCase()})
+                  {tasksRemaining} GROWTH LEFT TO MILESTONE: {currentMilestone.targetTasks} ({currentMilestone.stageName?.toUpperCase()})
                 </text>
               </g>
             ) : (
@@ -759,7 +796,7 @@ export default function EcosystemVisualization({
                   textAnchor="middle"
                   className="select-none tracking-wide"
                 >
-                  MILESTONE REACHED: 100+ CLOUDS FLOURISHING GROVE 🌟
+                  MILESTONE REACHED: 100+ GROWTH FLOURISHING GROVE 🌟
                 </text>
               </g>
             )}
@@ -1268,16 +1305,16 @@ export default function EcosystemVisualization({
         <div className={`p-3 rounded-[12px] border flex flex-col gap-1.5 transition-colors ${
           theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F2F8FF] border-[#BDE0FE]'
         }`}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-sans font-bold text-[#0080FF] flex items-center gap-1.5">
-              <span>🎯</span> Next Milestone: {currentMilestone.targetTasks} Clouds ({currentMilestone.stageName})
+              <span>🎯</span> Next Milestone: {currentMilestone.targetTasks} Growth ({currentMilestone.stageName})
             </span>
-            <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/15 text-[#0080FF]">
-              {individualEnergy} / {currentMilestone.targetTasks} clouds
+            <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#0080FF]/15 text-[#0080FF] tabular-nums shrink-0">
+              {individualEnergy} / {currentMilestone.targetTasks} pts
             </span>
           </div>
           <p className={`text-xs leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#5C6C7E]'}`}>
-            Click <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more {tasksRemaining === 1 ? 'cloud' : 'clouds'}</strong> to reach <strong>{currentMilestone.targetTasks} Clouds ({currentMilestone.stageName})</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7) === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
+            Earn <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{tasksRemaining} more Growth</strong> to reach <strong>{currentMilestone.targetTasks} Growth ({currentMilestone.stageName})</strong> (estimated in <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{isWeekly && daysToNext >= 7 ? `~${Math.ceil(daysToNext / 7)} ${Math.ceil(daysToNext / 7) === 1 ? 'week' : 'weeks'}` : `~${daysToNext} ${daysToNext === 1 ? 'day' : 'days'}`}</strong>).
           </p>
           <p className={`text-[11px] font-sans leading-normal pt-1 border-t border-dashed ${
             theme === 'dark' ? 'border-[#1F1F24] text-[#8E8E93]' : 'border-[#BDE0FE] text-[#6C6C70]'
@@ -1354,7 +1391,7 @@ export default function EcosystemVisualization({
                 <div className={`flex items-center justify-between text-[11px] font-sans ${
                   theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'
                 }`}>
-                  <span className="font-mono">{groupStats.collectiveTasks.toLocaleString()} / {nextMilestoneCloudsTarget.toLocaleString()} clouds clicked</span>
+                  <span className="font-mono tabular-nums">{groupStats.collectiveTasks.toLocaleString()} / {nextMilestoneCloudsTarget.toLocaleString()} Growth</span>
                   <span>~{daysToTeamMilestone} {daysToTeamMilestone === 1 ? 'day' : 'days'} left</span>
                 </div>
               </div>
@@ -1381,8 +1418,8 @@ export default function EcosystemVisualization({
                     <span className={`text-[10px] font-sans block ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
                       You
                     </span>
-                    <span className="text-lg font-serif font-bold text-[#0080FF] block mt-0.5">
-                      {individualEnergy} {individualEnergy === 1 ? 'cloud clicked' : 'clouds clicked'}
+                    <span className="text-lg font-serif font-bold text-[#0080FF] block mt-0.5 tabular-nums">
+                      {individualEnergy} Growth
                     </span>
                   </div>
 
@@ -1392,8 +1429,8 @@ export default function EcosystemVisualization({
                     <span className={`text-[10px] font-sans block ${theme === 'dark' ? 'text-[#8E8E93]' : 'text-[#6C6C70]'}`}>
                       Team Median
                     </span>
-                    <span className={`text-lg font-serif font-bold block mt-0.5 ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
-                      {teamAverageClouds} clouds clicked
+                    <span className={`text-lg font-serif font-bold block mt-0.5 tabular-nums ${theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}`}>
+                      {teamAverageClouds} Growth
                     </span>
                   </div>
                 </div>
@@ -1438,7 +1475,7 @@ export default function EcosystemVisualization({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 16 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className={`w-full max-w-sm rounded-[24px] border p-5 shadow-2xl relative flex flex-col gap-4 overflow-hidden ${
+              className={`w-full max-w-sm max-h-[90%] overflow-y-auto rounded-[24px] border p-5 shadow-2xl relative flex flex-col gap-3.5 ${
                 theme === 'dark' 
                   ? 'bg-[#121214] border-[#1F1F24] text-white shadow-black/80' 
                   : 'bg-white border-[#E5E5EA] text-[#1C1C1E] shadow-xl'
@@ -1473,7 +1510,7 @@ export default function EcosystemVisualization({
                 </button>
               </div>
 
-              {/* 3-Step Infographic Flow */}
+              {/* 4-Step Infographic Flow */}
               <div className="flex flex-col gap-2.5 pt-1">
                 {/* Step 1 */}
                 <div className={`p-3 rounded-[16px] border flex items-center gap-3 transition-colors ${
@@ -1510,7 +1547,7 @@ export default function EcosystemVisualization({
                     <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
                       theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                     }`}>
-                      Completed tasks release floating energy clouds in the sky above.
+                      Completed tasks release floating +1 Growth clouds in the sky above.
                     </p>
                   </div>
                 </div>
@@ -1529,7 +1566,26 @@ export default function EcosystemVisualization({
                     <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
                       theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
                     }`}>
-                      Click any cloud to trigger rainfall, nourish your tree, and watch it grow! Clicking enough clouds over time advances you to the next milestone.
+                      Tap any cloud to trigger rainfall and add its Growth points directly toward your next milestone.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 4: Streak Cloud Bonus */}
+                <div className={`p-3 rounded-[16px] border flex items-center gap-3 transition-colors ${
+                  theme === 'dark' ? 'bg-[#0A0A0C] border-[#1F1F24]' : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                }`}>
+                  <div className="w-9 h-9 rounded-full bg-[#FF9500]/15 flex items-center justify-center text-[#FF9500] shrink-0">
+                    <Flame className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs font-sans font-bold block leading-tight">
+                      4. Bonus Streak Cloud
+                    </span>
+                    <p className={`text-[11px] font-sans leading-normal mt-0.5 ${
+                      theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                    }`}>
+                      Keep logging tasks on a weekly basis earns you a larger Bonus Streak Cloud (+2 or +3 Growth) to reach milestones faster.
                     </p>
                   </div>
                 </div>
@@ -1539,7 +1595,7 @@ export default function EcosystemVisualization({
               <button
                 type="button"
                 onClick={() => setShowGrowthModal(false)}
-                className="w-full h-11 bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-bold rounded-full transition-all cursor-pointer shadow-xs mt-1"
+                className="w-full h-11 shrink-0 bg-[#0080FF] hover:bg-[#0066CC] active:scale-[0.99] text-white text-xs font-sans font-bold rounded-full transition-all cursor-pointer shadow-xs mt-1"
               >
                 Got it, let's grow!
               </button>

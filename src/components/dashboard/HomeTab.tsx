@@ -17,7 +17,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Goal, QuizAnswers } from '../../types';
+import { Goal, QuizAnswers, CloudBubble } from '../../types';
 import { getDailyHabitTip } from '../../utils/tipSelector';
 import { resolveProfileTags } from '../../utils/profileTags';
 
@@ -33,7 +33,7 @@ interface HomeTabProps {
   hasLoggedToday: boolean;
   onLogSuccess?: () => void;
   onResetLog?: () => void;
-  bubbles: Array<{ id: number; cx: number; cy: number; value: number; type: string; label: string; isNew?: boolean; taskId?: string }>;
+  bubbles: CloudBubble[];
   dismissedBubbleAlert: boolean;
   setDismissedBubbleAlert: (dismissed: boolean) => void;
   motivationalQuote?: string;
@@ -235,7 +235,7 @@ export default function HomeTab({
       )}
 
       {/* Smart Reminders Section */}
-      {!hasConfiguredNotifications ? (
+      {!hasConfiguredNotifications && (
         <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3 transition-colors duration-200 ${
           theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
         }`}>
@@ -270,33 +270,6 @@ export default function HomeTab({
             <Bell className="w-4 h-4 shrink-0" />
             <span>Set Up Reminders in Profile</span>
             <ArrowRight className="w-4 h-4 shrink-0" />
-          </button>
-        </div>
-      ) : (
-        <div className={`p-3 border rounded-[14px] flex items-center justify-between shadow-xs transition-colors duration-200 ${
-          theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
-        }`}>
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-[#34C759]/15 flex items-center justify-center shrink-0">
-              <Bell className="w-4 h-4 text-[#34C759]" />
-            </div>
-            <div>
-              <p className="text-xs font-bold leading-tight flex items-center gap-1.5">
-                <span>Reminders Active</span>
-                <span className="text-[9px] font-sans font-bold text-[#34C759] bg-[#34C759]/15 px-1.5 py-0.2 rounded-full inline-block text-center">
-                  ON
-                </span>
-              </p>
-              <p className={`text-[11px] ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-                Paired with "{anchorHabit}"
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => onNavigateToTab('profile')}
-            className="text-xs font-semibold text-[#0080FF] hover:underline cursor-pointer shrink-0"
-          >
-            Settings &rarr;
           </button>
         </div>
       )}

@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight, CheckCircle2, Droplets, Info } from 'lucide-react';
+import { Trophy, ShieldCheck, Heart, Sparkles, Zap, Users, Flame, Cloud, X, ArrowRight, CheckCircle2, Droplets, Info, Share2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useHabit } from '../context/HabitContext';
-import { CloudBubble } from '../types';
+import { CloudBubble, AccomplishedMilestone } from '../types';
+import MilestoneShareModal from './MilestoneShareModal';
+import {
+  MILESTONE_STAGES,
+  MASTERY_OVERFLOW_STAGE,
+  MilestoneStageConfig
+} from '../utils/milestones';
 
 interface EcosystemVisualizationProps {
   category: 'Environment' | 'Well-Being' | 'Compassion' | 'Responsible AI';
@@ -15,26 +21,15 @@ interface EcosystemVisualizationProps {
   bubbles: CloudBubble[];
   setBubbles: React.Dispatch<React.SetStateAction<CloudBubble[]>>;
   onPopCloud?: (taskId?: string, poppedValue?: number) => void;
+  onShareMilestone?: (milestone: AccomplishedMilestone) => void;
   theme?: 'dark' | 'light';
   children?: React.ReactNode;
   isWeekly?: boolean;
 }
 
-interface TaskMilestone {
-  targetTasks: number;
-  prevTasks: number;
-  label: string;
-  stageName: string;
-}
-
-const TASK_MILESTONES: TaskMilestone[] = [
-  { targetTasks: 3, prevTasks: 0, label: '3 Growth First Sprout', stageName: 'First Sprout' },
-  { targetTasks: 7, prevTasks: 3, label: '7 Growth Seedling', stageName: 'Seedling' },
-  { targetTasks: 15, prevTasks: 7, label: '15 Growth Sapling', stageName: 'Sapling' },
-  { targetTasks: 30, prevTasks: 15, label: '30 Growth Canopy', stageName: 'Branching Canopy' },
-  { targetTasks: 60, prevTasks: 30, label: '60 Growth Full Bloom', stageName: 'Full Bloom' },
-  { targetTasks: 100, prevTasks: 60, label: '100 Growth Mastery', stageName: 'Flourishing Grove' },
-  { targetTasks: 100, prevTasks: 100, label: '100+ Growth Mastery', stageName: 'Flourishing Grove (Mastery)' }
+const TASK_MILESTONES: MilestoneStageConfig[] = [
+  ...MILESTONE_STAGES,
+  MASTERY_OVERFLOW_STAGE
 ];
 
 const DAILY_TASKS_TARGET = 4; // Base 3 task clouds + 1 daily habit log = 4 Growth / day
@@ -50,6 +45,7 @@ export default function EcosystemVisualization({
   bubbles,
   setBubbles,
   onPopCloud,
+  onShareMilestone,
   theme = 'light',
   children,
   isWeekly = false
@@ -59,14 +55,12 @@ export default function EcosystemVisualization({
   const [hydrationMessage, setHydrationMessage] = useState<string>('');
   const { unitSystem } = useHabit();
 
-  // Milestone Celebration Animation State
-  const [celebrationMilestone, setCelebrationMilestone] = useState<{
-    stageName: string;
-    targetTasks: number;
-    unlockedMessage: string;
-  } | null>(null);
+  // Milestone Celebration Animation State (stage-specific & escalating)
+  const [celebrationMilestone, setCelebrationMilestone] = useState<MilestoneStageConfig | null>(null);
+  const [recentShareMilestone, setRecentShareMilestone] = useState<AccomplishedMilestone | null>(null);
+  const [localShareMilestone, setLocalShareMilestone] = useState<AccomplishedMilestone | null>(null);
 
-  const [confettiPieces, setConfettiPieces] = useState<{
+  const [celebrationParticles, setCelebrationParticles] = useState<{
     id: number;
     x: number;
     y: number;
@@ -74,52 +68,80 @@ export default function EcosystemVisualization({
     size: number;
     rotation: number;
     delay: number;
+    driftX: number;
   }[]>([]);
 
-  const triggerMilestoneCelebration = (milestone: TaskMilestone) => {
-    setCelebrationMilestone({
-      stageName: milestone.stageName,
-      targetTasks: milestone.targetTasks,
-      unlockedMessage: milestone.targetTasks === 3
-        ? 'Your plant has evolved! New secondary leaves have unfurled 🌱'
-        : milestone.targetTasks === 7
-        ? 'Dense foliage & upper leaves have sprouted! 🌿'
-        : milestone.targetTasks === 15
-        ? 'Woody branches & sapling boughs have grown! 🌳'
-        : milestone.targetTasks <= 30
-        ? 'A lush green canopy is expanding! 🍃'
-        : 'Vibrant blossoms have opened across the canopy! 🌸'
-    });
+  const celebrationTimerRef = useRef<number | null>(null);
 
-    const colors = ['#0080FF', '#3892FF', '#34C759', '#FFD700', '#FF9500', '#F472B6', '#38BDF8', '#86EFAC'];
-    const particles = Array.from({ length: 32 }).map((_, i) => ({
+  const triggerMilestoneCelebration = (milestone: MilestoneStageConfig) => {
+    if (celebrationTimerRef.current) {
+      window.clearTimeout(celebrationTimerRef.current);
+    }
+
+    setCelebrationMilestone(milestone);
+
+    const particleCount =
+      milestone.motif === 'aurora' ? 36 :
+      milestone.motif === 'petals' ? 32 :
+      milestone.motif === 'breeze' ? 28 :
+      milestone.motif === 'fireflies' ? 24 :
+      milestone.motif === 'butterflies' ? 20 :
+      18;
+
+    const particles = Array.from({ length: particleCount }).map((_, i) => ({
       id: Date.now() + i,
-      x: 10 + Math.random() * 80,
-      y: 10 + Math.random() * 65,
-      color: colors[i % colors.length],
-      size: 7 + Math.random() * 8,
+      x: 8 + Math.random() * 84,
+      y: 12 + Math.random() * 68,
+      color: milestone.particleColors[i % milestone.particleColors.length],
+      size: 9 + Math.random() * 8,
       rotation: Math.random() * 360,
-      delay: (i % 8) * 0.08
+      delay: (i % 9) * 0.09,
+      driftX: (Math.random() - 0.5) * 26
     }));
-    setConfettiPieces(particles);
+    setCelebrationParticles(particles);
 
-    setTimeout(() => {
+    celebrationTimerRef.current = window.setTimeout(() => {
       setCelebrationMilestone(null);
-      setConfettiPieces([]);
-    }, 4500);
+      setCelebrationParticles([]);
+    }, 4800);
   };
+
+  useEffect(() => {
+    return () => {
+      if (celebrationTimerRef.current) {
+        window.clearTimeout(celebrationTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Auto-dismiss temporary post-unlock social share prompt below visualization after 12s
+  useEffect(() => {
+    if (!recentShareMilestone) return;
+    const timer = window.setTimeout(() => {
+      setRecentShareMilestone(null);
+    }, 12000);
+    return () => window.clearTimeout(timer);
+  }, [recentShareMilestone]);
 
   const prevEnergyRef = useRef(individualEnergy);
   useEffect(() => {
     const prev = prevEnergyRef.current;
     if (individualEnergy > prev) {
-      const crossed = TASK_MILESTONES.find(m => prev < m.targetTasks && individualEnergy >= m.targetTasks);
+      const crossed = MILESTONE_STAGES.find(m => prev < m.targetTasks && individualEnergy >= m.targetTasks);
       if (crossed) {
         triggerMilestoneCelebration(crossed);
+        setRecentShareMilestone({
+          targetTasks: crossed.targetTasks,
+          stageName: crossed.stageName,
+          streakAtUnlock: Math.max(1, streak),
+          goalTitle,
+          category,
+          unlockedAt: new Date().toISOString()
+        });
       }
     }
     prevEnergyRef.current = individualEnergy;
-  }, [individualEnergy]);
+  }, [individualEnergy, streak, goalTitle, category]);
 
   // Target milestone is anchored cleanly below the top stat pills (y = 88)
   const currentMilestone = TASK_MILESTONES.find(m => individualEnergy < m.targetTasks) || TASK_MILESTONES[TASK_MILESTONES.length - 1];
@@ -376,6 +398,21 @@ export default function EcosystemVisualization({
         {/* Dynamic visual overlay corresponding to category */}
         <div className={`absolute inset-0 bg-gradient-to-b ${groupStats.visualColor} ${theme === 'dark' ? 'opacity-25' : 'opacity-40'} pointer-events-none`} />
 
+        {/* Escalating Stage-Specific Full-Stage Light & Aurora Burst */}
+        <AnimatePresence>
+          {celebrationMilestone && (
+            <motion.div
+              key={`stage-wash-${celebrationMilestone.targetTasks}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: [0, 0.95, 0.75, 0.9], scale: [0.92, 1.04, 1] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.8, ease: 'easeOut' }}
+              style={{ background: celebrationMilestone.glowGradient }}
+              className="absolute inset-0 pointer-events-none z-10"
+            />
+          )}
+        </AnimatePresence>
+
         {/* Top Header stats overlay */}
         <div className="flex justify-between items-start z-10">
           <div className={`space-y-0.5 p-2 px-3 rounded-full border backdrop-blur-md ${
@@ -594,61 +631,172 @@ export default function EcosystemVisualization({
           )}
         </AnimatePresence>
 
-        {/* Milestone Celebration Confetti & Petals */}
+        {/* Stage-Specific Escalating Nature Celebration Particles */}
         <AnimatePresence>
-          {confettiPieces.map((p) => (
-            <motion.div
-              key={p.id}
-              initial={{ 
-                left: `${p.x}%`, 
-                top: '-4%', 
-                opacity: 1, 
-                scale: 0.3, 
-                rotate: 0 
-              }}
-              animate={{ 
-                left: `${p.x + (Math.sin(p.id) * 12)}%`, 
-                top: `${p.y + 35}%`, 
-                opacity: [0, 1, 1, 0.8, 0], 
-                scale: [0.6, 1.25, 1, 0.75], 
-                rotate: p.rotation + 360 
-              }}
-              transition={{ 
-                duration: 3.2, 
-                delay: p.delay, 
-                ease: "easeOut" 
-              }}
-              style={{
-                backgroundColor: p.color,
-                width: `${p.size}px`,
-                height: `${p.size * (p.id % 2 === 0 ? 1 : 1.5)}px`,
-                borderRadius: p.id % 3 === 0 ? '999px' : '2px',
-              }}
-              className="absolute z-40 pointer-events-none shadow-xs"
-            />
-          ))}
+          {celebrationMilestone && celebrationParticles.map((p, idx) => {
+            const motif = celebrationMilestone.motif;
+
+            if (motif === 'sprouts') {
+              // Stage 1 (3 Growth): Emerald leaves rising softly from soil toward sky
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ left: `${p.x}%`, top: '86%', opacity: 0, scale: 0.4, rotate: p.rotation }}
+                  animate={{
+                    left: `${p.x + p.driftX * 0.4}%`,
+                    top: `${16 + (idx % 5) * 12}%`,
+                    opacity: [0, 1, 1, 0],
+                    scale: [0.5, 1.15, 0.85],
+                    rotate: p.rotation + 45
+                  }}
+                  transition={{ duration: 2.8, delay: p.delay, ease: 'easeOut' }}
+                  className="absolute z-40 pointer-events-none"
+                >
+                  <svg width={p.size + 4} height={p.size + 4} viewBox="0 0 20 20">
+                    <path d="M10 18 C4 13, 3 5, 10 2 C17 5, 16 13, 10 18 Z" fill={p.color} />
+                  </svg>
+                </motion.div>
+              );
+            }
+
+            if (motif === 'butterflies') {
+              // Stage 2 (7 Growth): Fluttering twin-wing sky butterflies gliding across stage
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ left: `${idx % 2 === 0 ? 5 : 92}%`, top: `${p.y}%`, opacity: 0, scale: 0.5 }}
+                  animate={{
+                    left: `${idx % 2 === 0 ? 85 - (idx % 4) * 10 : 12 + (idx % 4) * 10}%`,
+                    top: `${Math.max(12, p.y - 24)}%`,
+                    opacity: [0, 1, 1, 0],
+                    scale: [0.6, 1.1, 0.95, 0.7]
+                  }}
+                  transition={{ duration: 3.1, delay: p.delay, ease: 'easeInOut' }}
+                  className="absolute z-40 pointer-events-none"
+                >
+                  <svg width={p.size + 6} height={p.size + 4} viewBox="0 0 24 18">
+                    <path d="M12 9 C7 1, 1 3, 3 9 C1 13, 7 16, 12 10 Z" fill={p.color} opacity="0.92" />
+                    <path d="M12 9 C17 1, 23 3, 21 9 C23 13, 17 16, 12 10 Z" fill={p.color} opacity="0.85" />
+                  </svg>
+                </motion.div>
+              );
+            }
+
+            if (motif === 'fireflies') {
+              // Stage 3 (15 Growth): Warm golden ascending firefly orbs
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ left: `${p.x}%`, top: `${65 + (idx % 4) * 7}%`, opacity: 0, scale: 0.3 }}
+                  animate={{
+                    left: `${p.x + p.driftX * 0.7}%`,
+                    top: `${14 + (idx % 6) * 10}%`,
+                    opacity: [0, 1, 0.55, 1, 0],
+                    scale: [0.5, 1.35, 0.9, 1.2, 0.4]
+                  }}
+                  transition={{ duration: 3.4, delay: p.delay, ease: 'easeInOut' }}
+                  style={{
+                    width: `${p.size * 0.85}px`,
+                    height: `${p.size * 0.85}px`,
+                    backgroundColor: p.color,
+                    boxShadow: `0 0 10px ${p.color}`
+                  }}
+                  className="absolute z-40 pointer-events-none rounded-full"
+                />
+              );
+            }
+
+            if (motif === 'breeze') {
+              // Stage 4 (30 Growth): Sweeping emerald-teal breeze leaves curving across the canopy
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ left: '-6%', top: `${18 + (idx % 6) * 11}%`, opacity: 0, rotate: 0 }}
+                  animate={{
+                    left: '104%',
+                    top: `${Math.max(10, 18 + (idx % 6) * 11 + p.driftX * 0.6)}%`,
+                    opacity: [0, 1, 1, 0],
+                    rotate: p.rotation + 270
+                  }}
+                  transition={{ duration: 2.7, delay: p.delay, ease: 'easeOut' }}
+                  className="absolute z-40 pointer-events-none"
+                >
+                  <svg width={p.size + 4} height={p.size} viewBox="0 0 22 14">
+                    <path d="M2 7 C8 1, 16 1, 20 7 C16 13, 8 13, 2 7 Z" fill={p.color} />
+                  </svg>
+                </motion.div>
+              );
+            }
+
+            if (motif === 'petals') {
+              // Stage 5 (60 Growth): Blossom petal cascade drifting downward through canopy
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ left: `${p.x}%`, top: '-6%', opacity: 0, scale: 0.5, rotate: p.rotation }}
+                  animate={{
+                    left: `${p.x + Math.sin(idx) * 14}%`,
+                    top: `${p.y + 28}%`,
+                    opacity: [0, 1, 1, 0.8, 0],
+                    scale: [0.6, 1.25, 1, 0.8],
+                    rotate: p.rotation + 320
+                  }}
+                  transition={{ duration: 3.4, delay: p.delay, ease: 'easeOut' }}
+                  className="absolute z-40 pointer-events-none"
+                >
+                  <svg width={p.size + 4} height={p.size + 4} viewBox="0 0 20 20">
+                    <path d="M10 2 C15 5, 16 13, 10 18 C4 13, 5 5, 10 2 Z" fill={p.color} />
+                  </svg>
+                </motion.div>
+              );
+            }
+
+            // Stage 6 (100 Growth): Aurora Mastery 4-point crown stars & golden spores
+            return (
+              <motion.div
+                key={p.id}
+                initial={{ left: `${p.x}%`, top: `${p.y}%`, opacity: 0, scale: 0.2, rotate: 0 }}
+                animate={{
+                  left: `${p.x + p.driftX * 0.5}%`,
+                  top: `${Math.max(8, p.y - 22)}%`,
+                  opacity: [0, 1, 1, 0.85, 0],
+                  scale: [0.4, 1.45, 1.1, 0.5],
+                  rotate: p.rotation + 180
+                }}
+                transition={{ duration: 3.6, delay: p.delay, ease: 'easeOut' }}
+                className="absolute z-40 pointer-events-none"
+              >
+                <svg width={p.size + 5} height={p.size + 5} viewBox="0 0 24 24">
+                  <path
+                    d="M12 2 Q12 12 22 12 Q12 12 12 22 Q12 12 2 12 Q12 12 12 2 Z"
+                    fill={p.color}
+                  />
+                </svg>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
 
-        {/* Milestone Celebration Pop-up Banner */}
+        {/* Stage-Adapted Milestone Celebration Pop-up Banner */}
         <AnimatePresence>
           {celebrationMilestone && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.82, y: -15 }}
+              initial={{ opacity: 0, scale: 0.84, y: -15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.88, y: -10 }}
               transition={{ type: "spring", stiffness: 380, damping: 26 }}
-              className="absolute top-14 left-3 right-3 z-40 bg-gradient-to-r from-[#0080FF] via-[#3892FF] to-[#0080FF] text-white p-3 rounded-2xl shadow-xl border border-white/40 flex items-center justify-between gap-2.5 pointer-events-auto"
+              className={`absolute top-14 left-3 right-3 z-40 bg-gradient-to-r ${celebrationMilestone.bannerGradient} text-white p-3 rounded-2xl shadow-xl border border-white/40 flex items-center justify-between gap-2.5 pointer-events-auto`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xs flex items-center justify-center text-xl shrink-0 shadow-inner animate-bounce">
-                  🌱
+                  {celebrationMilestone.badgeEmoji}
                 </div>
                 <div className="min-w-0 space-y-0.5">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full text-white">
-                      Milestone Reached! 🌟
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-full text-white">
+                      {celebrationMilestone.celebrationHeadline}
                     </span>
-                    <span className="text-[11px] font-mono font-semibold text-emerald-200">
+                    <span className="text-[11px] font-mono font-semibold text-white/95">
                       {celebrationMilestone.targetTasks} Growth
                     </span>
                   </div>
@@ -826,30 +974,46 @@ export default function EcosystemVisualization({
               opacity="0.85" 
             />
 
-            {/* Milestone Celebration Radial Aura & Sparkle Halo */}
+            {/* Milestone Celebration Escalating Radial Aura & Expanding Burst Rings */}
             {celebrationMilestone && (
               <g className="pointer-events-none">
-                {/* Pulsing Radial Aura */}
+                {/* Pulsing Stage-Colored Radial Aura */}
                 <circle 
                   cx="195" 
                   cy={foliageCenterY} 
-                  r="95" 
-                  fill="url(#milestoneAura)" 
+                  r={celebrationMilestone.targetTasks >= 60 ? '125' : '98'} 
+                  fill={celebrationMilestone.accentHex}
+                  opacity="0.18"
                   className="animate-pulse" 
                 />
                 <circle 
                   cx="195" 
                   cy={foliageCenterY} 
-                  r="68" 
-                  fill={theme === 'dark' ? "#38BDF8" : "#34C759"} 
-                  opacity="0.22" 
+                  r={celebrationMilestone.targetTasks >= 30 ? '82' : '64'} 
+                  fill="none"
+                  stroke={celebrationMilestone.accentHex}
+                  strokeWidth="2"
+                  opacity="0.45"
+                  className="animate-ping"
                 />
+                {celebrationMilestone.targetTasks >= 15 && (
+                  <circle 
+                    cx="195" 
+                    cy={foliageCenterY} 
+                    r="112" 
+                    fill="none"
+                    stroke={celebrationMilestone.particleColors[0]}
+                    strokeWidth="1.5"
+                    strokeDasharray="6 6"
+                    opacity="0.45"
+                  />
+                )}
                 <circle 
                   cx="195" 
                   cy={plantTipY - 8} 
                   r="36" 
-                  fill={theme === 'dark' ? "#0080FF" : "#3892FF"} 
-                  opacity="0.28" 
+                  fill={celebrationMilestone.accentHex} 
+                  opacity="0.26" 
                   className="animate-ping" 
                 />
 
@@ -1234,6 +1398,86 @@ export default function EcosystemVisualization({
         </div>
       </div>
 
+      {/* Temporary Post-Unlock Milestone & Streak Share Prompt (directly below visualization) */}
+      <AnimatePresence>
+        {recentShareMilestone && (() => {
+          const stage = TASK_MILESTONES.find((m) => m.targetTasks === recentShareMilestone.targetTasks) || TASK_MILESTONES[0];
+          const streakUnit = isWeekly
+            ? recentShareMilestone.streakAtUnlock === 1 ? 'week' : 'weeks'
+            : recentShareMilestone.streakAtUnlock === 1 ? 'day' : 'days';
+          return (
+            <motion.div
+              key={`share-prompt-${recentShareMilestone.targetTasks}`}
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className={`p-3.5 rounded-[16px] border shadow-xs flex items-center justify-between gap-3 transition-colors ${
+                theme === 'dark'
+                  ? 'bg-[#121214] border-[#0080FF]/45 text-white'
+                  : 'bg-white border-[#0080FF]/40 text-[#1C1C1E]'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+                  style={{ backgroundColor: `${stage.accentHex}20` }}
+                >
+                  {stage.badgeEmoji}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-sans font-bold leading-tight truncate">
+                      {recentShareMilestone.stageName} Unlocked!
+                    </span>
+                    <span className="text-[10px] font-mono font-semibold text-[#FF9500] inline-flex items-center gap-0.5 tabular-nums">
+                      <Flame className="w-3 h-3 fill-current shrink-0" />
+                      {recentShareMilestone.streakAtUnlock} {streakUnit}
+                    </span>
+                  </div>
+                  <p className={`text-[11px] font-sans leading-tight mt-0.5 ${
+                    theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                  }`}>
+                    Share your milestone &amp; streak to inspire others.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = recentShareMilestone;
+                    setRecentShareMilestone(null);
+                    if (onShareMilestone) {
+                      onShareMilestone(target);
+                    } else {
+                      setLocalShareMilestone(target);
+                    }
+                  }}
+                  className="h-[40px] px-3 rounded-xl bg-[#0080FF] hover:bg-[#0066CC] text-white text-xs font-sans font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shadow-xs active:scale-[0.98]"
+                >
+                  <Share2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>Share</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRecentShareMilestone(null)}
+                  className={`p-2 rounded-full transition-colors cursor-pointer ${
+                    theme === 'dark'
+                      ? 'text-[#8E8E93] hover:text-white hover:bg-white/10'
+                      : 'text-[#6C6C70] hover:text-[#1C1C1E] hover:bg-black/5'
+                  }`}
+                  aria-label="Dismiss share prompt"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
+
       {children}
 
       {/* Gamified Impact Progress Indicators */}
@@ -1603,6 +1847,16 @@ export default function EcosystemVisualization({
           </div>
         )}
       </AnimatePresence>
+
+      {/* Standalone fallback Share Modal when onShareMilestone isn't handled by parent */}
+      {localShareMilestone && (
+        <MilestoneShareModal
+          milestone={localShareMilestone}
+          isWeekly={isWeekly}
+          theme={theme}
+          onClose={() => setLocalShareMilestone(null)}
+        />
+      )}
     </div>
   );
 }

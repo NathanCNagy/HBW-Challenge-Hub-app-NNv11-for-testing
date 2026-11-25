@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Check, Bell, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import EcosystemVisualization from '../EcosystemVisualization';
-import { Goal, CloudBubble } from '../../types';
+import { Goal, CloudBubble, AccomplishedMilestone } from '../../types';
 import { getAnchorSuggestions, AnchorSuggestion } from '../../data/anchors';
 import { formatTimeDisplay, formatDaysSummary } from '../alerts/TriggerItem';
 
@@ -31,6 +31,7 @@ interface ProgressTabProps {
   anchorHabit?: string;
   onSelectAnchor?: (anchor: string, defaultTime?: string, defaultDays?: string[]) => void;
   onNavigateToProfile?: () => void;
+  onShareMilestone?: (milestone: AccomplishedMilestone) => void;
   metrics?: {
     primaryBadge?: string;
     primaryValue: string;
@@ -59,6 +60,7 @@ export default function ProgressTab({
   anchorHabit,
   onSelectAnchor,
   onNavigateToProfile,
+  onShareMilestone,
   theme
 }: ProgressTabProps) {
   const checklistState = checklist || {
@@ -204,6 +206,7 @@ export default function ProgressTab({
         bubbles={bubbles}
         setBubbles={setBubbles}
         onPopCloud={onPopCloud}
+        onShareMilestone={onShareMilestone}
         theme={theme}
         isWeekly={isWeekly}
       >

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Goal, QuizAnswers, CloudBubble } from '../types';
+import { Goal, QuizAnswers, CloudBubble, AccomplishedMilestone } from '../types';
 import { 
   Home, 
   TrendingUp, 
@@ -27,6 +27,8 @@ import ScreenshotGalleryModal from './ScreenshotGalleryModal';
 import { downloadHabitPlanPDF } from '../utils/pdfExport';
 import { useHabit } from '../context/HabitContext';
 import { formatDrivingStreak } from '../utils/units';
+import { MILESTONE_STAGES } from '../utils/milestones';
+import MilestoneShareModal from './MilestoneShareModal';
 
 interface DashboardSimulationProps {
   goal: Goal;
@@ -116,6 +118,21 @@ export default function DashboardSimulation({
 
   // Shared Bubble State for Ecosystem Tree: starts EMPTY for demo consistency
   const [bubbles, setBubbles] = useState<CloudBubble[]>([]);
+
+  // Accomplished milestones persisted across sessions for Profile card & sharing
+  const [accomplishedMilestones, setAccomplishedMilestones] = useState<AccomplishedMilestone[]>(() => {
+    try {
+      const saved = localStorage.getItem('hbw_accomplished_milestones');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+  const [shareModalMilestone, setShareModalMilestone] = useState<AccomplishedMilestone | null>(null);
 
   // Category bubble types - each cloud is worth 1 task
   const bubbleTypesByCategory: Record<string, Array<{ type: string; label: string; value: number }>> = {
@@ -387,6 +404,33 @@ export default function DashboardSimulation({
     }
   }, [streak, hasLoggedToday, individualEnergy, activeGoal, checklist]);
 
+  // Record any newly accomplished milestones whenever Growth points advance
+  useEffect(() => {
+    setAccomplishedMilestones((prev) => {
+      const newlyUnlocked = MILESTONE_STAGES.filter(
+        (stage) =>
+          individualEnergy >= stage.targetTasks &&
+          !prev.some((existing) => existing.targetTasks === stage.targetTasks)
+      ).map((stage) => ({
+        targetTasks: stage.targetTasks,
+        stageName: stage.stageName,
+        streakAtUnlock: Math.max(1, streak),
+        goalTitle: activeGoal.title,
+        category: activeGoal.category,
+        unlockedAt: new Date().toISOString()
+      }));
+
+      if (newlyUnlocked.length === 0) return prev;
+      const updated = [...prev, ...newlyUnlocked];
+      try {
+        localStorage.setItem('hbw_accomplished_milestones', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  }, [individualEnergy, streak, activeGoal.title, activeGoal.category]);
+
   // Projected 3-Month metrics calculator based on active habit category
   const getMetricsLabels = () => {
     switch (activeGoal.category) {
@@ -642,6 +686,7 @@ export default function DashboardSimulation({
             anchorHabit={anchorHabit}
             onSelectAnchor={handleSelectAnchor}
             onNavigateToProfile={() => setActiveTab('profile')}
+            onShareMilestone={(m) => setShareModalMilestone(m)}
             metrics={metrics}
             theme={theme}
           />
@@ -673,10 +718,24 @@ export default function DashboardSimulation({
             setAnchorHabit={setAnchorHabit}
             setHasConfiguredNotifications={setHasConfiguredNotifications}
             onDownloadPDF={handleDownloadPDF}
+            accomplishedMilestones={accomplishedMilestones}
+            individualEnergy={individualEnergy}
+            onShareMilestone={(m) => setShareModalMilestone(m)}
           />
         )}
 
       </div>
+
+      {/* Shared In-App Milestone Social Share Sheet */}
+      <MilestoneShareModal
+        milestone={shareModalMilestone}
+        isWeekly={Boolean(
+          activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') ||
+          activeGoal.title.toLowerCase().includes('weekly')
+        )}
+        theme={theme}
+        onClose={() => setShareModalMilestone(null)}
+      />
 
       {/* Bottom Navigation Bar */}
       <div className={`border-t h-[64px] grid grid-cols-4 items-center shrink-0 z-20 transition-colors duration-200 ${

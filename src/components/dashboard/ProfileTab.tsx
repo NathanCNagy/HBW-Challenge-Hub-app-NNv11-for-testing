@@ -12,16 +12,20 @@ import {
   ChevronUp,
   Sliders,
   AlertCircle,
-  Zap
+  Zap,
+  Trophy,
+  Share2,
+  Flame
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Goal, QuizAnswers } from '../../types';
+import { Goal, QuizAnswers, AccomplishedMilestone } from '../../types';
 import SmartAlerts from '../SmartAlerts';
 import HabitsManager from '../HabitsManager';
 import { useHabit } from '../../context/HabitContext';
 import { buildRoutineOption, EffortTier, CATEGORY_EFFORT_CONFIGS, getDemographicResonance } from '../../data';
 import { formatImpactMetric } from '../../utils/units';
 import { resolveProfileTags } from '../../utils/profileTags';
+import { MILESTONE_STAGES, getMilestoneStageConfig } from '../../utils/milestones';
 
 interface ProfileTabProps {
   user: any;
@@ -38,6 +42,9 @@ interface ProfileTabProps {
   setAnchorHabit: (anchor: string) => void;
   setHasConfiguredNotifications: (configured: boolean) => void;
   onDownloadPDF?: () => void;
+  accomplishedMilestones?: AccomplishedMilestone[];
+  individualEnergy?: number;
+  onShareMilestone?: (milestone: AccomplishedMilestone) => void;
 }
 
 export default function ProfileTab({
@@ -54,7 +61,10 @@ export default function ProfileTab({
   anchorHabit,
   setAnchorHabit,
   setHasConfiguredNotifications,
-  onDownloadPDF
+  onDownloadPDF,
+  accomplishedMilestones = [],
+  individualEnergy = 0,
+  onShareMilestone
 }: ProfileTabProps) {
   const { unitSystem, setUnitSystem, isUS, commitGoal } = useHabit();
   const isWeekly = activeGoal.selectedOption?.scheduleText?.toLowerCase().includes('week') || activeGoal.title.toLowerCase().includes('weekly');
@@ -301,6 +311,177 @@ export default function ProfileTab({
           </div>
         )}
       </div>
+
+      {/* Accomplished Milestones Card */}
+      {(() => {
+        const sortedMilestones = [...accomplishedMilestones].sort(
+          (a, b) => b.targetTasks - a.targetTasks
+        );
+        const nextStage = MILESTONE_STAGES.find(
+          (stage) => !accomplishedMilestones.some((m) => m.targetTasks === stage.targetTasks)
+        );
+        const progressPercent = nextStage
+          ? Math.min(
+              100,
+              Math.max(
+                0,
+                Math.round(
+                  ((individualEnergy - nextStage.prevTasks) /
+                    (nextStage.targetTasks - nextStage.prevTasks)) *
+                    100
+                )
+              )
+            )
+          : 100;
+
+        return (
+          <div
+            className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3 transition-colors duration-200 ${
+              theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
+            }`}
+          >
+            <div
+              className={`flex items-center justify-between gap-2 border-b pb-2.5 ${
+                theme === 'dark' ? 'border-[#1F1F24]' : 'border-[#E5E5EA]'
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Trophy className="w-4 h-4 text-[#0080FF] shrink-0" />
+                <h4 className="text-xs font-sans font-bold uppercase tracking-wider truncate">
+                  Accomplished Milestones
+                </h4>
+              </div>
+              <span
+                className={`text-[11px] font-mono font-semibold tabular-nums shrink-0 ${
+                  theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                }`}
+              >
+                {accomplishedMilestones.length} / {MILESTONE_STAGES.length}
+              </span>
+            </div>
+
+            {nextStage && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-sans">
+                  <span className={theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}>
+                    Next: <strong className={theme === 'dark' ? 'text-white' : 'text-[#1C1C1E]'}>{nextStage.stageName}</strong>
+                  </span>
+                  <span className="font-mono font-semibold text-[#0080FF] tabular-nums">
+                    {individualEnergy} / {nextStage.targetTasks} Growth
+                  </span>
+                </div>
+                <div
+                  className={`w-full h-1.5 rounded-full overflow-hidden ${
+                    theme === 'dark' ? 'bg-[#1F1F24]' : 'bg-[#E5E5EA]'
+                  }`}
+                >
+                  <div
+                    className="h-full bg-[#0080FF] rounded-full transition-all duration-300"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {sortedMilestones.length === 0 ? (
+              <div
+                className={`p-3 rounded-xl border border-dashed text-center space-y-1 ${
+                  theme === 'dark'
+                    ? 'border-[#1F1F24] bg-[#0A0A0C] text-[#98989D]'
+                    : 'border-[#E5E5EA] bg-[#F5F5F7] text-[#6C6C70]'
+                }`}
+              >
+                <p className="text-xs font-sans font-medium">
+                  No milestones unlocked yet.
+                </p>
+                <p className="text-[11px] font-sans leading-snug">
+                  Complete tasks and water your plant in Progress to unlock First Sprout at 3 Growth and share your streak.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {sortedMilestones.map((m) => {
+                  const stage = getMilestoneStageConfig(m.targetTasks);
+                  const streakUnit = isWeekly
+                    ? m.streakAtUnlock === 1 ? 'wk' : 'wks'
+                    : m.streakAtUnlock === 1 ? 'day' : 'days';
+                  const unlockedDate = (() => {
+                    try {
+                      return new Date(m.unlockedAt).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric'
+                      });
+                    } catch {
+                      return '';
+                    }
+                  })();
+
+                  return (
+                    <div
+                      key={m.targetTasks}
+                      className={`p-3 rounded-[14px] border flex items-center justify-between gap-2.5 ${
+                        theme === 'dark'
+                          ? 'bg-[#0A0A0C] border-[#1F1F24]'
+                          : 'bg-[#F9F9FB] border-[#E5E5EA]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0"
+                          style={{ backgroundColor: `${stage.accentHex}20` }}
+                        >
+                          {stage.badgeEmoji}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-sans font-bold leading-tight truncate">
+                              {m.stageName}
+                            </span>
+                            <span className="text-[10px] font-mono font-semibold text-[#0080FF] shrink-0 tabular-nums">
+                              {m.targetTasks} pts
+                            </span>
+                          </div>
+                          <div
+                            className={`flex items-center gap-1.5 text-[11px] font-sans mt-0.5 flex-wrap ${
+                              theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'
+                            }`}
+                          >
+                            <span className="inline-flex items-center gap-0.5 text-[#FF9500] font-mono font-semibold text-[10px] tabular-nums">
+                              <Flame className="w-3 h-3 fill-current shrink-0" />
+                              {m.streakAtUnlock} {streakUnit}
+                            </span>
+                            {unlockedDate && (
+                              <>
+                                <span aria-hidden="true">·</span>
+                                <span className="truncate">{unlockedDate}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {onShareMilestone && (
+                        <button
+                          type="button"
+                          onClick={() => onShareMilestone(m)}
+                          className={`h-[38px] px-3 rounded-xl border text-xs font-sans font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 transition-all active:scale-[0.98] ${
+                            theme === 'dark'
+                              ? 'bg-[#121214] border-[#0080FF]/40 text-[#0080FF] hover:bg-[#0080FF]/10'
+                              : 'bg-white border-[#0080FF]/40 text-[#0080FF] hover:bg-[#0080FF]/5'
+                          }`}
+                        >
+                          <Share2 className="w-3.5 h-3.5 shrink-0" />
+                          <span>Share</span>
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Adapt Plan Card (Matches "Make an Impact" Accordion Design & Layout) */}
       {(() => {

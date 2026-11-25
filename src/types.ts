@@ -92,3 +92,12 @@ export interface CloudBubble {
   isStreakBonus?: boolean;
   streakCount?: number;
 }
+
+export interface AccomplishedMilestone {
+  targetTasks: number;
+  stageName: string;
+  streakAtUnlock: number;
+  goalTitle: string;
+  category: Category;
+  unlockedAt: string;
+}

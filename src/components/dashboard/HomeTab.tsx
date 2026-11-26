@@ -20,6 +20,7 @@ import { motion } from 'motion/react';
 import { Goal, QuizAnswers, CloudBubble } from '../../types';
 import { getDailyHabitTip } from '../../utils/tipSelector';
 import { resolveProfileTags } from '../../utils/profileTags';
+import WeeklyNoveltyTimeline from './WeeklyNoveltyTimeline';
 
 interface HomeTabProps {
   activeGoal: Goal;
@@ -71,6 +72,15 @@ export default function HomeTab({
 
   return (
     <div className="flex flex-col gap-4 w-full">
+      {/* 90-Day Weekly Novelty Timeline (Top of Today's Focus Tab) */}
+      <WeeklyNoveltyTimeline
+        goalId={activeGoal.id}
+        category={activeGoal.category}
+        goalTitle={activeGoal.title}
+        isWeekly={isWeekly}
+        theme={theme}
+      />
+
       {/* Active Focus Header Details */}
       <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3 relative overflow-hidden transition-colors duration-200 ${
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'

@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Goal, QuizAnswers, CloudBubble, AccomplishedMilestone } from '../types';
 import { 
-  Home, 
+  Target, 
   TrendingUp, 
   Users, 
   User, 
@@ -561,8 +561,8 @@ export default function DashboardSimulation({
             setShowOverflowMenu(false);
           }}
           className="flex items-center gap-2 cursor-pointer hover:opacity-90 active:scale-95 transition-all text-left group py-0.5 px-1.5 -ml-1 rounded-xl"
-          title="Return to Home Tab"
-          aria-label="Return to Home Tab"
+          title="Return to Today's Focus"
+          aria-label="Return to Today's Focus"
         >
           <HBWLogo variant="favicon" size="sm" className="h-7 w-7" theme={theme} />
           <span 
@@ -741,17 +741,19 @@ export default function DashboardSimulation({
       <div className={`border-t h-[64px] grid grid-cols-4 items-center shrink-0 z-20 transition-colors duration-200 ${
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}>
-        {/* TAB 1: HOME */}
+        {/* TAB 1: TODAY'S FOCUS */}
         <button
           onClick={() => setActiveTab('home')}
-          className={`flex flex-col items-center justify-center h-full transition-all cursor-pointer ${
+          className={`flex flex-col items-center justify-center h-full px-1 transition-all cursor-pointer ${
             activeTab === 'home' 
               ? 'text-[#0080FF]' 
               : theme === 'dark' ? 'text-[#8E8E93] hover:text-white' : 'text-[#8E8E93] hover:text-[#1C1C1E]'
           }`}
         >
-          <Home className="w-5 h-5 mb-0.5" />
-          <span className="text-[11px] font-sans font-medium leading-none">Home</span>
+          <Target className="w-5 h-5 mb-0.5 shrink-0" />
+          <span className="text-[10px] font-sans font-medium leading-none tracking-tight whitespace-nowrap">
+            Today&apos;s Focus
+          </span>
         </button>
 
         {/* TAB 2: PROGRESS */}

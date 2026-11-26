@@ -101,3 +101,18 @@ export interface AccomplishedMilestone {
   category: Category;
   unlockedAt: string;
 }
+
+export interface WeeklyNoveltyTwist {
+  id: string;
+  category: Category;
+  defaultWeek: number;
+  title: string;
+  twistPrompt: string;
+  benefitNote: string;
+}
+
+export interface WeeklyTimelineState {
+  startDateIso: string;
+  manualWeekOverride: number | null;
+  orderedTwistIds: string[];
+}

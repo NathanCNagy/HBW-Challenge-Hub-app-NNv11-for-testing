@@ -561,8 +561,8 @@ export default function DashboardSimulation({
             setShowOverflowMenu(false);
           }}
           className="flex items-center gap-2 cursor-pointer hover:opacity-90 active:scale-95 transition-all text-left group py-0.5 px-1.5 -ml-1 rounded-xl"
-          title="Return to Today's Focus"
-          aria-label="Return to Today's Focus"
+          title="Return to Daily Focus"
+          aria-label="Return to Daily Focus"
         >
           <HBWLogo variant="favicon" size="sm" className="h-7 w-7" theme={theme} />
           <span 
@@ -741,7 +741,7 @@ export default function DashboardSimulation({
       <div className={`border-t h-[64px] grid grid-cols-4 items-center shrink-0 z-20 transition-colors duration-200 ${
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}>
-        {/* TAB 1: TODAY'S FOCUS */}
+        {/* TAB 1: DAILY FOCUS */}
         <button
           onClick={() => setActiveTab('home')}
           className={`flex flex-col items-center justify-center h-full px-1 transition-all cursor-pointer ${
@@ -752,7 +752,7 @@ export default function DashboardSimulation({
         >
           <Target className="w-5 h-5 mb-0.5 shrink-0" />
           <span className="text-[10px] font-sans font-medium leading-none tracking-tight whitespace-nowrap">
-            Today&apos;s Focus
+            Daily Focus
           </span>
         </button>
 

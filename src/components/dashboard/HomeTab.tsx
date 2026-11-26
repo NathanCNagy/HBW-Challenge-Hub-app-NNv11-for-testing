@@ -6,11 +6,7 @@
 import React, { useState } from 'react';
 import { 
   CheckCircle, 
-  Calendar, 
-  Sparkles, 
-  Bell, 
   X,
-  ArrowRight,
   Lightbulb,
   RefreshCw,
   ExternalLink,
@@ -72,23 +68,14 @@ export default function HomeTab({
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      {/* 90-Day Weekly Novelty Timeline (Top of Today's Focus Tab) */}
-      <WeeklyNoveltyTimeline
-        goalId={activeGoal.id}
-        category={activeGoal.category}
-        goalTitle={activeGoal.title}
-        isWeekly={isWeekly}
-        theme={theme}
-      />
-
-      {/* Active Focus Header Details */}
+      {/* Active Focus Header Details (Top of Daily Focus Tab) */}
       <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3 relative overflow-hidden transition-colors duration-200 ${
         theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
       }`}>
         <div className="flex flex-col gap-1.5 z-10">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#6C6C70] dark:text-[#98989D]">
-              {isWeekly ? "This Week's Focus" : "Today's Focus"}
+              Daily Focus
             </span>
             {hasLoggedToday && (
               <span className="text-[10px] font-sans font-semibold text-[#34C759] flex items-center gap-1">
@@ -193,6 +180,15 @@ export default function HomeTab({
         )}
       </div>
 
+      {/* 90-Day Weekly Novelty Timeline */}
+      <WeeklyNoveltyTimeline
+        goalId={activeGoal.id}
+        category={activeGoal.category}
+        goalTitle={activeGoal.title}
+        isWeekly={isWeekly}
+        theme={theme}
+      />
+
       {/* Energy Harvest Banner (if bubbles are waiting) */}
       {bubbles.length > 0 && (
         <button
@@ -242,46 +238,6 @@ export default function HomeTab({
             Go to Progress Tab to Water It &rarr;
           </button>
         </motion.div>
-      )}
-
-      {/* Smart Reminders Section */}
-      {!hasConfiguredNotifications && (
-        <div className={`p-4 border rounded-[16px] shadow-xs flex flex-col gap-3 transition-colors duration-200 ${
-          theme === 'dark' ? 'bg-[#121214] border-[#1F1F24]' : 'bg-white border-[#E5E5EA]'
-        }`}>
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="w-7 h-7 rounded-full bg-[#0080FF]/15 flex items-center justify-center shrink-0">
-                <Bell className="w-4 h-4 text-[#0080FF]" />
-              </div>
-              <h4 className="text-xs font-sans font-bold uppercase tracking-wider truncate">
-                Smart Habit Reminders
-              </h4>
-            </div>
-            <span className="text-[9px] font-sans font-semibold uppercase px-2 py-0.5 rounded-full bg-[#FF9500]/15 text-[#FF9500] shrink-0 inline-block text-center">
-              Not Set Up
-            </span>
-          </div>
-
-          <p className={`text-xs leading-relaxed font-sans ${theme === 'dark' ? 'text-[#98989D]' : 'text-[#6C6C70]'}`}>
-            {isWeekly
-              ? 'Pair your habit with a regular routine (like your weekly grocery run or Sunday dinner) to make consistency automatic.'
-              : 'Pair your habit with a daily routine (like morning coffee or evening wind-down) to make consistency automatic.'}
-          </p>
-
-          <button
-            onClick={() => onNavigateToTab('profile')}
-            className={`h-[44px] w-full px-5 rounded-full font-sans font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.99] ${
-              theme === 'dark'
-                ? 'bg-[#0080FF]/15 hover:bg-[#0080FF]/25 text-[#0080FF] border border-[#0080FF]/30'
-                : 'bg-[#0080FF] hover:bg-[#0066CC] text-white'
-            }`}
-          >
-            <Bell className="w-4 h-4 shrink-0" />
-            <span>Set Up Reminders in Profile</span>
-            <ArrowRight className="w-4 h-4 shrink-0" />
-          </button>
-        </div>
       )}
 
       {/* Daily Habit Tip Card (Demographically Catered & Verified Source) */}

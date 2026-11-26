@@ -173,8 +173,8 @@ export default function WeeklyNoveltyTimeline({
       </div>
 
       {/* Minimalist Week Rows (Current Week + Next 2 Weeks) */}
-      <div className={`divide-y ${isDark ? 'divide-[#1F1F24]' : 'divide-[#E5E5EA]'}`}>
-        {visibleWeeks.map((weekNum) => {
+      <div className="flex flex-col">
+        {visibleWeeks.map((weekNum, idx) => {
           const twistId = timelineState.orderedTwistIds[weekNum - 1];
           const twist = getTwistById(category, twistId);
           const isCurrent = weekNum === activeWeek;
@@ -186,7 +186,19 @@ export default function WeeklyNoveltyTimeline({
               layout="position"
               key={`${weekNum}-${twist.id}`}
               transition={{ duration: 0.16, ease: 'easeOut' }}
-              className="py-3 first:pt-3 last:pb-1 flex items-center justify-between gap-3"
+              className={`flex items-center justify-between gap-3 transition-colors ${
+                isCurrent
+                  ? isDark
+                    ? 'bg-[#0080FF]/[0.10] -mx-2 px-2.5 py-3 mt-2 mb-1 rounded-[12px]'
+                    : 'bg-[#0080FF]/[0.06] -mx-2 px-2.5 py-3 mt-2 mb-1 rounded-[12px]'
+                  : `py-3 last:pb-1 ${
+                      idx > 1
+                        ? isDark
+                          ? 'border-t border-[#1F1F24]'
+                          : 'border-t border-[#E5E5EA]'
+                        : ''
+                    }`
+              }`}
             >
               <div className="min-w-0 flex-1 space-y-0.5">
                 <div className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums uppercase tracking-wider">
